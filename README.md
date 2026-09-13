@@ -25,6 +25,22 @@ Open http://localhost:5173. Stop the server with Ctrl+C.
 
 Run `python3 build-single.py` to regenerate `outputs/classic-studio.html` after editing the source. Prices can also be adjusted in the app's Parts list; $0 marks an already-owned part. Those edits are included in its build link.
 
+## Development
+
+```sh
+git clone https://github.com/kylegothman/your-classic.git
+cd your-classic
+npm ci
+npm test
+python3 -m http.server 5173 --directory dist
+# In another terminal, regenerate the portable app:
+python3 build-single.py
+```
+
+Use Node.js 22 or newer and Python 3. Run `npm run bake:shells` if the model or shell generator changes. GitHub Actions runs installation, both test suites and the portable build on pushes and pull requests. The checked-in `.openai/hosting.json` identifies the existing Classic Studio Sites deployment; it contains no credentials. Forks should use their own hosting configuration before deploying.
+
+Published app: https://classic-studio-kyle.kyle-gothman.chatgpt.site/ (current access policy applies).
+
 ## Using the app
 
 Select a preset or customize the twelve groups. The initial build counts a used 7th-generation board at $80. Drag to orbit, scroll to zoom, or focus the viewer and use arrow keys. Use camera presets, X-ray, or Clear front to inspect selected internal modules. The GLB faceplate, wheel and display are retained, with a separately extracted raised center button and a procedural hollow back shell.
