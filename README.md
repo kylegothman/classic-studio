@@ -28,7 +28,7 @@ Run `python3 build-single.py` to regenerate `outputs/classic-studio.html` after 
 ## Development
 
 ```sh
-git clone https://github.com/kylegothman/your-classic.git
+git clone https://github.com/kylegothman/classic-studio.git
 cd your-classic
 npm ci
 npm test

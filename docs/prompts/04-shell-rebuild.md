@@ -2,7 +2,7 @@
 
 ## Work from the git repo from now on
 
-The project is now a git repository with a GitHub remote: https://github.com/kylegothman/your-classic (local folder: the existing project directory with `dist/`, `tests/`, `build-single.py`, `README.md`). Read `AGENTS.md` at the repo root before changing anything. For this and every future task: pull `main` first, make the change, run `node tests/compatibility.mjs` and `python3 build-single.py`, commit with a clear message, and push to `main`. If a change is experimental, push it to a branch named `feature/<short-name>` instead and tell me. Never commit `work/` or `outputs/`; they are ignored on purpose.
+The project is now a git repository with a GitHub remote: https://github.com/kylegothman/classic-studio (local folder: the existing project directory with `dist/`, `tests/`, `build-single.py`, `README.md`). Read `AGENTS.md` at the repo root before changing anything. For this and every future task: pull `main` first, make the change, run `node tests/compatibility.mjs` and `python3 build-single.py`, commit with a clear message, and push to `main`. If a change is experimental, push it to a branch named `feature/<short-name>` instead and tell me. Never commit `work/` or `outputs/`; they are ignored on purpose.
 
 ## The remaining geometry problem
 
