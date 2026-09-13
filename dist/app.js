@@ -225,13 +225,7 @@ function renderConfigure() {
         ? '<p class="hint">Classic Connect 2 includes its own battery. Your separate battery choice is retained for switching back, but excluded from this kit’s estimate.</p>'
         : choice("battery")) + runtimeLine(),
     ),
-    g(
-      "screen",
-      8,
-      "Screen",
-      state.screen === "keep" ? "Keep original" : "Stock replacement",
-      choice("screen"),
-    ),
+    g("screen", 8, "Screen", selected(state, "screen").name, choice("screen")),
     g(
       "wireless",
       9,

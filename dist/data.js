@@ -11,7 +11,7 @@ import {
   ENGRAVING_STYLES,
 } from "./catalog.js";
 // Edit all names, prices, vendors, explanations and compatibility rules here.
-// Prices are planning allowances in USD, not live quotes. Updated 2026-09-12.
+// Prices are planning allowances in USD, not live quotes. EOE prices checked 2026-09-13.
 export const VENDORS = {
   iflash: { name: "iFlash", url: "https://www.iflash.xyz/store/" },
   eoe: { name: "Elite Obsolete Electronics", url: "https://eoe.works/" },
@@ -32,6 +32,29 @@ const o = (id, name, price, difficulty, description, vendor = "eoe") => ({
   description,
   vendor,
 });
+// Direct EOE product pages for non-catalog parts; the vendor homepage is the fallback.
+export const EOE_LINKS = {
+  "battery:stock":
+    "https://eoe.works/products/650mah-lithium-polymer-thin-battery-for-apple-ipod-video-5th-5-5-enhanced-a1136-ipod-classic-6th-7th-a1238",
+  "battery:2000":
+    "https://eoe.works/products/2000mah-rectangle-model-extended-capacity-battery-for-apple-ipod-classic-video-5-5-6th-7th",
+  "battery:2000-square":
+    "https://eoe.works/products/2000mah-square-model-extended-capacity-battery-for-apple-ipod-classic-video-5-5-6th-7th",
+  "battery:3000-thin":
+    "https://eoe.works/products/1x-3000mah-battery-replacement-ipod-classic-6-6th-7-video-5-5-5-thin-upgrade",
+  "battery:3800-thin":
+    "https://eoe.works/products/3800mah-thin-model-extended-capacity-battery-for-apple-ipod-classic-video-5-5-6th-7th",
+  "battery:3000":
+    "https://eoe.works/products/3000mah-thick-model-extended-capacity-battery-for-apple-ipod-classic-video-5-5-6th-7th",
+  "battery:3800":
+    "https://eoe.works/products/3800mah-thick-extended-capacity-lithium-ion-polymer-battery-for-apple-ipod-video-5th-5-5-a1136-apple-ipod-classic-6th-7th-a1238",
+  "screen:stock":
+    "https://eoe.works/products/replacement-lcd-screen-apple-ipod-classic-6th-7th-gen-80gb-160gb-120gb-display",
+  "screen:original":
+    "https://eoe.works/products/original-lcd-screen-display-for-apple-ipod-classic-6th-7th-generation-80gb-160gb-120gb-a1238-2007-2008-2009",
+  "taptic:on":
+    "https://eoe.works/products/new-solderless-taptic-vibration-motor-diy-kit-for-apple-ipod-video-5th-5-5-ipod-classic-6th-7th",
+};
 export const CATALOG = {
   board: [
     o(
@@ -129,49 +152,49 @@ export const CATALOG = {
     o(
       "stock",
       "Stock replacement · 550–650 mAh",
-      18,
+      9,
       2,
       "Standard replacement cell; runtime uses a nominal 650 mAh.",
     ),
     o(
       "2000",
       "2000 mAh thin · rectangle",
-      25,
+      15,
       3,
       "Thin rectangle: iFlash Quad or uDUAL under a thin back. Legacy 2000 mAh selections retain this ID.",
     ),
     o(
       "2000-square",
       "2000 mAh thin · square",
-      25,
+      15,
       3,
       "Thin square: Solo, Quad, uDUAL or generic dual microSD under a thin back.",
     ),
     o(
       "3000-thin",
       "3000 mAh · thin model",
-      32,
+      20,
       3,
       "Thin-format cell: iFlash Quad or uDUAL under a thin back.",
     ),
     o(
       "3800-thin",
       "3800 mAh · thin model",
-      38,
+      25,
       3,
       "Thin-format cell: iFlash Quad or uDUAL under a thin back.",
     ),
     o(
       "3000",
       "3000 mAh · thick model",
-      32,
+      20,
       3,
       "Thick-format cell requires a thick back; distinct from the thin 3000 mAh product.",
     ),
     o(
       "3800",
       "3800 mAh · thick model",
-      38,
+      20,
       3,
       "Thick-format cell requires a thick back. Check actual cell dimensions and capacity.",
     ),
@@ -233,10 +256,17 @@ export const CATALOG = {
     ),
     o(
       "stock",
-      "Stock replacement LCD",
-      25,
+      "New replacement LCD",
+      99.99,
       3,
-      "Replace a damaged or dim display with a standard compatible A1238 LCD.",
+      "New A1238 display from EOE. Replace a damaged, dim or scratched screen.",
+    ),
+    o(
+      "original",
+      "Original pulled LCD",
+      79.99,
+      3,
+      "Apple original display pulled from a donor, tested by EOE. Slightly cheaper than new.",
     ),
   ],
   bluetooth: [
@@ -287,11 +317,11 @@ export const CATALOG = {
     ),
     o(
       "on",
-      "Taptic engine",
-      25,
-      5,
-      "DIY haptic feedback driven from the wheel-click signal. Requires soldering, a suitable driver circuit and room for the motor.",
-      "diy",
+      "Taptic engine · EOE solderless kit",
+      40,
+      4,
+      "EOE solderless vibration-motor kit driven from the wheel click. Needs room for the motor; verify fit with a large battery.",
+      "eoe",
     ),
     o(
       "kit",
@@ -819,6 +849,8 @@ export function bom(s) {
     if (key === "connectivity" && p.id === "moon")
       rows.at(-1).description +=
         " Planner uses the thick category; the actual enclosure is custom.";
+    if (EOE_LINKS[key + ":" + p.id])
+      rows.at(-1).url = EOE_LINKS[key + ":" + p.id];
     if (key === "firmware" && p.id === "apple")
       rows.at(-1).url = "https://support.apple.com/ipod";
     if (
