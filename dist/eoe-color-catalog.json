@@ -4,8 +4,8 @@
   "Hex values are approximations chosen from the product names for on-screen rendering; they are not vendor-supplied.",
   "Prices are the lowest listed variant. Faceplates and click wheels are usually cheaper without the bundled center button; backplates are cheaper without the pre-installed headphone jack and dock bezel.",
   "Metal faceplates take metal center buttons; plastic and transparent faceplates take plastic or crystal clear center buttons.",
-  "Every backplate color is sold in both Thin and Thick; thick adds about $3 on some colors.",
-  "Search URL is used for the link because product handles were not captured for every item."
+  "Search URL is used for the link because product handles were not captured for every item.",
+  "Most backplate colors are sold in both Thin and Thick; Frost Blue, Daylight Blue, Violet Voltage, Storm Cloud Blue and the $14.99 stock stainless are Thin only (verified on eoe.works 2026-09-13)."
  ],
  "faceplates": [
   {
@@ -1457,8 +1457,7 @@
      "capacity"
     ],
     "bodies": [
-     "thin",
-     "thick"
+     "thin"
     ],
     "vendor": "EOE",
     "url": "https://eoe.works/search?q=Silver+%28stock+stainless%29+Backplate+iPod+Classic+6th+7th+A1238"
@@ -1654,8 +1653,7 @@
      "blank"
     ],
     "bodies": [
-     "thin",
-     "thick"
+     "thin"
     ],
     "vendor": "EOE",
     "url": "https://eoe.works/search?q=Storm+Cloud+Blue+Backplate+iPod+Classic+6th+7th+A1238"
@@ -1670,8 +1668,7 @@
      "universal"
     ],
     "bodies": [
-     "thin",
-     "thick"
+     "thin"
     ],
     "vendor": "EOE",
     "url": "https://eoe.works/search?q=Frost+Blue+Backplate+iPod+Classic+6th+7th+A1238"
@@ -1686,8 +1683,7 @@
      "universal"
     ],
     "bodies": [
-     "thin",
-     "thick"
+     "thin"
     ],
     "vendor": "EOE",
     "url": "https://eoe.works/search?q=Daylight+Blue+Backplate+iPod+Classic+6th+7th+A1238"
@@ -1756,8 +1752,7 @@
      "universal"
     ],
     "bodies": [
-     "thin",
-     "thick"
+     "thin"
     ],
     "vendor": "EOE",
     "url": "https://eoe.works/search?q=Violet+Voltage+Backplate+iPod+Classic+6th+7th+A1238"

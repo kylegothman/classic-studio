@@ -418,6 +418,7 @@ export const PRESETS = {
     capacity: 512,
     battery: "3000",
     body: "thick",
+    finish: "bp-silver-chrome",
     hold: "hs-thick-black",
     connectivity: "eoe",
     taptic: "on",
@@ -433,6 +434,7 @@ export const PRESETS = {
     capacity: 512,
     battery: "3000",
     body: "thick",
+    finish: "bp-silver-chrome",
     hold: "hs-thick-black",
     firmware: "rockbox",
   },
@@ -556,9 +558,22 @@ export function optionConstraint(s, key, id) {
     !APPEARANCE.finish.find((p) => p.id === id)?.bodies.includes(s.body)
   ) {
     const part = APPEARANCE.finish.find((p) => p.id === id);
+    const alternative =
+      APPEARANCE.finish.find(
+        (p) =>
+          p.bodies.includes(s.body) &&
+          p.family === part?.family &&
+          p.name.split(" ")[0] === part?.name.split(" ")[0],
+      ) ?? APPEARANCE.finish.find((p) => p.bodies.includes(s.body));
     return fail(
-      "This backplate color is not sold in the selected body depth.",
-      { body: part?.bodies[0] ?? "thin" },
+      "This backplate color is only sold in a " +
+        (part?.bodies[0] ?? "thin") +
+        " body. " +
+        alternative.name +
+        " is the closest " +
+        s.body +
+        " option.",
+      { finish: alternative.id },
     );
   }
   return null;
@@ -848,11 +863,12 @@ export function bom(s) {
     let included = false,
       extra = 0,
       detail = "",
+      family = FAMILY_NAMES[part.family] || part.family,
       name =
         part.name +
-        " (" +
-        (FAMILY_NAMES[part.family] || part.family) +
-        ") " +
+        (part.name.toLowerCase().includes(family.toLowerCase())
+          ? " "
+          : " (" + family + ") ") +
         APPEARANCE_LABELS[key].toLowerCase();
     if (key === "front" || key === "wheel") {
       if (s.buttonBundle === key) {
@@ -1229,14 +1245,25 @@ export function csv(rows) {
   return (
     "\uFEFF" +
     [
-      ["Group", "Part", "Vendor", "Estimated USD", "Link"],
+      ["Group", "Part", "Vendor", "Estimated USD", "Status", "Notes", "Link"],
       ...rows.map((r) => [
         r.group,
         r.name,
         r.vendor,
         r.price.toFixed(2),
+        r.included ? "Included" : r.extra ? "Base + estimate" : "Estimate",
+        r.description,
         r.url,
       ]),
+      [
+        "Total",
+        "Estimated parts total",
+        "",
+        rows.reduce((n, r) => n + r.price, 0).toFixed(2),
+        "",
+        "Excludes tax, shipping, tools and labor.",
+        "",
+      ],
     ]
       .map((r) => r.map(esc).join(","))
       .join("\r\n")
