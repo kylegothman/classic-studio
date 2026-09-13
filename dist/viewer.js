@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import {Brush,Evaluator,SUBTRACTION} from 'three-bvh-csg';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
@@ -10,65 +9,9 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {SMAAPass} from 'three/addons/postprocessing/SMAAPass.js';
-import {toCreasedNormals} from 'three/addons/utils/BufferGeometryUtils.js';
+import {finishPlateNormals,rounded,readShellCache} from './model-geometry.js';
 import {hasBT,hasQi,hasTaptic,batteryCapacity} from './data.js';
 import {appearance,surfaceSpec} from './catalog.js';
-
-// The source plate is the dimensional reference. Tangencies of its projected
-// outline give a radius at each corner; the largest planar triangle gives the
-// face plane (the button's raised face is deliberately not the reference).
-export function measureFaceplate(geometry){
- geometry.computeBoundingBox();const bounds=geometry.boundingBox.clone(),size=bounds.getSize(new THREE.Vector3()),p=geometry.attributes.position;
- const corners=[];for(const sx of [-1,1])for(const sy of [-1,1]){let tangent=-Infinity;for(let i=0;i<p.count;i++)if(Math.abs(p.getX(i)-(sx<0?bounds.min.x:bounds.max.x))<.00001)tangent=Math.max(tangent,sy*p.getY(i));corners.push((sy<0?-bounds.min.y:bounds.max.y)-tangent);}
- const flat=geometry.index?geometry.toNonIndexed():geometry,q=flat.attributes.position;let largest=0,faceZ=0;
- for(let i=0;i<q.count;i+=3){const a=new THREE.Vector3().fromBufferAttribute(q,i),b=new THREE.Vector3().fromBufferAttribute(q,i+1),c=new THREE.Vector3().fromBufferAttribute(q,i+2),n=b.clone().sub(a).cross(c.clone().sub(a)),area=n.length();if(n.z/area>.99999&&area>largest){largest=area;faceZ=(a.z+b.z+c.z)/3;}}
- if(flat!==geometry)flat.dispose();const radius=corners.reduce((a,b)=>a+b,0)/4;
- if(!Number.isFinite(radius)||radius<=0||Math.max(...corners)-Math.min(...corners)>.003)throw new Error('Front plate outline needs a new shell adapter.');
- return {width:size.x,height:size.y,radius,cornerRadii:corners,faceZ,bounds};
-}
-
-// Weld only for smooth bevel normals, then give every coplanar face triangle
-// an exact axial normal. Long screen-to-corner triangles cannot pull a highlight
-// across the face. The source bevel and screen/wheel openings remain intact.
-export function finishPlateNormals(geometry){
- const g=toCreasedNormals(geometry,Math.PI/3),p=g.attributes.position,n=g.attributes.normal;
- for(let i=0;i<p.count;i+=3){const a=new THREE.Vector3().fromBufferAttribute(p,i),b=new THREE.Vector3().fromBufferAttribute(p,i+1),c=new THREE.Vector3().fromBufferAttribute(p,i+2),v=b.sub(a).cross(c.sub(a)).normalize();if(Math.abs(v.z)>.99999)for(let j=0;j<3;j++)n.setXYZ(i+j,0,0,Math.sign(v.z));}
- return g;
-}
-
-function rounded(w,h,r){
- const s=new THREE.Shape();s.moveTo(-w/2+r,-h/2);s.lineTo(w/2-r,-h/2);s.absarc(w/2-r,-h/2+r,r,-Math.PI/2,0);s.lineTo(w/2,h/2-r);s.absarc(w/2-r,h/2-r,r,0,Math.PI/2);s.lineTo(-w/2+r,h/2);s.absarc(-w/2+r,h/2-r,r,Math.PI/2,Math.PI);s.lineTo(-w/2,-h/2+r);s.absarc(-w/2+r,-h/2+r,r,Math.PI,Math.PI*1.5);s.closePath();return s;
-}
-
-export function buildShellCache(plate){
- const started=performance.now(),wall=.02,bevel=.06,segments=12,width=plate.width+.02,height=plate.height+.02,radius=plate.radius+.01;
- const evaluator=new Evaluator();evaluator.useGroups=false;
- const brush=g=>{const b=new Brush(g);b.updateMatrixWorld();return b;};
- const subtract=(a,g)=>{const b=brush(g),result=evaluator.evaluate(a,b,SUBTRACTION);g.dispose();return result;};
- const extrude=(w,h,r,depth,b)=>finishPlateNormals(new THREE.ExtrudeGeometry(rounded(w-2*b,h-2*b,r-b),{depth:depth-2*b,bevelEnabled:true,bevelSize:b,bevelThickness:b,bevelSegments:segments,curveSegments:16,steps:1}));
- // The cavity trims the front roll at the wall thickness. Account for that
- // trim so the finished shell, not the uncut extrusion, is .39 / .52 deep.
- let tip=0;for(let i=1;i<=segments;i++){const a=(i-1)/segments*Math.PI/2,b=i/segments*Math.PI/2,x0=bevel*Math.sin(a),x1=bevel*Math.sin(b),x=bevel-wall;if(x>=x0&&x<=x1)tip=THREE.MathUtils.lerp(bevel*Math.cos(a),bevel*Math.cos(b),(x-x0)/(x1-x0));}
- const trim=bevel-tip,frontZ=plate.faceZ-.002,variants=new Map();
- for(const body of ['thin','thick']){
-  const depth=body==='thin'?.39:.52,rearZ=frontZ-depth,rawDepth=depth+trim;
-  const outer=extrude(width,height,radius,rawDepth,bevel);outer.translate(0,0,rearZ+bevel);
-  const inner=extrude(width-2*wall,height-2*wall,radius-wall,rawDepth+.3,bevel-wall);inner.translate(0,0,rearZ+wall+bevel-wall);
-  const outerBrush=brush(outer),hollow=subtract(outerBrush,inner);outer.dispose();
-  const centerZ=(rearZ+frontZ)/2;
-  for(const layout of ['original','usbc','moon']){
-   let result=hollow;
-   const cut=g=>{const previous=result;result=subtract(result,g);if(previous!==hollow)previous.geometry.dispose();};
-   const slot=(w,h,x,top=false)=>{const g=new THREE.ExtrudeGeometry(rounded(w,h,Math.min(h/2,.04)),{depth:.20,bevelEnabled:false,curveSegments:12});g.rotateX(Math.PI/2);g.translate(x,(top?height/2:-height/2)+.10,centerZ);cut(g);};
-   if(layout!=='usbc')slot(.83,.10,0);if(layout!=='original')slot(.35,.125,layout==='moon'?.8:0);
-   const jack=new THREE.CylinderGeometry(.07,.07,.20,40);jack.translate(.78,height/2,centerZ);cut(jack);slot(.35,.06,-.68,true);
-   const geometry=result.geometry;geometry.computeBoundingBox();geometry.computeBoundingSphere();
-   variants.set(body+':'+layout,{geometry,depth,rearZ,frontZ,centerZ,width,height,radius,wall});
-  }
-  hollow.geometry.dispose();
- }
- return {variants,buildMs:Math.round(performance.now()-started),plate:{width:plate.width,height:plate.height,radius:plate.radius,cornerRadii:plate.cornerRadii,faceZ:plate.faceZ},wall};
-}
 
 // Model adapter: bake every mesh's matrixWorld into its geometry before editing.
 // This supplied GLB has X width, Y height and +Z facing forward after its parent
@@ -76,12 +19,13 @@ export function buildShellCache(plate){
 export async function createViewer(host,initial){
  const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(36,1,.1,80);camera.position.set(4,1.8,8);
  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,matchMedia('(max-width: 700px)').matches?1.25:1.5));renderer.setSize(host.clientWidth,host.clientHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.9;host.append(renderer.domElement);renderer.domElement.setAttribute('aria-label','Interactive 3D iPod. Drag to rotate and scroll to zoom.');renderer.domElement.tabIndex=0;
- const pmrem=new THREE.PMREMGenerator(renderer);pmrem.compileEquirectangularShader();const hdr=await new RGBELoader().loadAsync(window.IPOD_HDR_DATA||'./assets/studio_small_09_1k.hdr');const environment=pmrem.fromEquirectangular(hdr);scene.environment=environment.texture;scene.environmentIntensity=.75;scene.environmentRotation.y=.55;hdr.dispose();pmrem.dispose();
+ const assetStarted=performance.now();let gltf,baked,hdr;try{[gltf,baked,hdr]=await Promise.all([new GLTFLoader().loadAsync(window.IPOD_MODEL_DATA||'./assets/ipod_classic.glb'),new GLTFLoader().loadAsync(window.IPOD_SHELL_DATA||'./assets/shells.glb'),new RGBELoader().loadAsync(window.IPOD_HDR_DATA||'./assets/studio_small_09_1k.hdr')]);}catch(error){renderer.dispose();host.replaceChildren();throw error;}
+ const assetLoadMs=Math.round(performance.now()-assetStarted);const shellCache=readShellCache(baked.scene);
+ const pmrem=new THREE.PMREMGenerator(renderer);pmrem.compileEquirectangularShader();const environment=pmrem.fromEquirectangular(hdr);scene.environment=environment.texture;scene.environmentIntensity=.75;scene.environmentRotation.y=.55;hdr.dispose();pmrem.dispose();
  scene.add(new THREE.HemisphereLight(0xffffff,0x6e7789,.75));const key=new THREE.DirectionalLight(0xffffff,2);key.position.set(-3,6,7);scene.add(key);const edge=new THREE.DirectionalLight(0xcadfff,1.5);edge.position.set(4,2,-4);scene.add(edge);
  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.enablePan=false;controls.minDistance=5;controls.maxDistance=14;controls.minPolarAngle=.22;controls.maxPolarAngle=Math.PI-.22;controls.target.set(0,0,0);
  let flight=null,lastInteraction=performance.now(),interacting=false;const touch=()=>{lastInteraction=performance.now();controls.autoRotate=false;};controls.addEventListener('start',()=>{flight=null;interacting=true;touch();});controls.addEventListener('end',()=>{interacting=false;touch();});document.addEventListener('pointerdown',touch);host.addEventListener('wheel',touch,{passive:true});controls.autoRotateSpeed=.45;
  const product=new THREE.Group();scene.add(product);const front=new THREE.Group(),rear=new THREE.Group(),inside=new THREE.Group();product.add(front,rear,inside);
- let gltf;try{gltf=await new GLTFLoader().loadAsync(window.IPOD_MODEL_DATA||'./assets/ipod_classic.glb');}catch(err){renderer.dispose();host.replaceChildren();throw err;}
  gltf.scene.updateMatrixWorld(true);const origin=new THREE.Box3().setFromObject(gltf.scene).getCenter(new THREE.Vector3());const parts={};
  // Planar UVs keep all multicolor parts vertical in canonical world space.
  function verticalUV(g){g.computeBoundingBox();const b=g.boundingBox,p=g.attributes.position,uv=[];for(let i=0;i<p.count;i++)uv.push((p.getX(i)-b.min.x)/Math.max(.001,b.max.x-b.min.x),(p.getY(i)-b.min.y)/Math.max(.001,b.max.y-b.min.y));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));}
@@ -111,9 +55,8 @@ export async function createViewer(host,initial){
  const taptic=box(.65,.20,.10,'#60656b',.61,-1.64,.04);label(taptic,'TAPTIC',.5,.10,.055,'#fff','#60656b');
  const airtag=new THREE.Mesh(new THREE.CylinderGeometry(.35,.35,.09,40),surface('#deded7',.28,.7));airtag.rotation.x=Math.PI/2;airtag.position.set(.61,-1.14,.085);inside.add(airtag);
  const qi=new THREE.Mesh(new THREE.TorusGeometry(.72,.028,8,64),surface('#bb7946',.3,.6));qi.position.set(0,-.15,-.09);inside.add(qi);
- // A single hollow steel mesh replaces all three legacy back pieces. CSG
- // runs once; body and connector changes swap cached geometry without scaling.
- const shellCache=buildShellCache(measureFaceplate(parts['Material.006'].geometry));
+ // Six baked hollow shells load with the model; body/port switches only swap
+ // geometry. CSG and both of its dependencies remain in the Node baking tools.
  for(const variant of shellCache.variants.values())verticalUV(variant.geometry);
  const shell=new THREE.Mesh(shellCache.variants.get('thin:original').geometry,surface('#aaa',.2,1));shell.name='Procedural back shell';rear.add(shell);let activeShell;
  const bottomEdge=new THREE.Group(),topEdge=new THREE.Group();rear.add(bottomEdge,topEdge);
@@ -174,7 +117,7 @@ export async function createViewer(host,initial){
  let qualityScale=1;const resize=()=>{const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h);composer.setPixelRatio(renderer.getPixelRatio()*qualityScale);composer.setSize(w,h);ao.setSize(Math.ceil(w*renderer.getPixelRatio()*qualityScale*.65),Math.ceil(h*renderer.getPixelRatio()*qualityScale*.65));bloomComposer.setPixelRatio(.6);bloomComposer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();};const ro=new ResizeObserver(resize);ro.observe(host);resize();
  renderer.domElement.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();touch();flight=null;const a=e.key==='ArrowLeft'?.15:e.key==='ArrowRight'?-.15:0;camera.position.applyAxisAngle(new THREE.Vector3(0,1,0),a);if(e.key==='ArrowUp')camera.position.y+=.3;if(e.key==='ArrowDown')camera.position.y-=.3;}});
  let alive=true,lastTime=performance.now(),sampleStart=lastTime,frames=0,fps=0,slowWindows=0;const reduced=matchMedia('(prefers-reduced-motion: reduce)');
- function metrics(){return {fps,qualityScale,pixelRatio:renderer.getPixelRatio(),width:host.clientWidth,height:host.clientHeight,msaa:target.samples,hdri:'Studio Small 09 · 1K',bodyDepth:activeShell.depth,shellTriangles:shell.geometry.attributes.position.count/3,shellCacheMs:shellCache.buildMs,shellVariants:shellCache.variants.size,plate:shellCache.plate,wall:shellCache.wall,portCenter:+bottomEdge.position.z.toFixed(4),portY:+bottomEdge.position.y.toFixed(4),topCenter:+topEdge.position.z.toFixed(4),portNormal:[0,-1,0],ports:[dock,usb].filter(p=>p.group.visible).map(p=>({kind:p===dock?'30-pin':'USB-C',width:p.w,height:p.h,center:[p.group.position.x,bottomEdge.position.y,bottomEdge.position.z],normal:[0,-1,0],rearOffset:rear.position.z})),camera:camera.position.toArray().map(v=>+v.toFixed(3)),idle:controls.autoRotate,ao:ao.enabled};}
+ function metrics(){return {fps,qualityScale,pixelRatio:renderer.getPixelRatio(),width:host.clientWidth,height:host.clientHeight,msaa:target.samples,hdri:'Studio Small 09 · 1K',bodyDepth:activeShell.depth,shellTriangles:(shell.geometry.index?.count??shell.geometry.attributes.position.count)/3,shellSource:'baked',assetLoadMs,shellVariants:shellCache.variants.size,plate:shellCache.plate,wall:shellCache.wall,portCenter:+bottomEdge.position.z.toFixed(4),portY:+bottomEdge.position.y.toFixed(4),topCenter:+topEdge.position.z.toFixed(4),portNormal:[0,-1,0],ports:[dock,usb].filter(p=>p.group.visible).map(p=>({kind:p===dock?'30-pin':'USB-C',width:p.w,height:p.h,center:[p.group.position.x,bottomEdge.position.y,bottomEdge.position.z],normal:[0,-1,0],rearOffset:rear.position.z})),camera:camera.position.toArray().map(v=>+v.toFixed(3)),idle:controls.autoRotate,ao:ao.enabled};}
  function frame(){if(!alive)return;requestAnimationFrame(frame);const time=performance.now(),dt=Math.min((time-lastTime)/1000,.1);lastTime=time;if(document.hidden){sampleStart=time;frames=0;return;}const lerp=reduced.matches?1:1-Math.exp(-8*dt);if(flight){const now=new THREE.Spherical().setFromVector3(camera.position),to=new THREE.Spherical().setFromVector3(flight);now.radius=THREE.MathUtils.lerp(now.radius,to.radius,lerp);now.phi=THREE.MathUtils.lerp(now.phi,to.phi,lerp);now.theta+=Math.atan2(Math.sin(to.theta-now.theta),Math.cos(to.theta-now.theta))*lerp;camera.position.setFromSpherical(now);if(camera.position.distanceTo(flight)<.015)flight=null;}
  const explode=state.view==='exploded';front.position.z=THREE.MathUtils.lerp(front.position.z,explode?1.35:0,lerp);rear.position.z=THREE.MathUtils.lerp(rear.position.z,explode?-1.2:0,lerp);inside.position.z=THREE.MathUtils.lerp(inside.position.z,explode?.25:0,lerp);
  for(const [m,t]of targets){m.material.color.lerp(t.color,lerp);for(const k of ['roughness','metalness','opacity'])m.material[k]=THREE.MathUtils.lerp(m.material[k],t[k],lerp);}controls.autoRotate=!reduced.matches&&!interacting&&!flight&&!explode&&time-lastInteraction>7000;controls.update(dt);renderFrame();frames++;if(!flight&&Math.abs(front.position.z-(explode?1.35:0))<.001&&Math.abs(rear.position.z-(explode?-1.2:0))<.001){host.dataset.pose=state.view+':'+state.body+':'+state.connectivity;host.dataset.renderMetrics=JSON.stringify(metrics());}

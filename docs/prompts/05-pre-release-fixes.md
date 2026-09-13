@@ -1,0 +1,5 @@
+# Pre-release fixes
+
+Source review: [docs/REVIEW.md](../REVIEW.md), supplied September 13, 2026.
+
+Pull `main` and read `docs/REVIEW.md`. Implement the four "Fix before release" items and the data correction in AGENTS.md, plus the hold-assembly fix under "Correctness and behavior". Specifically: bake the six shell variants into a static asset with a script under `tools/` and load them in `viewer.js` instead of running CSG at startup, keeping `tests/geometry.mjs` pointed at the baking code; add `package.json` with `"type": "module"`, the three pinned dev dependencies, and an `npm test` script that runs both test files; add `.github/workflows/test.yml` running `npm ci && npm test`; add an MIT `LICENSE` and a License section in the README; replace the two em dashes; make `normalize` swap the hold assembly to match the body or give the `hold-fit` rule a fix. Run the tests and the portable build, commit each item separately with a clear message, and push to `main`. Then, in a final separate commit, run Prettier with default settings over `dist/*.js` and `tests/*.mjs`, add a `.prettierrc`, and confirm the tests still pass.

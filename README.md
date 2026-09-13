@@ -4,7 +4,7 @@ A complete, client-side Three.js iPod Classic A1238 mod configurator.
 
 ## Open the portable app
 
-Open `classic-studio.html` in a modern browser. The model, studio HDR environment, option data, interface and styles are embedded. Three.js 0.180.0, three-bvh-csg 0.0.18, three-mesh-bvh 0.9.7 and the optional DM Sans font load from CDNs, so the first load needs internet access. No React, npm install or build step is required.
+Open `classic-studio.html` in a modern browser. The model, baked shells, studio HDR environment, option data, interface and styles are embedded. Three.js 0.180.0 and the optional DM Sans font load from CDNs, so the first load needs internet access. Opening the app needs no npm install or build step. Regenerating its portable HTML requires the development dependencies.
 
 ## Run the editable source
 
@@ -19,6 +19,9 @@ Open http://localhost:5173. Stop the server with Ctrl+C.
 - `dist/app.js`: form, editable prices, CSV / clipboard exports, URL persistence and WebMCP tools.
 - `dist/style.css`: responsive layout and system/light/dark themes.
 - `dist/assets/ipod_classic.glb`: the supplied model.
+- `dist/assets/shells.glb`: six baked shell geometries; regenerate with `npm run bake:shells`.
+- `tools/shell-geometry.mjs` and `tools/bake-shells.mjs`: build-time CSG and deterministic GLB baking.
+- `dist/model-geometry.js`: shared faceplate normals, detail outlines and baked-asset loading.
 
 Run `python3 build-single.py` to regenerate `outputs/classic-studio.html` after editing the source. Prices can also be adjusted in the app's Parts list; $0 marks an already-owned part. Those edits are included in its build link.
 
@@ -72,7 +75,7 @@ The one-piece procedural rear shell uses fixed USB-C (0.35 × 0.125 model inches
 
 All product meshes use MeshPhysicalMaterial, with clearcoat, catalog-driven transmission/thickness, brushed-metal anisotropy support and rainbow/polychrome iridescence. The current catalog has no separate brushed finish. The screen has a subtle physical glass reflection overlay. Crease-angle normals soften the case edges. Studio Small 09 by Sergej Majboroda / Poly Haven is bundled at 1K under CC0: https://polyhaven.com/a/studio_small_09 . RGBELoader and PMREM provide the environment. A baked radial contact shadow, ACES, sRGB, 4× MSAA where supported, mild SSAO, screen-only bloom and SMAA complete the WebGL pipeline. AO is skipped for transparent/X-ray builds to avoid false occlusion. WebGPU was not adopted; keeping the existing WebGL path avoids adding a second renderer and compatibility burden.
 
-The renderer caps pixel density, computes bloom and AO below full resolution, and reduces rendering resolution after sustained low frame rates. The portable file is about 2.75 MB including the supplied GLB and HDR. CDN access is still needed for Three.js, its addons and the pinned CSG/BVH libraries.
+The renderer caps pixel density, computes bloom and AO below full resolution, and reduces rendering resolution after sustained low frame rates. The portable file embeds the supplied GLB, baked shell GLB and HDR. CDN access is needed only for Three.js and its addons; the CSG/BVH libraries are build-time dependencies.
 
 Validation: `node tests/compatibility.mjs` checks the battery/storage matrix, kit restrictions and fixes, retained conflicts, runtime math, every option’s saved-link/BOM/CSV/guide path, v1/v2 restoration, all 215 catalog entries, and bundle accounting. Browser verification covered 48 port/body/preset combinations, underside inspection, clear internals and 1TB engraving. Physical laptop/phone benchmarks were not available; browser viewport measurements are reported separately from device performance.
 
@@ -85,10 +88,17 @@ Observed local browser performance: approximately 40–55 FPS during desktop che
 
 A rounded-rectangle extrusion has a 0.06-inch roll with 12 bevel segments. Subtracting an inset extrusion with three-bvh-csg makes a 0.02-inch hollow wall. The finished shell is exactly 0.39 or 0.52 inches deep, including the bevel. Its maximum outline extends 0.01 inch beyond the plate on each side; the front lip curls under the plate, whose flat face is 0.002 inch proud of the rim. One material covers the entire shell, including the sides, ends and cavity.
 
-Six variants (thin/thick × dock/USB-C/both) are cached at startup, so switching body or connector swaps a geometry without rebuilding or scaling. The dock, USB-C, 0.14-inch round headphone jack and 0.35 × 0.06-inch hold slot are CSG openings through the top/bottom walls. Recessed dark receptacles, selected-color lips and the hold slider follow their centers. Rear engraving follows the actual rear surface.
+Six variants (thin/thick × dock/USB-C/both) are baked into `dist/assets/shells.glb` and loaded alongside the model and HDR. Switching body or connector swaps a geometry without rebuilding or scaling. No CSG runs in the browser. The dock, USB-C, 0.14-inch round headphone jack and 0.35 × 0.06-inch hold slot are CSG openings through the top/bottom walls. Recessed dark receptacles, selected-color lips and the hold slider follow their centers. Rear engraving follows the actual rear surface.
 
 Flat face triangles now have exact axial normals; only the existing bevel receives smoothed normals. This removes the diagonal highlights between the screen and the plate corners while preserving the source front geometry and independent center button.
 
-Run `npm ci` once for local geometry-test dependencies, then `npm test` (or run the two files in `tests/` separately). The static app still needs no npm build. Geometry tests load the actual GLB, verify planar normals and measured dimensions, and raycast all six shells to check hollow walls, closed backs, aperture dimensions and surrounding continuous steel. Compatibility, old-link migration and BOM/export tests pass unchanged. Browser checks cover both bodies from 3/4 and Back, top/bottom openings, transparent internals, hollow exploded/X-ray views, capacity engraving and legacy-link restoration without console errors. The regenerated portable file is opened and checked through the local HTTP preview. The browser security policy blocks direct file:// navigation, so opening it directly from disk could not be verified in this session.
+Run `npm ci` once for local geometry-test dependencies, then `npm test` (or run the two files in `tests/` separately). The static app still needs no npm build. Geometry tests load the actual GLB, verify planar normals and measured dimensions, regenerate the shell asset byte-for-byte, and raycast all six generated and shipped shells to check hollow walls, closed backs, aperture dimensions and surrounding continuous steel. Compatibility, old-link migration and BOM/export tests pass unchanged. Browser checks cover both bodies from 3/4 and Back, top/bottom openings, transparent internals, hollow exploded/X-ray views, capacity engraving and legacy-link restoration without console errors. The regenerated portable file is opened and checked through the local HTTP preview. The browser security policy blocks direct file:// navigation, so opening it directly from disk could not be verified in this session.
 
-Matched before/after desktop measurement on September 13, 2026: **60 FPS → 60 FPS** for the settled default 3/4 view, at a 1440 × 900 browser viewport, 764 × 614 viewer, DPR 1, full quality scale and 4× MSAA. Earlier baseline samples ranged from 56 to 60 FPS while rotating; new thin/thick samples were 60 FPS. Generating all six shells took **623 ms** in the browser, with roughly 12,100–13,200 triangles per shell. This is a same-computer browser measurement, not a physical-phone benchmark, and excludes initial shader compilation.
+Matched before/after desktop measurement on September 13, 2026: **60 FPS → 60 FPS** for the settled default 3/4 view, at a 1440 × 900 browser viewport, 764 × 614 viewer, DPR 1, full quality scale and 4× MSAA. Earlier baseline samples ranged from 56 to 60 FPS while rotating; new thin/thick samples were 60 FPS. Before baking was moved out of the browser, generating all six shells took **623 ms**, with roughly 12,100–13,200 triangles per shell. This is a same-computer browser measurement, not a physical-phone benchmark, and excludes initial shader compilation.
+
+
+## Baked shells and portable generation
+
+The shell baker writes a deterministic indexed GLB (about 1.76 MB) with source-model provenance and per-variant dimensions. `npm test` fails if it no longer matches the model or baking code. Run `npm run bake:shells` after changing either, then regenerate the portable HTML. Keeping full float32 geometry preserves the tested cutouts and normals; the portable file is now about 5.1 MB because it embeds the baked geometry. Removing runtime CSG trades a larger asset for eliminating the synchronous startup calculation and two CDN dependencies.
+
+`build-single.py` uses the pinned esbuild dependency to bundle local modules, leaving only Three.js imports external. It no longer rewrites import/export text with regular expressions, so multiline imports, double quotes, and literal words in comments or strings survive formatting.
