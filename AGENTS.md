@@ -22,7 +22,7 @@ Classic Studio is a client-side Three.js configurator for planning mods to an iP
 
 ## Ground truth to preserve
 
-- 6th gen (2007) boards are capped at 128GB in Apple firmware (LBA28). 6.5G (MB565) and 7G (MC293/MC297) are not.
+- 6th gen (2007) and 6.5th gen (2008, MB565) boards are capped at 128GB in Apple firmware (LBA28). Only 7th gen (MC293/MC297) boards are not.
 - Thin body is 10.5 mm, thick is 13.5 mm. Bluetooth/USB-C back plate kits, AirTag, and thick-format batteries need thick.
 - EOE thin extended batteries (2000 rectangle, 3000 thin, 3800 thin) fit only with iFlash Quad or uDUAL.
 - Wi-Fi is not a mod on stock hardware. Keep it blocked with the explanation.
