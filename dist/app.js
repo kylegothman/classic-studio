@@ -1,61 +1,793 @@
-import {CATALOG,COSMETICS,DEFAULT,PRESETS,SOURCES,VENDORS,CAPACITIES,bom,warnings,guide,selected,normalize,encode,decode,csv,isKit,hasBT,hasQi,hasTaptic,appearanceKey,optionConstraint,unlockedByThick,runtimeEstimate} from './data.js';
-import {EOE,APPEARANCE,FAMILY_NAMES,ENGRAVING_STYLES,APPEARANCE_LABELS,BUNDLE_ESTIMATES,appearance,paintCSS} from './catalog.js';
-let restoreNotices=[];let state=location.hash?decode(location.hash,restoreNotices):normalize(DEFAULT),viewer=null,currentTab='configure';
-const searches={};let showUnlocks=false;
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}).format(n);
-const cap=n=>n>=1024?n/1024+'TB':n+'GB';
-const fixLabel=fix=>fix?.body&&Object.keys(fix).length===1?'Switch to '+fix.body:fix?.body?'Switch to '+fix.body+' + back kit':'Choose compatible back kit';
-const choice=(key)=>`<div class="options" role="group" aria-label="${esc(key)}">${CATALOG[key].map(p=>{const conflict=optionConstraint(state,key,p.id);const chosen=state[key]===p.id;return `<div class="option-wrap"><button type="button" class="option ${chosen?'selected':''}" data-key="${key}" data-value="${p.id}" aria-pressed="${chosen}" ${conflict?'disabled aria-describedby="constraint-'+key+'-'+p.id+'"':''}><span class="radio"></span><span class="option-main"><span class="option-title">${esc(p.name)}</span><span class="option-desc">${esc(p.description)}</span><span class="option-meta"><span>Difficulty ${p.difficulty}/5</span><span>${esc(VENDORS[p.vendor].name)}</span></span>${showUnlocks&&state.body==='thick'&&unlockedByThick(key,p.id)?'<span class="unlock-tag">Unlocked by thick body</span>':''}</span><span class="price">${money(state.prices[key+':'+p.id]??p.price).replace('.00','')}</span></button>${conflict?`<div class="inline-conflict" id="constraint-${key}-${p.id}">${chosen?'<strong>Selected · conflict</strong> ':''}${esc(conflict.message)}<button data-option-fix="${key}" data-option-id="${p.id}">${fixLabel(conflict.fix)} →</button></div>`:''}</div>`;}).join('')}</div>`;
-const runtimeLine=()=>{const r=runtimeEstimate(state);return `<p class="runtime-estimate"><strong>Estimated ${r.low} to ${r.high} hours of audio playback</strong><span>80–100% of ${r.capacity.toLocaleString()} mAh at about ${r.draw.toFixed(1)} mA. Aftermarket capacity ratings are optimistic.${r.kit?' Kit estimate assumes 2000 mAh; confirm the supplied cell.':''}</span></p>`;};
-const catalogResults=(key)=>{const query=(searches[key]||'').toLowerCase().trim();const parts=APPEARANCE[key].filter(p=>(key!=='finish'||p.bodies.includes(state.body))&&query.split(/\s+/).every(q=>(p.name+' '+p.family+' '+(FAMILY_NAMES[p.family]||'')+' '+p.vendor+' '+p.id).toLowerCase().includes(q)));const families=[...new Set(parts.map(p=>p.family))];return parts.length?families.map(family=>`<section class="swatch-family"><h4>${esc(FAMILY_NAMES[family]||family)} <span>${parts.filter(p=>p.family===family).length}</span></h4><div class="catalog-grid">${parts.filter(p=>p.family===family).map(p=>`<button class="catalog-swatch ${p.clear?'is-clear':''} ${state[key]===p.id?'selected':''}" data-key="${key}" data-value="${p.id}" aria-label="${esc(APPEARANCE_LABELS[key]+': '+p.name+' · '+(FAMILY_NAMES[p.family]||p.family)+' · from '+money(p.price)+' · Vendor: '+p.vendor)}" aria-pressed="${state[key]===p.id}" title="${esc(p.name+' · From '+money(p.price)+' · Vendor: '+p.vendor)}"><span class="color-sample" style="--paint:${paintCSS(p)}">${state[key]===p.id?'✓':''}</span><span class="vendor-mini">${esc(p.vendor)}</span><span class="swatch-tooltip" aria-hidden="true">${esc(p.name)}<br>From ${money(p.price)} · Vendor: ${esc(p.vendor)}</span></button>`).join('')}</div></section>`).join(''):'<p class="catalog-empty">No colors match this search. <button data-clear-search="'+key+'">Clear filter</button></p>';};
-const catalogPicker=(key,label)=>{const p=appearance(state,key);return `<div class="catalog-picker" data-catalog="${key}"><div class="selected-product"><span class="selected-color ${p.clear?'is-clear':''}" style="--paint:${paintCSS(p)}"></span><div><strong>${esc(p.name)}</strong><span>${esc(FAMILY_NAMES[p.family]||p.family)} · <span class="vendor-tag">Vendor: ${esc(p.vendor)}</span></span></div><a href="${esc(p.url)}" target="_blank" rel="noreferrer" aria-label="View ${esc(p.name)} at ${esc(p.vendor)}">From ${money(p.price)} ↗</a></div><label class="catalog-search"><span class="sr-only">Search ${esc(label)}</span><input type="search" data-search="${key}" aria-label="Search ${esc(label)}" placeholder="Search ${esc(label.toLowerCase())} · ${APPEARANCE[key].length} options" value="${esc(searches[key]||'')}"></label><div class="catalog-results">${catalogResults(key)}</div></div>`;};
-const bundleToggle=key=>`<label class="bundle-toggle"><input type="checkbox" data-bundle="${key}" ${state.buttonBundle===key?'checked':''}><span>Bundle selected center button <strong>+${money(BUNDLE_ESTIMATES[key==='front'?'frontButton':'wheelButton'])} estimate</strong><small>Use one button bundle: faceplate or wheel. Its separate charge is removed.</small></span></label>`;
-const group=(id,index,title,summary,body,open)=>`<details class="group" id="group-${id}" ${open?'open':''}><summary><span class="group-number">${String(index).padStart(2,'0')}</span><span class="group-name">${title}</span><span class="group-selection">${esc(summary)}</span></summary><div class="group-content">${body}</div></details>`;
-function renderConfigure(){const open=new Set($$('.group[open]').map(x=>x.id));const first=!$('#configure-panel').children.length;
-const g=(id,n,t,s,b)=>group(id,n,t,s,b,first?id==='front':open.has('group-'+id));
-$('#configure-panel').innerHTML=[
- g('front',1,'Faceplate',appearance(state,'front').name,catalogPicker('front','Faceplates')+bundleToggle('front')+`<p class="hint">Difficulty ${COSMETICS.front.difficulty}/5. Catalog colors are approximations. Clear finishes reveal the schematic internals.</p>`),
- g('back',2,'Backplate',state.connectivity==='moon'?'Classic Connect enclosure':(state.body==='thin'?'Thin':'Thick')+' · '+appearance(state,'finish').name,catalogPicker('finish','Backplates')+'<h3 class="subhead">Body</h3>'+`<div class="capacity" role="group" aria-label="Body depth">${['thin','thick'].map(id=>`<button data-key="body" data-value="${id}" class="${state.body===id?'selected':''}" aria-pressed="${state.body===id}">${id==='thin'?'Thin · 10.5 mm':'Thick · 13.5 mm'}</button>`).join('')}</div><p class="hint">Listed price is for the lowest variant. Thick-body allowance: +${money(BUNDLE_ESTIMATES.thickBody)}; actual price varies.</p><label class="field-label" for="engraving-style">Factory engraving style</label><select class="text-field" id="engraving-style" data-select="engravingStyle">${appearance(state,'finish').engravingStyles.map(id=>`<option value="${id}" ${state.engravingStyle===id?'selected':''}>${esc(ENGRAVING_STYLES[id])}</option>`).join('')}</select>${state.engravingStyle==='capacity'?`<label class="field-label capacity-label" for="capacity-mark">Capacity text on back</label><input id="capacity-mark" class="text-field" data-input="capacityMark" maxlength="24" value="${esc(state.capacityMark)}" placeholder="512GB"><p class="hint">Cosmetic text only; storage capacity is set in Storage.</p>`:''}<label class="bundle-toggle"><input type="checkbox" data-toggle="preinstalled" ${state.preinstalled?'checked':''} ${isKit(state)?'disabled':''}><span>Preinstalled headphone jack & dock bezel <strong>+${money(BUNDLE_ESTIMATES.preinstalled)} estimate</strong><small>Uses the selected Details parts and removes their separate charges.${isKit(state)?' The current kit already supplies its own enclosure.':''}</small></span></label><p class="hint">Choose the jack and bezel under Details. Factory engraving choices follow this color’s catalog availability. Custom text remains available below.</p><button class="quiet" data-view="back">View the back →</button><h3 class="subhead">Port & back kits</h3>`+choice('connectivity')),
- g('wheel',3,'Click wheel',appearance(state,'wheel').name,catalogPicker('wheel','Click wheels')+bundleToggle('wheel')+'<p class="hint">Difficulty 3/5. Atomic patterns are procedural approximations; verify the actual vendor photo.</p>'),
- g('button',4,'Center button',appearance(state,'button').name,catalogPicker('button','Center buttons')+'<p class="hint">Metal faceplates take metal buttons. Plastic and transparent fronts take plastic or crystal-clear buttons. Mixing them creates a warning. Difficulty 2/5.</p>'+(state.buttonBundle!=='none'?'<p class="included-note">Included with your '+state.buttonBundle+' bundle; no separate button charge.</p>':'')),
- g('board',5,'Logic board',state.board==='7g'?'7th generation':state.board==='65g'?'6.5 generation':'Original 6th generation',choice('board')),
- g('storage',6,'Storage',selected(state,'storage').name+' · '+(state.storage==='hdd'?'80GB':cap(state.capacity)),choice('storage')+(state.storage!=='hdd'?'<h3 class="subhead">Total capacity</h3><div class="capacity" role="group" aria-label="Storage capacity">'+CAPACITIES.map(n=>`<button data-key="capacity" data-value="${n}" class="${state.capacity===n?'selected':''}" aria-pressed="${state.capacity===n}">${cap(n)}</button>`).join('')+'</div><p class="hint">Adapter and storage media are priced separately. Quad capacity is the total across one to four cards. Card capacity is advertised decimal capacity.</p>':'')),
- g('battery',7,'Battery',state.connectivity==='moon'?'Included in kit':selected(state,'battery').name,(state.connectivity==='moon'?'<p class="hint">Classic Connect 2 includes its own battery. Your separate battery choice is retained for switching back, but excluded from this kit’s estimate.</p>':choice('battery'))+runtimeLine()),
- g('screen',8,'Screen',state.screen==='keep'?'Keep original':'Stock replacement',choice('screen')),
- g('wireless',9,'Wireless',hasBT(state)?'Bluetooth'+(hasQi(state)?' + Qi':''):'Wired audio',isKit(state)?'<p class="hint">Bluetooth is included in your back kit. The original 3.5 mm audio jack remains usable. Confirm the selected kit’s codecs.</p>':'<h3 class="subhead">Bluetooth</h3>'+choice('bluetooth')),
- g('feel',10,'Feel & firmware',state.firmware==='rockbox'?'Rockbox':'Apple firmware','<h3 class="subhead">Firmware</h3>'+choice('firmware')+'<h3 class="subhead">Haptic feedback</h3>'+(state.connectivity==='moon'?'<p class="hint">Haptics are included in Classic Connect 2.</p>':choice('taptic'))+'<h3 class="subhead">Audio capacitor bypass</h3>'+choice('bypass')),
- g('details',11,'Details',appearance(state,'bezel').name+' · '+appearance(state,'hold').name,'<h3 class="subhead">Dock bezel</h3>'+catalogPicker('bezel','Dock bezels')+'<h3 class="subhead">Headphone jack & hold switch</h3>'+catalogPicker('hold','Hold assemblies')+'<p class="hint">Difficulty 3/5. Match the jack assembly’s body depth. The tiny top switch and bottom bezel use these colors in the viewer.</p>'+(state.preinstalled||isKit(state)?'<p class="included-note">These parts are included in the selected back bundle or kit. Confirm variant availability with the seller.</p>':'')),
- g('cosmetic',12,'Engraving',state.engraving||'No engraving',`<label class="field-label" for="engraving">Back engraving <span>Optional · up to 80 characters</span></label><input class="text-field" id="engraving" data-input="engraving" maxlength="80" value="${esc(state.engraving)}" placeholder="A thousand songs. All yours."><p class="hint">${COSMETICS.engraving.description} Difficulty ${COSMETICS.engraving.difficulty}/5 when ordered engraved.</p><button class="quiet" data-view="back">View the back →</button>`)
-].join('');
-const wireless=$('#group-wireless .group-content');wireless.insertAdjacentHTML('beforeend','<h3 class="subhead">Wireless charging</h3>'+(state.connectivity==='moon'?'<p class="hint">Qi-compatible charging is included in Classic Connect 2.</p>':choice('qi'))+'<h3 class="subhead">Location tracking</h3>'+choice('airtag')+'<div class="blocked"><strong>Wi-Fi requires a different project</strong><p>There is no Wi-Fi add-on for the stock Classic logic board. A Raspberry Pi replacement replaces the core hardware and is incompatible with this configurator.</p><button disabled aria-describedby="wifi-note">Wi-Fi unavailable</button><span id="wifi-note" hidden>Requires full logic-board replacement with a computer.</span></div>');}
-function renderParts(){const rows=bom(state);$('#parts-panel').innerHTML='<h3 class="panel-title">Your parts list</h3><p class="panel-copy">Edit base prices to match quotes or mark owned parts at $0. Estimated bundle/body additions are shown separately and always added to the base. Edits are saved in your link.</p><div class="export-actions"><button data-action="copy-bom">Copy as text</button><button data-action="csv">Download CSV</button></div>'+rows.map(r=>`<div class="bom-row"><div><strong>${esc(r.name)}</strong><a href="${esc(r.url)}" target="_blank" rel="noreferrer">${esc(r.vendor)} ↗</a>${r.vendor==='EOE'?'<span class="vendor-tag">Vendor: EOE</span>':''}${r.description?`<small class="bom-detail">${esc(r.description)}</small>`:''}</div>${r.included?'<span class="included-label">Included<br>$0.00</span>':`<div class="bom-price-block"><label class="bom-price">$<input type="number" min="0" max="100000" step="0.01" aria-label="Price: ${esc(r.name)}" data-price="${esc(r.key)}" value="${r.editablePrice}"></label>${r.extra?`<small>+${money(r.extra)} additions<br><strong>${money(r.price)} total</strong></small>`:''}</div>`}</div>`).join('')+(state.connectivity==='moon'?'<p class="hint">Included in Classic Connect 2: enclosure, battery, Bluetooth, Qi receiver and haptics. These are charged once as a kit.</p>':'')+'<div class="breakdown"><h4 class="subhead">By category</h4>'+Object.entries(rows.reduce((a,r)=>(a[r.group]=(a[r.group]||0)+r.price,a),{})).map(([k,v])=>`<div class="subtotal"><span>${k}</span><span>${money(v)}</span></div>`).join('')+'</div><p class="hint">Donor iPod already owned. Tax, shipping, tools, labor and unpriced custom fabrication are not included. DIY electrical mods may require extra regulators, wiring and insulation.</p>';}
-function renderGuide(){const steps=guide(state),minutes=steps.reduce((a,s)=>a+s.minutes,0),hours=minutes/60;$('#guide-panel').innerHTML=`<h3 class="panel-title">Your assembly plan</h3><p class="panel-copy">Allow roughly ${hours.toFixed(1)}–${(hours*1.5).toFixed(1)} hours for hands-on work, plus music transfer. Maximum difficulty ${Math.max(...steps.map(s=>s.difficulty))}/5.</p><p class="hint">1 = simple setup · 3 = delicate disassembly · 5 = advanced soldering / fabrication. Resolve fit warnings first. This is an order-of-work guide; follow detailed maker instructions.</p>`+steps.map((s,i)=>`<div class="step"><div class="step-num">${i+1}</div><div><h4>${s.name}</h4><p>${esc(s.detail)}</p><p class="step-meta">Difficulty ${s.difficulty}/5 · about ${s.minutes} min</p></div></div>`).join('');}
-function renderWarnings(){const notes=warnings(state),n=notes.filter(n=>n.level==='warning').length;$('#compatibility').innerHTML=`<div class="compat-header">Compatibility check <span>${n?n+' to review':'No known conflicts'}</span></div>`+(notes.length?notes.map(r=>`<div class="notice ${r.level}"><strong>${esc(r.title)}</strong><p>${esc(r.message)}</p>${r.fix?`<button data-fix="${r.id}">${r.fix.hold?'Use matching '+state.body+' assembly':r.fix.body?fixLabel(r.fix):'Apply suggested fix'} →</button>`:''}</div>`).join(''):'<div class="compat-ok">No known conflicts for these selections. Confirm exact part dimensions with the vendor.</div>');$('#estimate-note').textContent=n?`${n} compatibility ${n===1?'warning':'warnings'} to review · estimates exclude tax & shipping.`:'Adjust prices in the parts list · excludes tax & shipping.';}
-function renderSummary(){const rows=bom(state),total=rows.reduce((a,r)=>a+r.price,0);const p=money(total).split('.');$('#total').innerHTML=p[0]+'<span>.'+p[1]+'</span>';$('#part-count').textContent=rows.length;$('#model-summary').textContent=(state.storage==='hdd'?'80GB':cap(state.capacity))+' · '+(state.board==='7g'?'7th generation':state.board==='65g'?'6.5 generation':'6th generation')+' · '+(state.connectivity==='moon'?'Connect 2 body':state.body==='thin'?'Thin body':'Thick body');$('#finish-label').textContent=appearance(state,'front').name+' / '+appearance(state,'finish').name;$$('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===state.view);b.setAttribute('aria-pressed',String(b.dataset.view===state.view));});$('#xray').setAttribute('aria-pressed',state.xray);$('#inside-legend').hidden=!(state.xray||state.view==='exploded'||appearance(state,'front').clear);$('#inside-legend').innerHTML=['Logic board',selected(state,'storage').name,state.connectivity==='moon'?'Kit battery':selected(state,'battery').name,hasBT(state)?'Bluetooth':null,hasQi(state)?'Qi coil':null,hasTaptic(state)?'Taptic motor':null,state.airtag==='on'?'AirTag':null].filter(Boolean).map(s=>`<span>${esc(s)}</span>`).join('');}
-function applyTheme(){const dark=state.theme==='dark'||(state.theme==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=dark?'dark':'light';$('#theme').title='Theme: '+state.theme;$('#theme').setAttribute('aria-label','Theme: '+state.theme+'. Click to change.');}
-function save(){try{history.replaceState(null,'','#'+encode(state));}catch{}}
-function renderRestoreNotice(){const el=$('#restore-notice');el.hidden=!restoreNotices.length;el.innerHTML=restoreNotices.length?'<details><summary>Saved build restored with updates</summary>'+restoreNotices.map(x=>'<p>'+esc(x)+'</p>').join('')+'</details>':'';}
-function render(){renderRestoreNotice();renderConfigure();renderParts();renderGuide();renderWarnings();renderSummary();applyTheme();}
-function set(patch,{renderForm=true}={}){const old=state.view;if(state.body==='thin'&&patch.body==='thick')showUnlocks=true;const notes=[];state=normalize({...state,...patch},notes);if(notes.length)restoreNotices=[...new Set([...restoreNotices,...notes])];save();if(renderForm)render();else{renderParts();renderGuide();renderWarnings();renderSummary();}viewer?.update(state);if(patch.view!==undefined||old!==state.view)viewer?.angle(state.view);}
-function tab(name,scroll=false){currentTab=name;$$('[data-tab]').forEach(b=>{const active=b.dataset.tab===name;b.setAttribute('aria-selected',active);b.tabIndex=active?0:-1;});for(const id of ['configure','parts','guide'])$('#'+id+'-panel').hidden=id!==name;if(scroll) $('.tabs').scrollIntoView({behavior:'smooth',block:'start'});}
-let toastTimer;function toast(message){$('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),3000);}
-async function copy(text,title){try{await navigator.clipboard.writeText(text);toast(title+' copied');}catch{$('#copy-title').textContent=title;$('#copy-text').value=text;$('#copy-dialog').showModal();$('#copy-text').select();}}
-function exportBOM(){return 'CLASSIC STUDIO · PARTS LIST\n\n'+bom(state).map(r=>`${r.group} | ${r.name} | ${r.vendor} | ${money(r.price)} | ${r.url}`).join('\n')+'\n\nEstimated total: '+money(bom(state).reduce((a,r)=>a+r.price,0))+'\nExcludes tax, shipping, tools and labor.\n\nCOMPATIBILITY\n'+warnings(state).map(r=>r.title+': '+r.message).join('\n');}
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.optionFix){const c=optionConstraint(state,b.dataset.optionFix,b.dataset.optionId);if(c?.fix)set(c.fix);}if(b.dataset.clearSearch){searches[b.dataset.clearSearch]='';renderConfigure();}if(b.dataset.key){set({[b.dataset.key]:b.dataset.key==='capacity'?Number(b.dataset.value):b.dataset.value});$('#preset').value='';}if(b.dataset.view)set({view:b.dataset.view});if(b.dataset.tab)tab(b.dataset.tab);if(b.dataset.fix){const r=warnings(state).find(r=>r.id===b.dataset.fix);if(r?.fix){set(r.fix);toast('Suggested fix applied');}}if(b.dataset.action==='copy-bom')copy(exportBOM(),'Parts list');if(b.dataset.action==='csv'){const blob=new Blob([csv(bom(state))],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='classic-studio-parts.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);toast('Parts CSV downloaded');}});
-function commitPrice(input){const value=input.value;const price=Number(value);if(value===''||!Number.isFinite(price)||price<0||price>100000){input.setCustomValidity('Enter a price from $0 to $100,000.');return;}input.setCustomValidity('');state=normalize({...state,prices:{...state.prices,[input.dataset.price]:price}});save();renderSummary();renderConfigure();const totals=Object.entries(bom(state).reduce((a,r)=>(a[r.group]=(a[r.group]||0)+r.price,a),{}));$('#parts-panel .breakdown').innerHTML='<h4 class="subhead">By category</h4>'+totals.map(([k,v])=>`<div class="subtotal"><span>${k}</span><span>${money(v)}</span></div>`).join('');}
-document.addEventListener('input',e=>{if(e.target.dataset.search){const k=e.target.dataset.search;searches[k]=e.target.value;e.target.closest('[data-catalog]').querySelector('.catalog-results').innerHTML=catalogResults(k);}if(e.target.dataset.price)commitPrice(e.target);if(e.target.dataset.input){set({[e.target.dataset.input]:e.target.value},{renderForm:false});if(e.target.dataset.input==='engraving')$('#group-cosmetic .group-selection').textContent=e.target.value||'No engraving';}});
-document.addEventListener('change',e=>{if(e.target.dataset.bundle){const key=e.target.dataset.bundle;set({buttonBundle:e.target.checked?key:'none'});}if(e.target.dataset.toggle)set({[e.target.dataset.toggle]:e.target.checked});if(e.target.dataset.select)set({[e.target.dataset.select]:e.target.value});if(e.target.dataset.price){commitPrice(e.target);if(!e.target.validity.valid)e.target.reportValidity();}});
-$('#preset').addEventListener('change',e=>{if(PRESETS[e.target.value]){restoreNotices=[];const name=e.target.value;set({...PRESETS[name],prices:{},theme:state.theme});$('#preset').value=name;toast('Preset applied');}});
-$('#reset').addEventListener('click',()=>{restoreNotices=[];set({...DEFAULT,prices:{},theme:state.theme});$('#preset').value='';toast('Build reset');});$('#share').addEventListener('click',()=>{save();copy(location.href,'Build link');});$('#xray').addEventListener('click',()=>set({xray:!state.xray}));$('#review-parts').addEventListener('click',()=>tab(currentTab==='parts'?'configure':'parts',true));$('#theme').addEventListener('click',()=>{const themes=['system','light','dark'];set({theme:themes[(themes.indexOf(state.theme)+1)%3]});toast('Theme: '+state.theme);});$('#close-copy').addEventListener('click',()=>$('#copy-dialog').close());
-$('.brand').addEventListener('click',e=>{e.preventDefault();window.scrollTo({top:0,behavior:'smooth'});});
-$('.tabs').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const tabs=['configure','parts','guide'];const i=e.key==='Home'?0:e.key==='End'?2:(tabs.indexOf(currentTab)+(e.key==='ArrowRight'?1:2))%3;tab(tabs[i]);$('#tab-'+tabs[i]).focus();});
-window.addEventListener('hashchange',()=>{const old=state.view;restoreNotices=[];state=decode(location.hash,restoreNotices);render();viewer?.update(state);if(old!==state.view)viewer?.angle(state.view);$('#preset').value='';toast('Build restored from link');});matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);
-$('#sources-list').innerHTML=SOURCES.map(([n,url])=>`<a href="${url}" target="_blank" rel="noreferrer">${n} ↗</a>`).join('');render();tab('configure');
+import {
+  CATALOG,
+  COSMETICS,
+  DEFAULT,
+  PRESETS,
+  SOURCES,
+  VENDORS,
+  CAPACITIES,
+  bom,
+  warnings,
+  guide,
+  selected,
+  normalize,
+  encode,
+  decode,
+  csv,
+  isKit,
+  hasBT,
+  hasQi,
+  hasTaptic,
+  appearanceKey,
+  optionConstraint,
+  unlockedByThick,
+  runtimeEstimate,
+} from "./data.js";
+import {
+  EOE,
+  APPEARANCE,
+  FAMILY_NAMES,
+  ENGRAVING_STYLES,
+  APPEARANCE_LABELS,
+  BUNDLE_ESTIMATES,
+  appearance,
+  paintCSS,
+} from "./catalog.js";
+let restoreNotices = [];
+let state = location.hash
+    ? decode(location.hash, restoreNotices)
+    : normalize(DEFAULT),
+  viewer = null,
+  currentTab = "configure";
+const searches = {};
+let showUnlocks = false;
+const $ = (s) => document.querySelector(s),
+  $$ = (s) => [...document.querySelectorAll(s)];
+const esc = (v) =>
+  String(v).replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
+const money = (n) =>
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+  }).format(n);
+const cap = (n) => (n >= 1024 ? n / 1024 + "TB" : n + "GB");
+const fixLabel = (fix) =>
+  fix?.body && Object.keys(fix).length === 1
+    ? "Switch to " + fix.body
+    : fix?.body
+      ? "Switch to " + fix.body + " + back kit"
+      : "Choose compatible back kit";
+const choice = (key) =>
+  `<div class="options" role="group" aria-label="${esc(key)}">${CATALOG[key]
+    .map((p) => {
+      const conflict = optionConstraint(state, key, p.id);
+      const chosen = state[key] === p.id;
+      return `<div class="option-wrap"><button type="button" class="option ${chosen ? "selected" : ""}" data-key="${key}" data-value="${p.id}" aria-pressed="${chosen}" ${conflict ? 'disabled aria-describedby="constraint-' + key + "-" + p.id + '"' : ""}><span class="radio"></span><span class="option-main"><span class="option-title">${esc(p.name)}</span><span class="option-desc">${esc(p.description)}</span><span class="option-meta"><span>Difficulty ${p.difficulty}/5</span><span>${esc(VENDORS[p.vendor].name)}</span></span>${showUnlocks && state.body === "thick" && unlockedByThick(key, p.id) ? '<span class="unlock-tag">Unlocked by thick body</span>' : ""}</span><span class="price">${money(state.prices[key + ":" + p.id] ?? p.price).replace(".00", "")}</span></button>${conflict ? `<div class="inline-conflict" id="constraint-${key}-${p.id}">${chosen ? "<strong>Selected · conflict</strong> " : ""}${esc(conflict.message)}<button data-option-fix="${key}" data-option-id="${p.id}">${fixLabel(conflict.fix)} →</button></div>` : ""}</div>`;
+    })
+    .join("")}</div>`;
+const runtimeLine = () => {
+  const r = runtimeEstimate(state);
+  return `<p class="runtime-estimate"><strong>Estimated ${r.low} to ${r.high} hours of audio playback</strong><span>80–100% of ${r.capacity.toLocaleString()} mAh at about ${r.draw.toFixed(1)} mA. Aftermarket capacity ratings are optimistic.${r.kit ? " Kit estimate assumes 2000 mAh; confirm the supplied cell." : ""}</span></p>`;
+};
+const catalogResults = (key) => {
+  const query = (searches[key] || "").toLowerCase().trim();
+  const parts = APPEARANCE[key].filter(
+    (p) =>
+      (key !== "finish" || p.bodies.includes(state.body)) &&
+      query
+        .split(/\s+/)
+        .every((q) =>
+          (
+            p.name +
+            " " +
+            p.family +
+            " " +
+            (FAMILY_NAMES[p.family] || "") +
+            " " +
+            p.vendor +
+            " " +
+            p.id
+          )
+            .toLowerCase()
+            .includes(q),
+        ),
+  );
+  const families = [...new Set(parts.map((p) => p.family))];
+  return parts.length
+    ? families
+        .map(
+          (family) =>
+            `<section class="swatch-family"><h4>${esc(FAMILY_NAMES[family] || family)} <span>${parts.filter((p) => p.family === family).length}</span></h4><div class="catalog-grid">${parts
+              .filter((p) => p.family === family)
+              .map(
+                (p) =>
+                  `<button class="catalog-swatch ${p.clear ? "is-clear" : ""} ${state[key] === p.id ? "selected" : ""}" data-key="${key}" data-value="${p.id}" aria-label="${esc(APPEARANCE_LABELS[key] + ": " + p.name + " · " + (FAMILY_NAMES[p.family] || p.family) + " · from " + money(p.price) + " · Vendor: " + p.vendor)}" aria-pressed="${state[key] === p.id}" title="${esc(p.name + " · From " + money(p.price) + " · Vendor: " + p.vendor)}"><span class="color-sample" style="--paint:${paintCSS(p)}">${state[key] === p.id ? "✓" : ""}</span><span class="vendor-mini">${esc(p.vendor)}</span><span class="swatch-tooltip" aria-hidden="true">${esc(p.name)}<br>From ${money(p.price)} · Vendor: ${esc(p.vendor)}</span></button>`,
+              )
+              .join("")}</div></section>`,
+        )
+        .join("")
+    : '<p class="catalog-empty">No colors match this search. <button data-clear-search="' +
+        key +
+        '">Clear filter</button></p>';
+};
+const catalogPicker = (key, label) => {
+  const p = appearance(state, key);
+  return `<div class="catalog-picker" data-catalog="${key}"><div class="selected-product"><span class="selected-color ${p.clear ? "is-clear" : ""}" style="--paint:${paintCSS(p)}"></span><div><strong>${esc(p.name)}</strong><span>${esc(FAMILY_NAMES[p.family] || p.family)} · <span class="vendor-tag">Vendor: ${esc(p.vendor)}</span></span></div><a href="${esc(p.url)}" target="_blank" rel="noreferrer" aria-label="View ${esc(p.name)} at ${esc(p.vendor)}">From ${money(p.price)} ↗</a></div><label class="catalog-search"><span class="sr-only">Search ${esc(label)}</span><input type="search" data-search="${key}" aria-label="Search ${esc(label)}" placeholder="Search ${esc(label.toLowerCase())} · ${APPEARANCE[key].length} options" value="${esc(searches[key] || "")}"></label><div class="catalog-results">${catalogResults(key)}</div></div>`;
+};
+const bundleToggle = (key) =>
+  `<label class="bundle-toggle"><input type="checkbox" data-bundle="${key}" ${state.buttonBundle === key ? "checked" : ""}><span>Bundle selected center button <strong>+${money(BUNDLE_ESTIMATES[key === "front" ? "frontButton" : "wheelButton"])} estimate</strong><small>Use one button bundle: faceplate or wheel. Its separate charge is removed.</small></span></label>`;
+const group = (id, index, title, summary, body, open) =>
+  `<details class="group" id="group-${id}" ${open ? "open" : ""}><summary><span class="group-number">${String(index).padStart(2, "0")}</span><span class="group-name">${title}</span><span class="group-selection">${esc(summary)}</span></summary><div class="group-content">${body}</div></details>`;
+function renderConfigure() {
+  const open = new Set($$(".group[open]").map((x) => x.id));
+  const first = !$("#configure-panel").children.length;
+  const g = (id, n, t, s, b) =>
+    group(id, n, t, s, b, first ? id === "front" : open.has("group-" + id));
+  $("#configure-panel").innerHTML = [
+    g(
+      "front",
+      1,
+      "Faceplate",
+      appearance(state, "front").name,
+      catalogPicker("front", "Faceplates") +
+        bundleToggle("front") +
+        `<p class="hint">Difficulty ${COSMETICS.front.difficulty}/5. Catalog colors are approximations. Clear finishes reveal the schematic internals.</p>`,
+    ),
+    g(
+      "back",
+      2,
+      "Backplate",
+      state.connectivity === "moon"
+        ? "Classic Connect enclosure"
+        : (state.body === "thin" ? "Thin" : "Thick") +
+            " · " +
+            appearance(state, "finish").name,
+      catalogPicker("finish", "Backplates") +
+        '<h3 class="subhead">Body</h3>' +
+        `<div class="capacity" role="group" aria-label="Body depth">${["thin", "thick"].map((id) => `<button data-key="body" data-value="${id}" class="${state.body === id ? "selected" : ""}" aria-pressed="${state.body === id}">${id === "thin" ? "Thin · 10.5 mm" : "Thick · 13.5 mm"}</button>`).join("")}</div><p class="hint">Listed price is for the lowest variant. Thick-body allowance: +${money(BUNDLE_ESTIMATES.thickBody)}; actual price varies.</p><label class="field-label" for="engraving-style">Factory engraving style</label><select class="text-field" id="engraving-style" data-select="engravingStyle">${appearance(
+          state,
+          "finish",
+        )
+          .engravingStyles.map(
+            (id) =>
+              `<option value="${id}" ${state.engravingStyle === id ? "selected" : ""}>${esc(ENGRAVING_STYLES[id])}</option>`,
+          )
+          .join(
+            "",
+          )}</select>${state.engravingStyle === "capacity" ? `<label class="field-label capacity-label" for="capacity-mark">Capacity text on back</label><input id="capacity-mark" class="text-field" data-input="capacityMark" maxlength="24" value="${esc(state.capacityMark)}" placeholder="512GB"><p class="hint">Cosmetic text only; storage capacity is set in Storage.</p>` : ""}<label class="bundle-toggle"><input type="checkbox" data-toggle="preinstalled" ${state.preinstalled ? "checked" : ""} ${isKit(state) ? "disabled" : ""}><span>Preinstalled headphone jack & dock bezel <strong>+${money(BUNDLE_ESTIMATES.preinstalled)} estimate</strong><small>Uses the selected Details parts and removes their separate charges.${isKit(state) ? " The current kit already supplies its own enclosure." : ""}</small></span></label><p class="hint">Choose the jack and bezel under Details. Factory engraving choices follow this color’s catalog availability. Custom text remains available below.</p><button class="quiet" data-view="back">View the back →</button><h3 class="subhead">Port & back kits</h3>` +
+        choice("connectivity"),
+    ),
+    g(
+      "wheel",
+      3,
+      "Click wheel",
+      appearance(state, "wheel").name,
+      catalogPicker("wheel", "Click wheels") +
+        bundleToggle("wheel") +
+        '<p class="hint">Difficulty 3/5. Atomic patterns are procedural approximations; verify the actual vendor photo.</p>',
+    ),
+    g(
+      "button",
+      4,
+      "Center button",
+      appearance(state, "button").name,
+      catalogPicker("button", "Center buttons") +
+        '<p class="hint">Metal faceplates take metal buttons. Plastic and transparent fronts take plastic or crystal-clear buttons. Mixing them creates a warning. Difficulty 2/5.</p>' +
+        (state.buttonBundle !== "none"
+          ? '<p class="included-note">Included with your ' +
+            state.buttonBundle +
+            " bundle; no separate button charge.</p>"
+          : ""),
+    ),
+    g(
+      "board",
+      5,
+      "Logic board",
+      state.board === "7g"
+        ? "7th generation"
+        : state.board === "65g"
+          ? "6.5 generation"
+          : "Original 6th generation",
+      choice("board"),
+    ),
+    g(
+      "storage",
+      6,
+      "Storage",
+      selected(state, "storage").name +
+        " · " +
+        (state.storage === "hdd" ? "80GB" : cap(state.capacity)),
+      choice("storage") +
+        (state.storage !== "hdd"
+          ? '<h3 class="subhead">Total capacity</h3><div class="capacity" role="group" aria-label="Storage capacity">' +
+            CAPACITIES.map(
+              (n) =>
+                `<button data-key="capacity" data-value="${n}" class="${state.capacity === n ? "selected" : ""}" aria-pressed="${state.capacity === n}">${cap(n)}</button>`,
+            ).join("") +
+            '</div><p class="hint">Adapter and storage media are priced separately. Quad capacity is the total across one to four cards. Card capacity is advertised decimal capacity.</p>'
+          : ""),
+    ),
+    g(
+      "battery",
+      7,
+      "Battery",
+      state.connectivity === "moon"
+        ? "Included in kit"
+        : selected(state, "battery").name,
+      (state.connectivity === "moon"
+        ? '<p class="hint">Classic Connect 2 includes its own battery. Your separate battery choice is retained for switching back, but excluded from this kit’s estimate.</p>'
+        : choice("battery")) + runtimeLine(),
+    ),
+    g(
+      "screen",
+      8,
+      "Screen",
+      state.screen === "keep" ? "Keep original" : "Stock replacement",
+      choice("screen"),
+    ),
+    g(
+      "wireless",
+      9,
+      "Wireless",
+      hasBT(state)
+        ? "Bluetooth" + (hasQi(state) ? " + Qi" : "")
+        : "Wired audio",
+      isKit(state)
+        ? '<p class="hint">Bluetooth is included in your back kit. The original 3.5 mm audio jack remains usable. Confirm the selected kit’s codecs.</p>'
+        : '<h3 class="subhead">Bluetooth</h3>' + choice("bluetooth"),
+    ),
+    g(
+      "feel",
+      10,
+      "Feel & firmware",
+      state.firmware === "rockbox" ? "Rockbox" : "Apple firmware",
+      '<h3 class="subhead">Firmware</h3>' +
+        choice("firmware") +
+        '<h3 class="subhead">Haptic feedback</h3>' +
+        (state.connectivity === "moon"
+          ? '<p class="hint">Haptics are included in Classic Connect 2.</p>'
+          : choice("taptic")) +
+        '<h3 class="subhead">Audio capacitor bypass</h3>' +
+        choice("bypass"),
+    ),
+    g(
+      "details",
+      11,
+      "Details",
+      appearance(state, "bezel").name + " · " + appearance(state, "hold").name,
+      '<h3 class="subhead">Dock bezel</h3>' +
+        catalogPicker("bezel", "Dock bezels") +
+        '<h3 class="subhead">Headphone jack & hold switch</h3>' +
+        catalogPicker("hold", "Hold assemblies") +
+        '<p class="hint">Difficulty 3/5. Match the jack assembly’s body depth. The tiny top switch and bottom bezel use these colors in the viewer.</p>' +
+        (state.preinstalled || isKit(state)
+          ? '<p class="included-note">These parts are included in the selected back bundle or kit. Confirm variant availability with the seller.</p>'
+          : ""),
+    ),
+    g(
+      "cosmetic",
+      12,
+      "Engraving",
+      state.engraving || "No engraving",
+      `<label class="field-label" for="engraving">Back engraving <span>Optional · up to 80 characters</span></label><input class="text-field" id="engraving" data-input="engraving" maxlength="80" value="${esc(state.engraving)}" placeholder="A thousand songs. All yours."><p class="hint">${COSMETICS.engraving.description} Difficulty ${COSMETICS.engraving.difficulty}/5 when ordered engraved.</p><button class="quiet" data-view="back">View the back →</button>`,
+    ),
+  ].join("");
+  const wireless = $("#group-wireless .group-content");
+  wireless.insertAdjacentHTML(
+    "beforeend",
+    '<h3 class="subhead">Wireless charging</h3>' +
+      (state.connectivity === "moon"
+        ? '<p class="hint">Qi-compatible charging is included in Classic Connect 2.</p>'
+        : choice("qi")) +
+      '<h3 class="subhead">Location tracking</h3>' +
+      choice("airtag") +
+      '<div class="blocked"><strong>Wi-Fi requires a different project</strong><p>There is no Wi-Fi add-on for the stock Classic logic board. A Raspberry Pi replacement replaces the core hardware and is incompatible with this configurator.</p><button disabled aria-describedby="wifi-note">Wi-Fi unavailable</button><span id="wifi-note" hidden>Requires full logic-board replacement with a computer.</span></div>',
+  );
+}
+function renderParts() {
+  const rows = bom(state);
+  $("#parts-panel").innerHTML =
+    '<h3 class="panel-title">Your parts list</h3><p class="panel-copy">Edit base prices to match quotes or mark owned parts at $0. Estimated bundle/body additions are shown separately and always added to the base. Edits are saved in your link.</p><div class="export-actions"><button data-action="copy-bom">Copy as text</button><button data-action="csv">Download CSV</button></div>' +
+    rows
+      .map(
+        (r) =>
+          `<div class="bom-row"><div><strong>${esc(r.name)}</strong><a href="${esc(r.url)}" target="_blank" rel="noreferrer">${esc(r.vendor)} ↗</a>${r.vendor === "EOE" ? '<span class="vendor-tag">Vendor: EOE</span>' : ""}${r.description ? `<small class="bom-detail">${esc(r.description)}</small>` : ""}</div>${r.included ? '<span class="included-label">Included<br>$0.00</span>' : `<div class="bom-price-block"><label class="bom-price">$<input type="number" min="0" max="100000" step="0.01" aria-label="Price: ${esc(r.name)}" data-price="${esc(r.key)}" value="${r.editablePrice}"></label>${r.extra ? `<small>+${money(r.extra)} additions<br><strong>${money(r.price)} total</strong></small>` : ""}</div>`}</div>`,
+      )
+      .join("") +
+    (state.connectivity === "moon"
+      ? '<p class="hint">Included in Classic Connect 2: enclosure, battery, Bluetooth, Qi receiver and haptics. These are charged once as a kit.</p>'
+      : "") +
+    '<div class="breakdown"><h4 class="subhead">By category</h4>' +
+    Object.entries(
+      rows.reduce(
+        (a, r) => ((a[r.group] = (a[r.group] || 0) + r.price), a),
+        {},
+      ),
+    )
+      .map(
+        ([k, v]) =>
+          `<div class="subtotal"><span>${k}</span><span>${money(v)}</span></div>`,
+      )
+      .join("") +
+    '</div><p class="hint">Donor iPod already owned. Tax, shipping, tools, labor and unpriced custom fabrication are not included. DIY electrical mods may require extra regulators, wiring and insulation.</p>';
+}
+function renderGuide() {
+  const steps = guide(state),
+    minutes = steps.reduce((a, s) => a + s.minutes, 0),
+    hours = minutes / 60;
+  $("#guide-panel").innerHTML =
+    `<h3 class="panel-title">Your assembly plan</h3><p class="panel-copy">Allow roughly ${hours.toFixed(1)}–${(hours * 1.5).toFixed(1)} hours for hands-on work, plus music transfer. Maximum difficulty ${Math.max(...steps.map((s) => s.difficulty))}/5.</p><p class="hint">1 = simple setup · 3 = delicate disassembly · 5 = advanced soldering / fabrication. Resolve fit warnings first. This is an order-of-work guide; follow detailed maker instructions.</p>` +
+    steps
+      .map(
+        (s, i) =>
+          `<div class="step"><div class="step-num">${i + 1}</div><div><h4>${s.name}</h4><p>${esc(s.detail)}</p><p class="step-meta">Difficulty ${s.difficulty}/5 · about ${s.minutes} min</p></div></div>`,
+      )
+      .join("");
+}
+function renderWarnings() {
+  const notes = warnings(state),
+    n = notes.filter((n) => n.level === "warning").length;
+  $("#compatibility").innerHTML =
+    `<div class="compat-header">Compatibility check <span>${n ? n + " to review" : "No known conflicts"}</span></div>` +
+    (notes.length
+      ? notes
+          .map(
+            (r) =>
+              `<div class="notice ${r.level}"><strong>${esc(r.title)}</strong><p>${esc(r.message)}</p>${r.fix ? `<button data-fix="${r.id}">${r.fix.hold ? "Use matching " + state.body + " assembly" : r.fix.body ? fixLabel(r.fix) : "Apply suggested fix"} →</button>` : ""}</div>`,
+          )
+          .join("")
+      : '<div class="compat-ok">No known conflicts for these selections. Confirm exact part dimensions with the vendor.</div>');
+  $("#estimate-note").textContent = n
+    ? `${n} compatibility ${n === 1 ? "warning" : "warnings"} to review · estimates exclude tax & shipping.`
+    : "Adjust prices in the parts list · excludes tax & shipping.";
+}
+function renderSummary() {
+  const rows = bom(state),
+    total = rows.reduce((a, r) => a + r.price, 0);
+  const p = money(total).split(".");
+  $("#total").innerHTML = p[0] + "<span>." + p[1] + "</span>";
+  $("#part-count").textContent = rows.length;
+  $("#model-summary").textContent =
+    (state.storage === "hdd" ? "80GB" : cap(state.capacity)) +
+    " · " +
+    (state.board === "7g"
+      ? "7th generation"
+      : state.board === "65g"
+        ? "6.5 generation"
+        : "6th generation") +
+    " · " +
+    (state.connectivity === "moon"
+      ? "Connect 2 body"
+      : state.body === "thin"
+        ? "Thin body"
+        : "Thick body");
+  $("#finish-label").textContent =
+    appearance(state, "front").name + " / " + appearance(state, "finish").name;
+  $$("[data-view]").forEach((b) => {
+    b.classList.toggle("active", b.dataset.view === state.view);
+    b.setAttribute("aria-pressed", String(b.dataset.view === state.view));
+  });
+  $("#xray").setAttribute("aria-pressed", state.xray);
+  $("#inside-legend").hidden = !(
+    state.xray ||
+    state.view === "exploded" ||
+    appearance(state, "front").clear
+  );
+  $("#inside-legend").innerHTML = [
+    "Logic board",
+    selected(state, "storage").name,
+    state.connectivity === "moon"
+      ? "Kit battery"
+      : selected(state, "battery").name,
+    hasBT(state) ? "Bluetooth" : null,
+    hasQi(state) ? "Qi coil" : null,
+    hasTaptic(state) ? "Taptic motor" : null,
+    state.airtag === "on" ? "AirTag" : null,
+  ]
+    .filter(Boolean)
+    .map((s) => `<span>${esc(s)}</span>`)
+    .join("");
+}
+function applyTheme() {
+  const dark =
+    state.theme === "dark" ||
+    (state.theme === "system" &&
+      matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  $("#theme").title = "Theme: " + state.theme;
+  $("#theme").setAttribute(
+    "aria-label",
+    "Theme: " + state.theme + ". Click to change.",
+  );
+}
+function save() {
+  try {
+    history.replaceState(null, "", "#" + encode(state));
+  } catch {}
+}
+function renderRestoreNotice() {
+  const el = $("#restore-notice");
+  el.hidden = !restoreNotices.length;
+  el.innerHTML = restoreNotices.length
+    ? "<details><summary>Saved build restored with updates</summary>" +
+      restoreNotices.map((x) => "<p>" + esc(x) + "</p>").join("") +
+      "</details>"
+    : "";
+}
+function render() {
+  renderRestoreNotice();
+  renderConfigure();
+  renderParts();
+  renderGuide();
+  renderWarnings();
+  renderSummary();
+  applyTheme();
+}
+function set(patch, { renderForm = true } = {}) {
+  const old = state.view;
+  if (state.body === "thin" && patch.body === "thick") showUnlocks = true;
+  const notes = [];
+  state = normalize({ ...state, ...patch }, notes);
+  if (notes.length)
+    restoreNotices = [...new Set([...restoreNotices, ...notes])];
+  save();
+  if (renderForm) render();
+  else {
+    renderParts();
+    renderGuide();
+    renderWarnings();
+    renderSummary();
+  }
+  viewer?.update(state);
+  if (patch.view !== undefined || old !== state.view) viewer?.angle(state.view);
+}
+function tab(name, scroll = false) {
+  currentTab = name;
+  $$("[data-tab]").forEach((b) => {
+    const active = b.dataset.tab === name;
+    b.setAttribute("aria-selected", active);
+    b.tabIndex = active ? 0 : -1;
+  });
+  for (const id of ["configure", "parts", "guide"])
+    $("#" + id + "-panel").hidden = id !== name;
+  if (scroll) $(".tabs").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+let toastTimer;
+function toast(message) {
+  $("#toast").textContent = message;
+  $("#toast").classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $("#toast").classList.remove("show"), 3000);
+}
+async function copy(text, title) {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast(title + " copied");
+  } catch {
+    $("#copy-title").textContent = title;
+    $("#copy-text").value = text;
+    $("#copy-dialog").showModal();
+    $("#copy-text").select();
+  }
+}
+function exportBOM() {
+  return (
+    "CLASSIC STUDIO · PARTS LIST\n\n" +
+    bom(state)
+      .map(
+        (r) =>
+          `${r.group} | ${r.name} | ${r.vendor} | ${money(r.price)} | ${r.url}`,
+      )
+      .join("\n") +
+    "\n\nEstimated total: " +
+    money(bom(state).reduce((a, r) => a + r.price, 0)) +
+    "\nExcludes tax, shipping, tools and labor.\n\nCOMPATIBILITY\n" +
+    warnings(state)
+      .map((r) => r.title + ": " + r.message)
+      .join("\n")
+  );
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("button");
+  if (!b || b.disabled) return;
+  if (b.dataset.optionFix) {
+    const c = optionConstraint(state, b.dataset.optionFix, b.dataset.optionId);
+    if (c?.fix) set(c.fix);
+  }
+  if (b.dataset.clearSearch) {
+    searches[b.dataset.clearSearch] = "";
+    renderConfigure();
+  }
+  if (b.dataset.key) {
+    set({
+      [b.dataset.key]:
+        b.dataset.key === "capacity"
+          ? Number(b.dataset.value)
+          : b.dataset.value,
+    });
+    $("#preset").value = "";
+  }
+  if (b.dataset.view) set({ view: b.dataset.view });
+  if (b.dataset.tab) tab(b.dataset.tab);
+  if (b.dataset.fix) {
+    const r = warnings(state).find((r) => r.id === b.dataset.fix);
+    if (r?.fix) {
+      set(r.fix);
+      toast("Suggested fix applied");
+    }
+  }
+  if (b.dataset.action === "copy-bom") copy(exportBOM(), "Parts list");
+  if (b.dataset.action === "csv") {
+    const blob = new Blob([csv(bom(state))], {
+      type: "text/csv;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "classic-studio-parts.csv";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    toast("Parts CSV downloaded");
+  }
+});
+function commitPrice(input) {
+  const value = input.value;
+  const price = Number(value);
+  if (value === "" || !Number.isFinite(price) || price < 0 || price > 100000) {
+    input.setCustomValidity("Enter a price from $0 to $100,000.");
+    return;
+  }
+  input.setCustomValidity("");
+  state = normalize({
+    ...state,
+    prices: { ...state.prices, [input.dataset.price]: price },
+  });
+  save();
+  renderSummary();
+  renderConfigure();
+  const totals = Object.entries(
+    bom(state).reduce(
+      (a, r) => ((a[r.group] = (a[r.group] || 0) + r.price), a),
+      {},
+    ),
+  );
+  $("#parts-panel .breakdown").innerHTML =
+    '<h4 class="subhead">By category</h4>' +
+    totals
+      .map(
+        ([k, v]) =>
+          `<div class="subtotal"><span>${k}</span><span>${money(v)}</span></div>`,
+      )
+      .join("");
+}
+document.addEventListener("input", (e) => {
+  if (e.target.dataset.search) {
+    const k = e.target.dataset.search;
+    searches[k] = e.target.value;
+    e.target
+      .closest("[data-catalog]")
+      .querySelector(".catalog-results").innerHTML = catalogResults(k);
+  }
+  if (e.target.dataset.price) commitPrice(e.target);
+  if (e.target.dataset.input) {
+    set({ [e.target.dataset.input]: e.target.value }, { renderForm: false });
+    if (e.target.dataset.input === "engraving")
+      $("#group-cosmetic .group-selection").textContent =
+        e.target.value || "No engraving";
+  }
+});
+document.addEventListener("change", (e) => {
+  if (e.target.dataset.bundle) {
+    const key = e.target.dataset.bundle;
+    set({ buttonBundle: e.target.checked ? key : "none" });
+  }
+  if (e.target.dataset.toggle)
+    set({ [e.target.dataset.toggle]: e.target.checked });
+  if (e.target.dataset.select)
+    set({ [e.target.dataset.select]: e.target.value });
+  if (e.target.dataset.price) {
+    commitPrice(e.target);
+    if (!e.target.validity.valid) e.target.reportValidity();
+  }
+});
+$("#preset").addEventListener("change", (e) => {
+  if (PRESETS[e.target.value]) {
+    restoreNotices = [];
+    const name = e.target.value;
+    set({ ...PRESETS[name], prices: {}, theme: state.theme });
+    $("#preset").value = name;
+    toast("Preset applied");
+  }
+});
+$("#reset").addEventListener("click", () => {
+  restoreNotices = [];
+  set({ ...DEFAULT, prices: {}, theme: state.theme });
+  $("#preset").value = "";
+  toast("Build reset");
+});
+$("#share").addEventListener("click", () => {
+  save();
+  copy(location.href, "Build link");
+});
+$("#xray").addEventListener("click", () => set({ xray: !state.xray }));
+$("#review-parts").addEventListener("click", () =>
+  tab(currentTab === "parts" ? "configure" : "parts", true),
+);
+$("#theme").addEventListener("click", () => {
+  const themes = ["system", "light", "dark"];
+  set({ theme: themes[(themes.indexOf(state.theme) + 1) % 3] });
+  toast("Theme: " + state.theme);
+});
+$("#close-copy").addEventListener("click", () => $("#copy-dialog").close());
+$(".brand").addEventListener("click", (e) => {
+  e.preventDefault();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+$(".tabs").addEventListener("keydown", (e) => {
+  if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+  e.preventDefault();
+  const tabs = ["configure", "parts", "guide"];
+  const i =
+    e.key === "Home"
+      ? 0
+      : e.key === "End"
+        ? 2
+        : (tabs.indexOf(currentTab) + (e.key === "ArrowRight" ? 1 : 2)) % 3;
+  tab(tabs[i]);
+  $("#tab-" + tabs[i]).focus();
+});
+window.addEventListener("hashchange", () => {
+  const old = state.view;
+  restoreNotices = [];
+  state = decode(location.hash, restoreNotices);
+  render();
+  viewer?.update(state);
+  if (old !== state.view) viewer?.angle(state.view);
+  $("#preset").value = "";
+  toast("Build restored from link");
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener(
+  "change",
+  applyTheme,
+);
+$("#sources-list").innerHTML = SOURCES.map(
+  ([n, url]) => `<a href="${url}" target="_blank" rel="noreferrer">${n} ↗</a>`,
+).join("");
+render();
+tab("configure");
 // WebMCP uses the same state reducer as the form, with strict field validation.
-const context=document.modelContext;const lifecycle=new AbortController();if(context?.registerTool){const register=t=>{try{Promise.resolve(context.registerTool(t,{signal:lifecycle.signal})).catch(()=>{});}catch{}};
-register({name:'read_ipod_build',title:'Read iPod build',description:'Read the current iPod configuration, estimated parts and compatibility warnings.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true},execute:()=>({configuration:state,parts:bom(state),warnings:warnings(state),total:Number(bom(state).reduce((a,r)=>a+r.price,0).toFixed(2)),runtime:runtimeEstimate(state),rendering:viewer?.metrics()??null})});
-register({name:'configure_ipod_build',title:'Configure iPod build',description:'Change selected options in the visible iPod configurator. Wi-Fi is unavailable.',inputSchema:{type:'object',properties:{changes:{type:'object',properties:Object.fromEntries([...Object.entries(CATALOG).map(([k,v])=>[k,{type:'string',enum:v.map(x=>x.id)}]),['capacity',{type:'number',enum:CAPACITIES}],...Object.entries(APPEARANCE).map(([k,v])=>[k,{type:'string',enum:v.map(p=>p.id)}]),['buttonBundle',{type:'string',enum:['none','front','wheel']}],['preinstalled',{type:'boolean'}],['engravingStyle',{type:'string',enum:Object.keys(ENGRAVING_STYLES)}],['capacityMark',{type:'string',maxLength:24}],['engraving',{type:'string',maxLength:80}]]),additionalProperties:false}},required:['changes'],additionalProperties:false},annotations:{readOnlyHint:false},execute:input=>{if(!input?.changes||typeof input.changes!=='object'||Array.isArray(input.changes))throw new Error('changes must be an object');const permitted=new Set([...Object.keys(CATALOG),'capacity',...Object.keys(APPEARANCE),'buttonBundle','preinstalled','engravingStyle','capacityMark','engraving']);const candidate=normalize({...state,...input.changes});for(const [k,v] of Object.entries(input.changes)){if(!permitted.has(k)||candidate[k]!==v)throw new Error('Invalid option: '+k);}set(input.changes);return {configuration:state,total:Number(bom(state).reduce((a,r)=>a+r.price,0).toFixed(2)),warnings:warnings(state)};}});window.addEventListener('pagehide',()=>lifecycle.abort(),{once:true});}
-async function loadViewer(){try{const {createViewer}=await import('./viewer.js');viewer=await createViewer($('#viewer'),state);$('#viewer-status')?.remove();window.__viewerReady=true;}catch(error){if(!$('#viewer-status'))$('#viewer').insertAdjacentHTML('beforeend','<div id="viewer-status"></div>');$('#viewer-status').innerHTML='The 3D preview could not load. Check your connection and WebGL support.<button id="retry-viewer">Retry preview</button>';$('#retry-viewer').onclick=()=>location.reload();console.error('Viewer error:',error);}}
+const context = document.modelContext;
+const lifecycle = new AbortController();
+if (context?.registerTool) {
+  const register = (t) => {
+    try {
+      Promise.resolve(
+        context.registerTool(t, { signal: lifecycle.signal }),
+      ).catch(() => {});
+    } catch {}
+  };
+  register({
+    name: "read_ipod_build",
+    title: "Read iPod build",
+    description:
+      "Read the current iPod configuration, estimated parts and compatibility warnings.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+      additionalProperties: false,
+    },
+    annotations: { readOnlyHint: true },
+    execute: () => ({
+      configuration: state,
+      parts: bom(state),
+      warnings: warnings(state),
+      total: Number(
+        bom(state)
+          .reduce((a, r) => a + r.price, 0)
+          .toFixed(2),
+      ),
+      runtime: runtimeEstimate(state),
+      rendering: viewer?.metrics() ?? null,
+    }),
+  });
+  register({
+    name: "configure_ipod_build",
+    title: "Configure iPod build",
+    description:
+      "Change selected options in the visible iPod configurator. Wi-Fi is unavailable.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        changes: {
+          type: "object",
+          properties: Object.fromEntries([
+            ...Object.entries(CATALOG).map(([k, v]) => [
+              k,
+              { type: "string", enum: v.map((x) => x.id) },
+            ]),
+            ["capacity", { type: "number", enum: CAPACITIES }],
+            ...Object.entries(APPEARANCE).map(([k, v]) => [
+              k,
+              { type: "string", enum: v.map((p) => p.id) },
+            ]),
+            [
+              "buttonBundle",
+              { type: "string", enum: ["none", "front", "wheel"] },
+            ],
+            ["preinstalled", { type: "boolean" }],
+            [
+              "engravingStyle",
+              { type: "string", enum: Object.keys(ENGRAVING_STYLES) },
+            ],
+            ["capacityMark", { type: "string", maxLength: 24 }],
+            ["engraving", { type: "string", maxLength: 80 }],
+          ]),
+          additionalProperties: false,
+        },
+      },
+      required: ["changes"],
+      additionalProperties: false,
+    },
+    annotations: { readOnlyHint: false },
+    execute: (input) => {
+      if (
+        !input?.changes ||
+        typeof input.changes !== "object" ||
+        Array.isArray(input.changes)
+      )
+        throw new Error("changes must be an object");
+      const permitted = new Set([
+        ...Object.keys(CATALOG),
+        "capacity",
+        ...Object.keys(APPEARANCE),
+        "buttonBundle",
+        "preinstalled",
+        "engravingStyle",
+        "capacityMark",
+        "engraving",
+      ]);
+      const candidate = normalize({ ...state, ...input.changes });
+      for (const [k, v] of Object.entries(input.changes)) {
+        if (!permitted.has(k) || candidate[k] !== v)
+          throw new Error("Invalid option: " + k);
+      }
+      set(input.changes);
+      return {
+        configuration: state,
+        total: Number(
+          bom(state)
+            .reduce((a, r) => a + r.price, 0)
+            .toFixed(2),
+        ),
+        warnings: warnings(state),
+      };
+    },
+  });
+  window.addEventListener("pagehide", () => lifecycle.abort(), { once: true });
+}
+async function loadViewer() {
+  try {
+    const { createViewer } = await import("./viewer.js");
+    viewer = await createViewer($("#viewer"), state);
+    $("#viewer-status")?.remove();
+    window.__viewerReady = true;
+  } catch (error) {
+    if (!$("#viewer-status"))
+      $("#viewer").insertAdjacentHTML(
+        "beforeend",
+        '<div id="viewer-status"></div>',
+      );
+    $("#viewer-status").innerHTML =
+      'The 3D preview could not load. Check your connection and WebGL support.<button id="retry-viewer">Retry preview</button>';
+    $("#retry-viewer").onclick = () => location.reload();
+    console.error("Viewer error:", error);
+  }
+}
 loadViewer();

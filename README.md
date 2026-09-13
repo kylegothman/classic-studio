@@ -37,7 +37,7 @@ python3 -m http.server 5173 --directory dist
 python3 build-single.py
 ```
 
-Use Node.js 22 or newer and Python 3. Run `npm run bake:shells` if the model or shell generator changes. GitHub Actions runs installation, both test suites and the portable build on pushes and pull requests. The checked-in `.openai/hosting.json` identifies the existing Classic Studio Sites deployment; it contains no credentials. Forks should use their own hosting configuration before deploying.
+Use Node.js 22 or newer and Python 3. `npm run format` applies the pinned Prettier defaults to source, tools and tests; `npm run format:check` checks them without editing. Run `npm run bake:shells` if the model or shell generator changes. GitHub Actions runs installation, both test suites and the portable build on pushes and pull requests. The checked-in `.openai/hosting.json` identifies the existing Classic Studio Sites deployment; it contains no credentials. Forks should use their own hosting configuration before deploying.
 
 Published app: https://classic-studio-kyle.kyle-gothman.chatgpt.site/ (current access policy applies).
 

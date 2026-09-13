@@ -4,10 +4,13 @@
   "type": "module",
   "scripts": {
     "test": "node tests/compatibility.mjs && node tests/geometry.mjs",
-    "bake:shells": "node tools/bake-shells.mjs"
+    "bake:shells": "node tools/bake-shells.mjs",
+    "format": "prettier --write \"dist/*.js\" \"tests/*.mjs\" \"tools/*.mjs\"",
+    "format:check": "prettier --check \"dist/*.js\" \"tests/*.mjs\" \"tools/*.mjs\""
   },
   "devDependencies": {
     "esbuild": "0.28.2",
+    "prettier": "3.9.6",
     "three": "0.180.0",
     "three-bvh-csg": "0.0.18",
     "three-mesh-bvh": "0.9.7"

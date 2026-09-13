@@ -2270,27 +2270,47 @@ var __export = (target, all) => {
 
 // dist/catalog.js
 function adapt(items, key) {
-  if (!Array.isArray(items) || !items.length) throw new Error("Missing catalog: " + key);
+  if (!Array.isArray(items) || !items.length)
+    throw new Error("Missing catalog: " + key);
   const ids = /* @__PURE__ */ new Set();
   return items.map((item) => {
-    if (!item.id || ids.has(item.id)) throw new Error("Duplicate or missing catalog ID");
+    if (!item.id || ids.has(item.id))
+      throw new Error("Duplicate or missing catalog ID");
     ids.add(item.id);
     const colors = String(item.color).split("->").map((x) => x.trim());
-    if (!colors.every((x) => /^#[\da-f]{6}$/i.test(x))) throw new Error("Invalid catalog color: " + item.id);
+    if (!colors.every((x) => /^#[\da-f]{6}$/i.test(x)))
+      throw new Error("Invalid catalog color: " + item.id);
     const price = item.price ?? item.priceFrom;
-    if (!Number.isFinite(price) || price < 0) throw new Error("Invalid catalog price: " + item.id);
+    if (!Number.isFinite(price) || price < 0)
+      throw new Error("Invalid catalog price: " + item.id);
     let family = item.finish ?? item.material ?? "plastic";
     if (key === "hold") family = item.body;
-    if (key === "bezel") family = /atomic|glow/i.test(item.id) ? "atomic" : /transparent|clear/i.test(item.id) ? "transparent" : "plastic";
+    if (key === "bezel")
+      family = /atomic|glow/i.test(item.id) ? "atomic" : /transparent|clear/i.test(item.id) ? "transparent" : "plastic";
     const clear = ["transparent", "atomic"].includes(family);
-    return { ...item, price, colors, hex: colors[0], family, clear, glow: /glow/i.test(item.id), material: item.material ?? (key === "finish" ? "metal" : "plastic"), url: /^https:\/\//.test(item.url) ? item.url : "https://eoe.works/", vendor: item.vendor || "EOE" };
+    return {
+      ...item,
+      price,
+      colors,
+      hex: colors[0],
+      family,
+      clear,
+      glow: /glow/i.test(item.id),
+      material: item.material ?? (key === "finish" ? "metal" : "plastic"),
+      url: /^https:\/\//.test(item.url) ? item.url : "https://eoe.works/",
+      vendor: item.vendor || "EOE"
+    };
   });
 }
 function surfaceSpec(p) {
-  if (p.clear) return { metalness: 0, roughness: 0.055, clearcoat: 0.2, opacity: 0.24 };
-  if (p.family === "matte") return { metalness: 0, roughness: 0.8, clearcoat: 0, opacity: 1 };
-  if (p.family === "chrome") return { metalness: 1, roughness: 0.15, clearcoat: 0, opacity: 1 };
-  if (p.material === "metal") return { metalness: 0.9, roughness: 0.35, clearcoat: 0, opacity: 1 };
+  if (p.clear)
+    return { metalness: 0, roughness: 0.055, clearcoat: 0.2, opacity: 0.24 };
+  if (p.family === "matte")
+    return { metalness: 0, roughness: 0.8, clearcoat: 0, opacity: 1 };
+  if (p.family === "chrome")
+    return { metalness: 1, roughness: 0.15, clearcoat: 0, opacity: 1 };
+  if (p.material === "metal")
+    return { metalness: 0.9, roughness: 0.35, clearcoat: 0, opacity: 1 };
   return { metalness: 0, roughness: 0.4, clearcoat: 0.25, opacity: 1 };
 }
 function nearestBack(hex) {
@@ -2304,49 +2324,154 @@ function nearestBack(hex) {
 var EOE, BUNDLE_ESTIMATES, FAMILY_NAMES, ENGRAVING_STYLES, APPEARANCE_LABELS, APPEARANCE, appearance, paintCSS, LEGACY_IDS, LEGACY_APPROXIMATE;
 var init_catalog = __esm({
   async "dist/catalog.js"() {
-    EOE = globalThis.IPOD_EOE_CATALOG ?? await fetch(new URL("./eoe-color-catalog.json", import.meta.url), { cache: "no-cache" }).then((r) => {
+    EOE = globalThis.IPOD_EOE_CATALOG ?? await fetch(new URL("./eoe-color-catalog.json", import.meta.url), {
+      cache: "no-cache"
+    }).then((r) => {
       if (!r.ok) throw new Error("EOE catalog could not load");
       return r.json();
     });
-    BUNDLE_ESTIMATES = { frontButton: 8, wheelButton: 8, preinstalled: 20, thickBody: 3 };
-    FAMILY_NAMES = { metal: "Metal", matte: "Matte", gradient: "Gradient", plastic: "Plastic", transparent: "Crystal Clear", standard: "Standard", iridescent: "Rainbow / Polychrome", atomic: "Atomic", chrome: "Chrome", thin: "Thin", thick: "Thick" };
+    BUNDLE_ESTIMATES = {
+      frontButton: 8,
+      wheelButton: 8,
+      preinstalled: 20,
+      thickBody: 3
+    };
+    FAMILY_NAMES = {
+      metal: "Metal",
+      matte: "Matte",
+      gradient: "Gradient",
+      plastic: "Plastic",
+      transparent: "Crystal Clear",
+      standard: "Standard",
+      iridescent: "Rainbow / Polychrome",
+      atomic: "Atomic",
+      chrome: "Chrome",
+      thin: "Thin",
+      thick: "Thick"
+    };
     ENGRAVING_STYLES = EOE.backplates.engravingStyles;
-    APPEARANCE_LABELS = { front: "Faceplate", wheel: "Click wheel", button: "Center button", finish: "Backplate", bezel: "Dock bezel", hold: "Headphone jack / hold switch" };
-    APPEARANCE = { front: adapt(EOE.faceplates, "front"), wheel: adapt(EOE.clickWheels, "wheel"), button: adapt(EOE.centerButtons, "button"), finish: adapt(EOE.backplates.colors, "finish"), bezel: adapt(EOE.dockBezels, "bezel"), hold: adapt(EOE.holdSwitchJack, "hold") };
+    APPEARANCE_LABELS = {
+      front: "Faceplate",
+      wheel: "Click wheel",
+      button: "Center button",
+      finish: "Backplate",
+      bezel: "Dock bezel",
+      hold: "Headphone jack / hold switch"
+    };
+    APPEARANCE = {
+      front: adapt(EOE.faceplates, "front"),
+      wheel: adapt(EOE.clickWheels, "wheel"),
+      button: adapt(EOE.centerButtons, "button"),
+      finish: adapt(EOE.backplates.colors, "finish"),
+      bezel: adapt(EOE.dockBezels, "bezel"),
+      hold: adapt(EOE.holdSwitchJack, "hold")
+    };
     appearance = (s, key) => APPEARANCE[key].find((p) => p.id === s[key]) ?? APPEARANCE[key][0];
     paintCSS = (p) => p.colors.length > 1 ? "linear-gradient(to bottom," + p.colors.join(",") + ")" : p.hex;
-    LEGACY_IDS = { front: { black: "fp-metal-black", silver: "fp-metal-silver", white: "fp-metal-white-matte", red: "fp-metal-red", blue: "fp-metal-blue", gold: "fp-metal-gold", transparent: "fp-plastic-crystal-clear" }, wheel: { black: "cw-black", white: "cw-white", silver: "cw-grey", red: "cw-red", blue: "cw-blue", gold: "cw-atomic-gold-metallic", transparent: "cw-fully-transparent-clear" }, button: { black: "cb-metal-black", silver: "cb-metal-silver", white: "cb-plastic-white", red: "cb-metal-red", blue: "cb-plastic-blue", gold: "cb-metal-gold", transparent: "cb-clear-transparent-crystal-clear" }, finish: { polished: "bp-silver-stock-stainless", brushed: "bp-silver-stock-stainless", black: "bp-black", gold: "bp-gold", blue: "bp-ocean-blue", red: "bp-sangria-red" } };
-    LEGACY_APPROXIMATE = { front: ["white"], wheel: ["silver", "gold"], finish: ["brushed", "blue", "red", "custom"] };
+    LEGACY_IDS = {
+      front: {
+        black: "fp-metal-black",
+        silver: "fp-metal-silver",
+        white: "fp-metal-white-matte",
+        red: "fp-metal-red",
+        blue: "fp-metal-blue",
+        gold: "fp-metal-gold",
+        transparent: "fp-plastic-crystal-clear"
+      },
+      wheel: {
+        black: "cw-black",
+        white: "cw-white",
+        silver: "cw-grey",
+        red: "cw-red",
+        blue: "cw-blue",
+        gold: "cw-atomic-gold-metallic",
+        transparent: "cw-fully-transparent-clear"
+      },
+      button: {
+        black: "cb-metal-black",
+        silver: "cb-metal-silver",
+        white: "cb-plastic-white",
+        red: "cb-metal-red",
+        blue: "cb-plastic-blue",
+        gold: "cb-metal-gold",
+        transparent: "cb-clear-transparent-crystal-clear"
+      },
+      finish: {
+        polished: "bp-silver-stock-stainless",
+        brushed: "bp-silver-stock-stainless",
+        black: "bp-black",
+        gold: "bp-gold",
+        blue: "bp-ocean-blue",
+        red: "bp-sangria-red"
+      }
+    };
+    LEGACY_APPROXIMATE = {
+      front: ["white"],
+      wheel: ["silver", "gold"],
+      finish: ["brushed", "blue", "red", "custom"]
+    };
   }
 });
 
 // dist/data.js
 function runtimeEstimate(s) {
   const draw = (s.storage === "hdd" ? 18 : 14) * (s.firmware === "rockbox" ? 1.1 : 1) * (hasBT(s) ? 1.25 : 1), capacity = batteryCapacity(s);
-  return { low: Math.round(capacity * 0.8 / draw), high: Math.round(capacity / draw), draw, capacity, kit: s.connectivity === "moon" };
+  return {
+    low: Math.round(capacity * 0.8 / draw),
+    high: Math.round(capacity / draw),
+    draw,
+    capacity,
+    kit: s.connectivity === "moon"
+  };
 }
 function optionConstraint(s, key, id) {
   const fail = (message, fix) => ({ message, fix });
-  if (key === "connectivity" && ["eoe", "moon"].includes(id) && s.body === "thin") return fail(id === "moon" ? "Requires thick body in this planner. Classic Connect 2 supplies its own custom back enclosure." : THICK_KIT, { body: "thick" });
-  if (key === "airtag" && id === "on" && s.body === "thin") return fail("No internal space with a thin back and an extended battery.", { body: "thick" });
-  if (key === "battery" && ["3000", "3800"].includes(id) && s.body === "thin") return fail("This thick-model cell requires a thick body.", { body: "thick" });
+  if (key === "connectivity" && ["eoe", "moon"].includes(id) && s.body === "thin")
+    return fail(
+      id === "moon" ? "Requires thick body in this planner. Classic Connect 2 supplies its own custom back enclosure." : THICK_KIT,
+      { body: "thick" }
+    );
+  if (key === "airtag" && id === "on" && s.body === "thin")
+    return fail("No internal space with a thin back and an extended battery.", {
+      body: "thick"
+    });
+  if (key === "battery" && ["3000", "3800"].includes(id) && s.body === "thin")
+    return fail("This thick-model cell requires a thick body.", {
+      body: "thick"
+    });
   if (key === "qi" && id === "on" || key === "taptic" && id === "kit") {
-    if (s.body === "thin") return fail("Requires thick body and a compatible back kit.", isKit(s) ? { body: "thick" } : { body: "thick", connectivity: "eoe" });
-    if (!isKit(s)) return fail("Available only through a compatible back kit. Confirm this feature with the seller.", { connectivity: "eoe" });
+    if (s.body === "thin")
+      return fail(
+        "Requires thick body and a compatible back kit.",
+        isKit(s) ? { body: "thick" } : { body: "thick", connectivity: "eoe" }
+      );
+    if (!isKit(s))
+      return fail(
+        "Available only through a compatible back kit. Confirm this feature with the seller.",
+        { connectivity: "eoe" }
+      );
   }
   if (key === "storage" && s.body === "thin" && s.battery !== "stock" && s.connectivity !== "moon") {
     const allowed = s.battery === "2000-square" ? ["solo", "quad", "udual", "dual"] : ["quad", "udual"];
-    if (!allowed.includes(id)) return fail(s.battery === "2000-square" && !["sata", "m2", "cf"].includes(id) ? "The 2000 mAh square cell fits Solo, Quad, uDUAL or generic dual microSD under a thin back." : LOW_PROFILE, { body: "thick" });
+    if (!allowed.includes(id))
+      return fail(
+        s.battery === "2000-square" && !["sata", "m2", "cf"].includes(id) ? "The 2000 mAh square cell fits Solo, Quad, uDUAL or generic dual microSD under a thin back." : LOW_PROFILE,
+        { body: "thick" }
+      );
   }
   if (key === "finish" && !APPEARANCE.finish.find((p) => p.id === id)?.bodies.includes(s.body)) {
     const part = APPEARANCE.finish.find((p) => p.id === id);
-    return fail("This backplate color is not sold in the selected body depth.", { body: part?.bodies[0] ?? "thin" });
+    return fail(
+      "This backplate color is not sold in the selected body depth.",
+      { body: part?.bodies[0] ?? "thin" }
+    );
   }
   return null;
 }
 function appearanceKey(s, key) {
   if (key === "front" || key === "wheel") return key + ":" + s[key];
-  if (key === "finish") return "back:" + s.finish + ":" + s.body + ":" + s.engravingStyle;
+  if (key === "finish")
+    return "back:" + s.finish + ":" + s.body + ":" + s.engravingStyle;
   return key + ":" + s[key];
 }
 function bom(s) {
@@ -2354,26 +2479,70 @@ function bom(s) {
   const add = (key, group2, name, basePrice, vendor, description = "", included = false, url = null, extra = 0) => {
     const v = VENDORS[vendor] || { name: vendor, url: "https://eoe.works/" };
     const editablePrice = s.prices[key] ?? basePrice;
-    rows.push({ key, group: group2, name, price: included ? 0 : Math.round((editablePrice + extra) * 100) / 100, basePrice, editablePrice, extra, vendor: v.name, url: url ?? v.url, description, included });
+    rows.push({
+      key,
+      group: group2,
+      name,
+      price: included ? 0 : Math.round((editablePrice + extra) * 100) / 100,
+      basePrice,
+      editablePrice,
+      extra,
+      vendor: v.name,
+      url: url ?? v.url,
+      description,
+      included
+    });
   };
-  for (const [key, group2] of [["board", "Logic board"], ["storage", "Storage"], ["battery", "Battery"], ["connectivity", "Connectivity"], ["screen", "Screen"], ["bluetooth", "Wireless"], ["qi", "Wireless"], ["airtag", "Wireless"], ["taptic", "Feel"], ["firmware", "Firmware"]]) {
+  for (const [key, group2] of [
+    ["board", "Logic board"],
+    ["storage", "Storage"],
+    ["battery", "Battery"],
+    ["connectivity", "Connectivity"],
+    ["screen", "Screen"],
+    ["bluetooth", "Wireless"],
+    ["qi", "Wireless"],
+    ["airtag", "Wireless"],
+    ["taptic", "Feel"],
+    ["firmware", "Firmware"]
+  ]) {
     const p = selected(s, key);
-    if (["bluetooth", "qi", "airtag", "taptic"].includes(key) && p.id === "off") continue;
+    if (["bluetooth", "qi", "airtag", "taptic"].includes(key) && p.id === "off")
+      continue;
     if (key === "connectivity" && p.id === "original") continue;
     if (key === "battery" && s.connectivity === "moon") continue;
-    if (key === "bluetooth" && isKit(s) || ["qi", "taptic"].includes(key) && s.connectivity === "moon") continue;
+    if (key === "bluetooth" && isKit(s) || ["qi", "taptic"].includes(key) && s.connectivity === "moon")
+      continue;
     add(key + ":" + p.id, group2, p.name, p.price, p.vendor, p.description);
-    if (key === "connectivity" && p.id === "moon") rows.at(-1).description += " Planner uses the thick category; the actual enclosure is custom.";
-    if (key === "firmware" && p.id === "apple") rows.at(-1).url = "https://support.apple.com/ipod";
-    if (key === "storage" && ["solo", "quad", "sata", "cf", "udual"].includes(p.id)) rows.at(-1).url = "https://www.iflash.xyz/store/iflash-" + p.id + "/";
-    if (key === "connectivity" && p.id === "eoe") rows.at(-1).url = "https://eoe.works/products/backplate-mod-kit-usb-c-internal-bluetooth-5-2-for-apple-ipod-video-5th-5-5-a1136-ipod-classic-6th-7th-a1238";
-    if (key === "connectivity" && p.id === "usbc") rows.at(-1).url = "https://eoe.works/products/new-usb-c-dock-replacement-for-apple-ipod-video-5th-5-5-a1136-ipod-classic-6th-7th-a1238";
+    if (key === "connectivity" && p.id === "moon")
+      rows.at(-1).description += " Planner uses the thick category; the actual enclosure is custom.";
+    if (key === "firmware" && p.id === "apple")
+      rows.at(-1).url = "https://support.apple.com/ipod";
+    if (key === "storage" && ["solo", "quad", "sata", "cf", "udual"].includes(p.id))
+      rows.at(-1).url = "https://www.iflash.xyz/store/iflash-" + p.id + "/";
+    if (key === "connectivity" && p.id === "eoe")
+      rows.at(-1).url = "https://eoe.works/products/backplate-mod-kit-usb-c-internal-bluetooth-5-2-for-apple-ipod-video-5th-5-5-a1136-ipod-classic-6th-7th-a1238";
+    if (key === "connectivity" && p.id === "usbc")
+      rows.at(-1).url = "https://eoe.works/products/new-usb-c-dock-replacement-for-apple-ipod-video-5th-5-5-a1136-ipod-classic-6th-7th-a1238";
   }
   if (s.storage !== "hdd") {
     const kind = s.storage === "m2" ? "M.2 SATA SSD" : s.storage === "sata" ? "mSATA SSD" : s.storage === "cf" ? "CompactFlash card" : "microSD media";
-    add(`media:${s.storage}:${s.capacity}`, "Storage", `${s.capacity >= 1024 ? s.capacity / 1024 + "TB" : s.capacity + "GB"} ${kind}`, MEDIA_PRICES[s.storage][CAPACITIES.indexOf(s.capacity)], "used", "Media allowance; verify compatibility. Quad total can be spread over up to four cards.");
+    add(
+      `media:${s.storage}:${s.capacity}`,
+      "Storage",
+      `${s.capacity >= 1024 ? s.capacity / 1024 + "TB" : s.capacity + "GB"} ${kind}`,
+      MEDIA_PRICES[s.storage][CAPACITIES.indexOf(s.capacity)],
+      "used",
+      "Media allowance; verify compatibility. Quad total can be spread over up to four cards."
+    );
   }
-  for (const [key, group2] of [["front", "Front plate"], ["wheel", "Click wheel"], ["button", "Center button"], ["finish", "Back plate"], ["bezel", "Details"], ["hold", "Details"]]) {
+  for (const [key, group2] of [
+    ["front", "Front plate"],
+    ["wheel", "Click wheel"],
+    ["button", "Center button"],
+    ["finish", "Back plate"],
+    ["bezel", "Details"],
+    ["hold", "Details"]
+  ]) {
     const part = appearance(s, key);
     let included = false, extra = 0, detail = "", name = part.name + " (" + (FAMILY_NAMES[part.family] || part.family) + ") " + APPEARANCE_LABELS[key].toLowerCase();
     if (key === "front" || key === "wheel") {
@@ -2403,158 +2572,866 @@ function bom(s) {
       included = true;
       detail = isKit(s) ? "Kit detail reference; verify the chosen variant." : "Included with preinstalled backplate bundle.";
     }
-    add(appearanceKey(s, key), group2, name, part.price, part.vendor, detail, included, part.url, extra);
+    add(
+      appearanceKey(s, key),
+      group2,
+      name,
+      part.price,
+      part.vendor,
+      detail,
+      included,
+      part.url,
+      extra
+    );
   }
-  if (s.engraving.trim()) add("engraving", "Cosmetics", "Custom engraving: " + s.engraving, s.engravingPrice, "eoe", "Custom text is additional to the selected factory engraving style. Confirm service availability.");
+  if (s.engraving.trim())
+    add(
+      "engraving",
+      "Cosmetics",
+      "Custom engraving: " + s.engraving,
+      s.engravingPrice,
+      "eoe",
+      "Custom text is additional to the selected factory engraving style. Confirm service availability."
+    );
   return rows;
 }
 function guide(s) {
-  const steps = [{ name: "Open and inspect the donor", detail: "Back up music. Discharge and disconnect the battery. Opening A1238 metal clips is usually the hardest mechanical step.", difficulty: 4, minutes: 40 }];
+  const steps = [
+    {
+      name: "Open and inspect the donor",
+      detail: "Back up music. Discharge and disconnect the battery. Opening A1238 metal clips is usually the hardest mechanical step.",
+      difficulty: 4,
+      minutes: 40
+    }
+  ];
   const add = (name, detail, difficulty, minutes) => steps.push({ name, detail, difficulty, minutes });
-  if (s.board !== "6g") add("Swap and inspect the logic board", "Transfer the compatible board; inspect fragile ribbon connectors before seating them.", 4, 35);
-  if (s.storage !== "hdd") add("Install and restore flash storage", "Fit compatible media and adapter, connect the drive ribbon, restore and verify full capacity.", selected(s, "storage").difficulty, 30);
-  add("Set up and test firmware", s.firmware === "rockbox" ? "Restore Apple firmware first, then follow the current Rockbox iPod Classic manual. Test dual boot and library access." : "Restore with compatible Apple desktop software and test sync, audio and controls.", s.firmware === "rockbox" ? 3 : 2, s.firmware === "rockbox" ? 35 : 20);
-  add(s.connectivity === "moon" ? "Fit the kit battery" : "Fit and insulate the battery", "Use the cell supplier\u2019s fit guidance. Avoid pinching, bending or compressing lithium cells.", 3, 20);
-  add("Fit the back and connectivity", s.connectivity === "original" ? "Check the matching hold-switch and headphone-jack assembly. Leave the shell open for testing." : "Follow the kit maker\u2019s wiring instructions. Verify charging, USB data and both wired and wireless audio as applicable.", s.connectivity === "original" ? 3 : 5, s.connectivity === "original" ? 20 : 65);
-  add("Fit the front, wheel, center button and LCD", appearance(s, "front").name + " faceplate; " + appearance(s, "wheel").name + " wheel; " + appearance(s, "button").name + " center button. " + (s.buttonBundle !== "none" ? "Center button is ordered with the " + s.buttonBundle + "; verify its material. " : "") + "Seat flex cables and test every button before closing.", 3, 35);
-  add(s.preinstalled && !isKit(s) ? "Check the preinstalled jack and dock bezel" : "Fit and test the small details", appearance(s, "hold").name + " " + appearance(s, "hold").body + " headphone/hold assembly and " + appearance(s, "bezel").name + " dock bezel. " + (isKit(s) ? "Confirm that these references match the chosen kit." : s.preinstalled ? "Vendor installs these with the back; test hold, audio and port alignment." : "Match the body depth, insulate the ribbon and test hold, audio and port alignment."), s.preinstalled ? 2 : 3, s.preinstalled ? 10 : 25);
-  add("Confirm back color and factory engraving", appearance(s, "finish").name + " \xB7 " + s.body + " \xB7 " + ENGRAVING_STYLES[s.engravingStyle] + (s.engravingStyle === "capacity" ? " \xB7 " + s.capacityMark : "") + ". " + (isKit(s) ? "Kit customization must be confirmed with its maker." : "Order this factory variant before assembly. Capacity text is a cosmetic marking; it does not change storage."), 1, 5);
-  if (s.bluetooth === "aptx" && !isKit(s)) add("Wire and test the Bluetooth transmitter", "Test analog audio, isolation, antenna placement and the 3.5 mm jack.", 5, 55);
-  if (s.qi === "on" && s.connectivity !== "moon") add("Verify and test kit Qi charging", "Confirm that the chosen back kit supports Qi and provides its required charging window. Test alignment, insulation and charging heat.", 4, 40);
-  if (s.taptic === "kit" && s.connectivity !== "moon") add("Test kit-integrated haptics", "Confirm the selected back kit includes a haptic driver and motor. Test feedback before closing.", 4, 20);
-  if (s.taptic === "on" && s.connectivity !== "moon") add("Install and test taptic feedback", "Follow a proven driver-circuit design and insulate the motor and wiring.", 5, 40);
-  if (s.airtag === "on") add("Fit AirTag and regulated power", "Use a regulated 3V supply and verify antenna reception before fixing the board in place.", 5, 60);
-  add("Finish, test and close", s.engraving ? "Confirm engraving with the shell vendor before assembly. Check clearances, charging, audio and controls before closing." : "Check clearances, charging, audio and controls. Close only when the build is fully tested.", 3, 25);
+  if (s.board !== "6g")
+    add(
+      "Swap and inspect the logic board",
+      "Transfer the compatible board; inspect fragile ribbon connectors before seating them.",
+      4,
+      35
+    );
+  if (s.storage !== "hdd")
+    add(
+      "Install and restore flash storage",
+      "Fit compatible media and adapter, connect the drive ribbon, restore and verify full capacity.",
+      selected(s, "storage").difficulty,
+      30
+    );
+  add(
+    "Set up and test firmware",
+    s.firmware === "rockbox" ? "Restore Apple firmware first, then follow the current Rockbox iPod Classic manual. Test dual boot and library access." : "Restore with compatible Apple desktop software and test sync, audio and controls.",
+    s.firmware === "rockbox" ? 3 : 2,
+    s.firmware === "rockbox" ? 35 : 20
+  );
+  add(
+    s.connectivity === "moon" ? "Fit the kit battery" : "Fit and insulate the battery",
+    "Use the cell supplier\u2019s fit guidance. Avoid pinching, bending or compressing lithium cells.",
+    3,
+    20
+  );
+  add(
+    "Fit the back and connectivity",
+    s.connectivity === "original" ? "Check the matching hold-switch and headphone-jack assembly. Leave the shell open for testing." : "Follow the kit maker\u2019s wiring instructions. Verify charging, USB data and both wired and wireless audio as applicable.",
+    s.connectivity === "original" ? 3 : 5,
+    s.connectivity === "original" ? 20 : 65
+  );
+  add(
+    "Fit the front, wheel, center button and LCD",
+    appearance(s, "front").name + " faceplate; " + appearance(s, "wheel").name + " wheel; " + appearance(s, "button").name + " center button. " + (s.buttonBundle !== "none" ? "Center button is ordered with the " + s.buttonBundle + "; verify its material. " : "") + "Seat flex cables and test every button before closing.",
+    3,
+    35
+  );
+  add(
+    s.preinstalled && !isKit(s) ? "Check the preinstalled jack and dock bezel" : "Fit and test the small details",
+    appearance(s, "hold").name + " " + appearance(s, "hold").body + " headphone/hold assembly and " + appearance(s, "bezel").name + " dock bezel. " + (isKit(s) ? "Confirm that these references match the chosen kit." : s.preinstalled ? "Vendor installs these with the back; test hold, audio and port alignment." : "Match the body depth, insulate the ribbon and test hold, audio and port alignment."),
+    s.preinstalled ? 2 : 3,
+    s.preinstalled ? 10 : 25
+  );
+  add(
+    "Confirm back color and factory engraving",
+    appearance(s, "finish").name + " \xB7 " + s.body + " \xB7 " + ENGRAVING_STYLES[s.engravingStyle] + (s.engravingStyle === "capacity" ? " \xB7 " + s.capacityMark : "") + ". " + (isKit(s) ? "Kit customization must be confirmed with its maker." : "Order this factory variant before assembly. Capacity text is a cosmetic marking; it does not change storage."),
+    1,
+    5
+  );
+  if (s.bluetooth === "aptx" && !isKit(s))
+    add(
+      "Wire and test the Bluetooth transmitter",
+      "Test analog audio, isolation, antenna placement and the 3.5 mm jack.",
+      5,
+      55
+    );
+  if (s.qi === "on" && s.connectivity !== "moon")
+    add(
+      "Verify and test kit Qi charging",
+      "Confirm that the chosen back kit supports Qi and provides its required charging window. Test alignment, insulation and charging heat.",
+      4,
+      40
+    );
+  if (s.taptic === "kit" && s.connectivity !== "moon")
+    add(
+      "Test kit-integrated haptics",
+      "Confirm the selected back kit includes a haptic driver and motor. Test feedback before closing.",
+      4,
+      20
+    );
+  if (s.taptic === "on" && s.connectivity !== "moon")
+    add(
+      "Install and test taptic feedback",
+      "Follow a proven driver-circuit design and insulate the motor and wiring.",
+      5,
+      40
+    );
+  if (s.airtag === "on")
+    add(
+      "Fit AirTag and regulated power",
+      "Use a regulated 3V supply and verify antenna reception before fixing the board in place.",
+      5,
+      60
+    );
+  add(
+    "Finish, test and close",
+    s.engraving ? "Confirm engraving with the shell vendor before assembly. Check clearances, charging, audio and controls before closing." : "Check clearances, charging, audio and controls. Close only when the build is fully tested.",
+    3,
+    25
+  );
   return steps;
 }
 function normalize(input, notices = []) {
   const s = { ...DEFAULT, prices: {} };
   if (!input || typeof input !== "object" || Array.isArray(input)) return s;
   const legacy = input.schemaVersion !== 2;
-  for (const k of Object.keys(CATALOG)) if (CATALOG[k].some((o2) => o2.id === input[k])) s[k] = input[k];
+  for (const k of Object.keys(CATALOG))
+    if (CATALOG[k].some((o2) => o2.id === input[k])) s[k] = input[k];
   for (const key of Object.keys(APPEARANCE)) {
     const original = input[key];
     let id = original;
-    if (legacy && key === "finish" && original === "custom") id = nearestBack(input.customFinish);
-    else if (legacy && Object.hasOwn(LEGACY_IDS[key] ?? {}, original)) id = LEGACY_IDS[key][original];
+    if (legacy && key === "finish" && original === "custom")
+      id = nearestBack(input.customFinish);
+    else if (legacy && Object.hasOwn(LEGACY_IDS[key] ?? {}, original))
+      id = LEGACY_IDS[key][original];
     if (APPEARANCE[key].some((p) => p.id === id)) {
       s[key] = id;
-      if (id !== original && LEGACY_APPROXIMATE[key]?.includes(original)) notices.push(APPEARANCE_LABELS[key] + ": " + original + " was matched to " + appearance(s, key).name + ".");
-    } else if (original !== void 0) notices.push(APPEARANCE_LABELS[key] + ": unavailable option replaced with " + appearance(s, key).name + ".");
+      if (id !== original && LEGACY_APPROXIMATE[key]?.includes(original))
+        notices.push(
+          APPEARANCE_LABELS[key] + ": " + original + " was matched to " + appearance(s, key).name + "."
+        );
+    } else if (original !== void 0)
+      notices.push(
+        APPEARANCE_LABELS[key] + ": unavailable option replaced with " + appearance(s, key).name + "."
+      );
   }
-  if (legacy && !input.hold) s.hold = s.body === "thick" ? "hs-thick-black" : "hs-thin-black";
+  if (legacy && !input.hold)
+    s.hold = s.body === "thick" ? "hs-thick-black" : "hs-thin-black";
   if (CAPACITIES.includes(input.capacity)) s.capacity = input.capacity;
-  for (const k of ["engravingPrice"]) if (Number.isFinite(input[k]) && input[k] >= 0 && input[k] <= 1e4) s[k] = input[k];
+  for (const k of ["engravingPrice"])
+    if (Number.isFinite(input[k]) && input[k] >= 0 && input[k] <= 1e4)
+      s[k] = input[k];
   s.engraving = String(input.engraving || "").slice(0, 80);
-  s.capacityMark = String(input.capacityMark ?? (legacy ? s.storage === "hdd" ? "80GB" : s.capacity >= 1024 ? s.capacity / 1024 + "TB" : s.capacity + "GB" : DEFAULT.capacityMark)).slice(0, 24);
-  if (["front", "back", "three", "exploded"].includes(input.view)) s.view = input.view;
+  s.capacityMark = String(
+    input.capacityMark ?? (legacy ? s.storage === "hdd" ? "80GB" : s.capacity >= 1024 ? s.capacity / 1024 + "TB" : s.capacity + "GB" : DEFAULT.capacityMark)
+  ).slice(0, 24);
+  if (["front", "back", "three", "exploded"].includes(input.view))
+    s.view = input.view;
   if (["system", "light", "dark"].includes(input.theme)) s.theme = input.theme;
   s.xray = input.xray === true;
-  if (["none", "front", "wheel"].includes(input.buttonBundle)) s.buttonBundle = input.buttonBundle;
+  if (["none", "front", "wheel"].includes(input.buttonBundle))
+    s.buttonBundle = input.buttonBundle;
   s.preinstalled = input.preinstalled === true;
   const styles = appearance(s, "finish").engravingStyles;
   const desired = input.engravingStyle ?? (legacy ? "blank" : DEFAULT.engravingStyle);
   s.engravingStyle = styles.includes(desired) ? desired : styles[0];
-  if (input.engravingStyle && !styles.includes(desired)) notices.push("Engraving style changed to " + ENGRAVING_STYLES[s.engravingStyle] + " for this back color.");
+  if (input.engravingStyle && !styles.includes(desired))
+    notices.push(
+      "Engraving style changed to " + ENGRAVING_STYLES[s.engravingStyle] + " for this back color."
+    );
   if (input.prices && typeof input.prices === "object") {
-    for (const [k, v] of Object.entries(input.prices)) if (/^[a-z0-9:_-]{1,240}$/.test(k) && Number.isFinite(v) && v >= 0 && v <= 1e5) s.prices[k] = v;
+    for (const [k, v] of Object.entries(input.prices))
+      if (/^[a-z0-9:_-]{1,240}$/.test(k) && Number.isFinite(v) && v >= 0 && v <= 1e5)
+        s.prices[k] = v;
   }
   if (legacy) {
     const old = input.prices ?? {};
     const migrate = (oldKey, newKey) => {
-      if (Number.isFinite(old[oldKey]) && old[oldKey] >= 0 && old[oldKey] <= 1e5) s.prices[newKey] = old[oldKey];
+      if (Number.isFinite(old[oldKey]) && old[oldKey] >= 0 && old[oldKey] <= 1e5)
+        s.prices[newKey] = old[oldKey];
     };
     migrate("front:" + input.front, appearanceKey(s, "front"));
     migrate("body:" + s.body, appearanceKey(s, "finish"));
-    if (Number.isFinite(old["body:" + s.body]) && old["body:" + s.body] >= 0 && old["body:" + s.body] <= 1e5) s.prices["back-premium:" + s.finish + ":" + s.body] = 0;
-    if (Number.isFinite(input.frontPrice) && input.frontPrice !== 22 && input.frontPrice >= 0 && input.frontPrice <= 1e5) s.prices[appearanceKey(s, "front")] = input.frontPrice;
+    if (Number.isFinite(old["body:" + s.body]) && old["body:" + s.body] >= 0 && old["body:" + s.body] <= 1e5)
+      s.prices["back-premium:" + s.finish + ":" + s.body] = 0;
+    if (Number.isFinite(input.frontPrice) && input.frontPrice !== 22 && input.frontPrice >= 0 && input.frontPrice <= 1e5)
+      s.prices[appearanceKey(s, "front")] = input.frontPrice;
     const wheelQuote = old["wheel:" + input.wheel + ":" + input.button] ?? (input.wheelPrice !== 15 ? input.wheelPrice : void 0);
     if (Number.isFinite(wheelQuote) && wheelQuote >= 0 && wheelQuote <= 1e5) {
       s.prices[appearanceKey(s, "wheel")] = wheelQuote;
       s.prices[appearanceKey(s, "button")] = 0;
-      notices.push("Your saved wheel/button assembly quote is retained; its button is shown at $0.");
+      notices.push(
+        "Your saved wheel/button assembly quote is retained; its button is shown at $0."
+      );
     }
     if (!input.hold) {
       s.prices[appearanceKey(s, "hold")] = s.body === "thick" ? Number.isFinite(old["hold:thick"]) && old["hold:thick"] >= 0 && old["hold:thick"] <= 1e5 ? old["hold:thick"] : 20 : 0;
     }
     if (!input.bezel) s.prices[appearanceKey(s, "bezel")] = 0;
-    notices.unshift("Older build restored. Matching EOE colors are selected; original small parts are treated as owned.");
+    notices.unshift(
+      "Older build restored. Matching EOE colors are selected; original small parts are treated as owned."
+    );
   }
   return s;
 }
 function decode(hash, notices = []) {
   try {
     const value = JSON.parse(decodeURIComponent(hash.replace(/^#/, "")));
-    if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Invalid configuration");
+    if (!value || typeof value !== "object" || Array.isArray(value))
+      throw new Error("Invalid configuration");
     return normalize(value, notices);
   } catch {
-    notices.push("This saved link could not be read. The default build has been restored.");
+    notices.push(
+      "This saved link could not be read. The default build has been restored."
+    );
     return normalize(null);
   }
 }
 function csv(rows) {
   const esc2 = (v) => '"' + String(v).replace(/^[=+@-]/, "'$&").replaceAll('"', '""') + '"';
-  return "\uFEFF" + [["Group", "Part", "Vendor", "Estimated USD", "Link"], ...rows.map((r) => [r.group, r.name, r.vendor, r.price.toFixed(2), r.url])].map((r) => r.map(esc2).join(",")).join("\r\n");
+  return "\uFEFF" + [
+    ["Group", "Part", "Vendor", "Estimated USD", "Link"],
+    ...rows.map((r) => [
+      r.group,
+      r.name,
+      r.vendor,
+      r.price.toFixed(2),
+      r.url
+    ])
+  ].map((r) => r.map(esc2).join(",")).join("\r\n");
 }
 var VENDORS, o, CATALOG, CAPACITIES, MEDIA_PRICES, COSMETICS, DEFAULT, PRESETS, SOURCES, isKit, hasBT, hasQi, hasTaptic, selected, rule, batteryCapacity, THICK_KIT, LOW_PROFILE, unlockedByThick, RULES, warnings, encode;
 var init_data = __esm({
   async "dist/data.js"() {
     await init_catalog();
-    VENDORS = { iflash: { name: "iFlash", url: "https://www.iflash.xyz/store/" }, eoe: { name: "Elite Obsolete Electronics", url: "https://eoe.works/" }, moon: { name: "moonlit.market", url: "https://moonlit.market/products/classic-connect-2" }, used: { name: "Used parts / eBay", url: "https://www.ebay.com/" }, apple: { name: "Apple", url: "https://www.apple.com/airtag/" }, rockbox: { name: "Rockbox", url: "https://www.rockbox.org/" }, diy: { name: "DIY parts supplier", url: "https://www.digikey.com/" } };
-    o = (id, name, price, difficulty, description, vendor = "eoe") => ({ id, name, price, difficulty, description, vendor });
+    VENDORS = {
+      iflash: { name: "iFlash", url: "https://www.iflash.xyz/store/" },
+      eoe: { name: "Elite Obsolete Electronics", url: "https://eoe.works/" },
+      moon: {
+        name: "moonlit.market",
+        url: "https://moonlit.market/products/classic-connect-2"
+      },
+      used: { name: "Used parts / eBay", url: "https://www.ebay.com/" },
+      apple: { name: "Apple", url: "https://www.apple.com/airtag/" },
+      rockbox: { name: "Rockbox", url: "https://www.rockbox.org/" },
+      diy: { name: "DIY parts supplier", url: "https://www.digikey.com/" }
+    };
+    o = (id, name, price, difficulty, description, vendor = "eoe") => ({
+      id,
+      name,
+      price,
+      difficulty,
+      description,
+      vendor
+    });
     CATALOG = {
-      board: [o("6g", "Original 6th generation", 0, 1, "Keep your 2007 80GB board. Apple firmware is limited to 128GB by LBA28 addressing.", "used"), o("7g", "7th generation \xB7 MC293 / MC297", 80, 4, "A used 2009\u20132014 board supports LBA48, removing the 128GB addressing cap. Budget includes a new purchase.", "used"), o("65g", "6.5 generation \xB7 MB565", 70, 4, "The 2008 120GB board still has the 128GB Apple-firmware flash-storage cap. It is not equivalent to the 7th generation.", "used")],
-      storage: [o("hdd", "Original 80GB hard drive", 0, 1, "Reuse the spinning drive. Original capacity, more weight and moving parts.", "used"), o("solo", "iFlash Solo", 38, 2, "One full-size SD slot; a microSD card needs an SD sleeve. Simple, low-power flash storage.", "iflash"), o("quad", "iFlash Quad", 45, 2, "Four microSD slots in the slimmest iFlash adapter. Helps leave room for a larger battery.", "iflash"), o("udual", "iFlash uDUAL", 42, 2, "Low-profile dual microSD adapter. Check card compatibility with the maker.", "iflash"), o("dual", "Generic dual microSD", 25, 3, "Generic dual microSD adapter; fit allowance only. Verify exact board and firmware support.", "diy"), o("m2", "M.2 SATA adapter", 40, 3, "M.2 SATA, not NVMe. Verify the adapter and SSD combination; extended thin batteries are not supported.", "diy"), o("sata", "iFlash Sata", 40, 3, "Uses an mSATA SSD, not M.2 or NVMe. Runs warmer and uses more power than SD. Confirm SSD compatibility.", "iflash"), o("cf", "CompactFlash adapter", 35, 3, "Uses a compatible true-IDE CompactFlash card. Card compatibility and high-capacity availability vary.", "iflash")],
-      battery: [o("stock", "Stock replacement \xB7 550\u2013650 mAh", 18, 2, "Standard replacement cell; runtime uses a nominal 650 mAh."), o("2000", "2000 mAh thin \xB7 rectangle", 25, 3, "Thin rectangle: iFlash Quad or uDUAL under a thin back. Legacy 2000 mAh selections retain this ID."), o("2000-square", "2000 mAh thin \xB7 square", 25, 3, "Thin square: Solo, Quad, uDUAL or generic dual microSD under a thin back."), o("3000-thin", "3000 mAh \xB7 thin model", 32, 3, "Thin-format cell: iFlash Quad or uDUAL under a thin back."), o("3800-thin", "3800 mAh \xB7 thin model", 38, 3, "Thin-format cell: iFlash Quad or uDUAL under a thin back."), o("3000", "3000 mAh \xB7 thick model", 32, 3, "Thick-format cell requires a thick back; distinct from the thin 3000 mAh product."), o("3800", "3800 mAh \xB7 thick model", 38, 3, "Thick-format cell requires a thick back. Check actual cell dimensions and capacity.")],
-      body: [o("thin", "Thin \xB7 10.5 mm", 20, 2, "Matches your original 80GB enclosure. Less room for batteries and wireless boards."), o("thick", "Thick \xB7 13.5 mm", 25, 3, "Adds internal depth. Usually needs a matching thick headphone-jack / hold-switch assembly.")],
-      connectivity: [o("original", "Original 30-pin", 0, 1, "Keep charging, sync, docks and accessories through the original connector."), o("usbc", "USB-C dock replacement", 100, 5, "USB-C charging and USB 2.0 data conversion. This replacement requires intensive microsoldering and removes the original 30-pin connector."), o("eoe", "USB-C + Bluetooth kit", 150, 4, "Planning allowance for a combined back kit. Confirm board fit, codec, data and included parts with the seller; aptX is not assumed."), o("moon", "Classic Connect 2", 140, 4, "Custom enclosure, included battery, Bluetooth 5.2 with aptX, Qi and haptics. Retains 30-pin. USB-C data needs three soldered wires. Price is a $140 planning allowance.", "moon")],
-      screen: [o("keep", "Keep original LCD", 0, 1, "Reuse the existing working screen. No verified higher-brightness upgrade is listed."), o("stock", "Stock replacement LCD", 25, 3, "Replace a damaged or dim display with a standard compatible A1238 LCD.")],
-      bluetooth: [o("off", "No additional Bluetooth", 0, 1, "Keep the original wired audio path."), o("aptx", "Internal Bluetooth 5.x \xB7 aptX", 40, 5, "DIY transmitter tapping analog audio; the 3.5 mm jack stays usable if wired correctly. Confirm aptX codec support on both devices.", "diy")],
-      qi: [o("off", "No additional Qi", 0, 1, "Charge by cable."), o("on", "Kit-integrated Qi", 15, 4, "Available only with a thick-body back kit. Classic Connect 2 includes Qi; confirm this optional feature with the EOE kit seller.")],
-      airtag: [o("off", "No AirTag", 0, 1, "Leave the internal space available."), o("on", "Integrated AirTag", 35, 5, "A disassembled AirTag needs regulated 3V power, insulation and internal space. Never connect directly to the iPod lithium cell.", "apple")],
-      taptic: [o("off", "Original wheel feedback", 0, 1, "Keep the original audible click."), o("on", "Taptic engine", 25, 5, "DIY haptic feedback driven from the wheel-click signal. Requires soldering, a suitable driver circuit and room for the motor.", "diy"), o("kit", "Kit-integrated haptics", 25, 4, "Available through a thick-body kit. Included with Classic Connect 2; confirm the EOE kit configuration.")],
-      firmware: [o("apple", "Apple firmware", 0, 1, "Familiar menus, ALAC and gapless playback. FLAC needs conversion. Sync with compatible desktop software.", "apple"), o("rockbox", "Rockbox \xB7 dual boot", 0, 3, "FLAC, ALAC, gapless playback and themes. Dual boot is supported; battery capacity adjusts runtime estimates, not the battery percentage gauge.", "rockbox")],
-      bypass: [o("off", "Standard audio circuit", 0, 1, "Keep the Cirrus-based audio path."), o("on", "Audio capacitor bypass", 0, 5, "Informational only: the common iMod capacitor bypass is for Wolfson-based 5th / 5.5th gen boards, not these 6th / 7th gen boards.", "diy")]
+      board: [
+        o(
+          "6g",
+          "Original 6th generation",
+          0,
+          1,
+          "Keep your 2007 80GB board. Apple firmware is limited to 128GB by LBA28 addressing.",
+          "used"
+        ),
+        o(
+          "7g",
+          "7th generation \xB7 MC293 / MC297",
+          80,
+          4,
+          "A used 2009\u20132014 board supports LBA48, removing the 128GB addressing cap. Budget includes a new purchase.",
+          "used"
+        ),
+        o(
+          "65g",
+          "6.5 generation \xB7 MB565",
+          70,
+          4,
+          "The 2008 120GB board still has the 128GB Apple-firmware flash-storage cap. It is not equivalent to the 7th generation.",
+          "used"
+        )
+      ],
+      storage: [
+        o(
+          "hdd",
+          "Original 80GB hard drive",
+          0,
+          1,
+          "Reuse the spinning drive. Original capacity, more weight and moving parts.",
+          "used"
+        ),
+        o(
+          "solo",
+          "iFlash Solo",
+          38,
+          2,
+          "One full-size SD slot; a microSD card needs an SD sleeve. Simple, low-power flash storage.",
+          "iflash"
+        ),
+        o(
+          "quad",
+          "iFlash Quad",
+          45,
+          2,
+          "Four microSD slots in the slimmest iFlash adapter. Helps leave room for a larger battery.",
+          "iflash"
+        ),
+        o(
+          "udual",
+          "iFlash uDUAL",
+          42,
+          2,
+          "Low-profile dual microSD adapter. Check card compatibility with the maker.",
+          "iflash"
+        ),
+        o(
+          "dual",
+          "Generic dual microSD",
+          25,
+          3,
+          "Generic dual microSD adapter; fit allowance only. Verify exact board and firmware support.",
+          "diy"
+        ),
+        o(
+          "m2",
+          "M.2 SATA adapter",
+          40,
+          3,
+          "M.2 SATA, not NVMe. Verify the adapter and SSD combination; extended thin batteries are not supported.",
+          "diy"
+        ),
+        o(
+          "sata",
+          "iFlash Sata",
+          40,
+          3,
+          "Uses an mSATA SSD, not M.2 or NVMe. Runs warmer and uses more power than SD. Confirm SSD compatibility.",
+          "iflash"
+        ),
+        o(
+          "cf",
+          "CompactFlash adapter",
+          35,
+          3,
+          "Uses a compatible true-IDE CompactFlash card. Card compatibility and high-capacity availability vary.",
+          "iflash"
+        )
+      ],
+      battery: [
+        o(
+          "stock",
+          "Stock replacement \xB7 550\u2013650 mAh",
+          18,
+          2,
+          "Standard replacement cell; runtime uses a nominal 650 mAh."
+        ),
+        o(
+          "2000",
+          "2000 mAh thin \xB7 rectangle",
+          25,
+          3,
+          "Thin rectangle: iFlash Quad or uDUAL under a thin back. Legacy 2000 mAh selections retain this ID."
+        ),
+        o(
+          "2000-square",
+          "2000 mAh thin \xB7 square",
+          25,
+          3,
+          "Thin square: Solo, Quad, uDUAL or generic dual microSD under a thin back."
+        ),
+        o(
+          "3000-thin",
+          "3000 mAh \xB7 thin model",
+          32,
+          3,
+          "Thin-format cell: iFlash Quad or uDUAL under a thin back."
+        ),
+        o(
+          "3800-thin",
+          "3800 mAh \xB7 thin model",
+          38,
+          3,
+          "Thin-format cell: iFlash Quad or uDUAL under a thin back."
+        ),
+        o(
+          "3000",
+          "3000 mAh \xB7 thick model",
+          32,
+          3,
+          "Thick-format cell requires a thick back; distinct from the thin 3000 mAh product."
+        ),
+        o(
+          "3800",
+          "3800 mAh \xB7 thick model",
+          38,
+          3,
+          "Thick-format cell requires a thick back. Check actual cell dimensions and capacity."
+        )
+      ],
+      body: [
+        o(
+          "thin",
+          "Thin \xB7 10.5 mm",
+          20,
+          2,
+          "Matches your original 80GB enclosure. Less room for batteries and wireless boards."
+        ),
+        o(
+          "thick",
+          "Thick \xB7 13.5 mm",
+          25,
+          3,
+          "Adds internal depth. Usually needs a matching thick headphone-jack / hold-switch assembly."
+        )
+      ],
+      connectivity: [
+        o(
+          "original",
+          "Original 30-pin",
+          0,
+          1,
+          "Keep charging, sync, docks and accessories through the original connector."
+        ),
+        o(
+          "usbc",
+          "USB-C dock replacement",
+          100,
+          5,
+          "USB-C charging and USB 2.0 data conversion. This replacement requires intensive microsoldering and removes the original 30-pin connector."
+        ),
+        o(
+          "eoe",
+          "USB-C + Bluetooth kit",
+          150,
+          4,
+          "Planning allowance for a combined back kit. Confirm board fit, codec, data and included parts with the seller; aptX is not assumed."
+        ),
+        o(
+          "moon",
+          "Classic Connect 2",
+          140,
+          4,
+          "Custom enclosure, included battery, Bluetooth 5.2 with aptX, Qi and haptics. Retains 30-pin. USB-C data needs three soldered wires. Price is a $140 planning allowance.",
+          "moon"
+        )
+      ],
+      screen: [
+        o(
+          "keep",
+          "Keep original LCD",
+          0,
+          1,
+          "Reuse the existing working screen. No verified higher-brightness upgrade is listed."
+        ),
+        o(
+          "stock",
+          "Stock replacement LCD",
+          25,
+          3,
+          "Replace a damaged or dim display with a standard compatible A1238 LCD."
+        )
+      ],
+      bluetooth: [
+        o(
+          "off",
+          "No additional Bluetooth",
+          0,
+          1,
+          "Keep the original wired audio path."
+        ),
+        o(
+          "aptx",
+          "Internal Bluetooth 5.x \xB7 aptX",
+          40,
+          5,
+          "DIY transmitter tapping analog audio; the 3.5 mm jack stays usable if wired correctly. Confirm aptX codec support on both devices.",
+          "diy"
+        )
+      ],
+      qi: [
+        o("off", "No additional Qi", 0, 1, "Charge by cable."),
+        o(
+          "on",
+          "Kit-integrated Qi",
+          15,
+          4,
+          "Available only with a thick-body back kit. Classic Connect 2 includes Qi; confirm this optional feature with the EOE kit seller."
+        )
+      ],
+      airtag: [
+        o("off", "No AirTag", 0, 1, "Leave the internal space available."),
+        o(
+          "on",
+          "Integrated AirTag",
+          35,
+          5,
+          "A disassembled AirTag needs regulated 3V power, insulation and internal space. Never connect directly to the iPod lithium cell.",
+          "apple"
+        )
+      ],
+      taptic: [
+        o(
+          "off",
+          "Original wheel feedback",
+          0,
+          1,
+          "Keep the original audible click."
+        ),
+        o(
+          "on",
+          "Taptic engine",
+          25,
+          5,
+          "DIY haptic feedback driven from the wheel-click signal. Requires soldering, a suitable driver circuit and room for the motor.",
+          "diy"
+        ),
+        o(
+          "kit",
+          "Kit-integrated haptics",
+          25,
+          4,
+          "Available through a thick-body kit. Included with Classic Connect 2; confirm the EOE kit configuration."
+        )
+      ],
+      firmware: [
+        o(
+          "apple",
+          "Apple firmware",
+          0,
+          1,
+          "Familiar menus, ALAC and gapless playback. FLAC needs conversion. Sync with compatible desktop software.",
+          "apple"
+        ),
+        o(
+          "rockbox",
+          "Rockbox \xB7 dual boot",
+          0,
+          3,
+          "FLAC, ALAC, gapless playback and themes. Dual boot is supported; battery capacity adjusts runtime estimates, not the battery percentage gauge.",
+          "rockbox"
+        )
+      ],
+      bypass: [
+        o(
+          "off",
+          "Standard audio circuit",
+          0,
+          1,
+          "Keep the Cirrus-based audio path."
+        ),
+        o(
+          "on",
+          "Audio capacitor bypass",
+          0,
+          5,
+          "Informational only: the common iMod capacitor bypass is for Wolfson-based 5th / 5.5th gen boards, not these 6th / 7th gen boards.",
+          "diy"
+        )
+      ]
     };
     CAPACITIES = [128, 256, 512, 1024, 2048];
-    MEDIA_PRICES = { udual: [15, 25, 45, 95, 180], dual: [15, 25, 45, 95, 180], m2: [20, 30, 50, 90, 180], solo: [15, 25, 45, 95, 185], quad: [15, 25, 45, 95, 180], sata: [20, 30, 50, 90, 180], cf: [100, 190, 350, 700, 1400] };
-    COSMETICS = { front: { price: 22, difficulty: 3, vendor: "eoe", description: "Clear plastic reveals the selected internals. Check replacement faceplate fit for A1238." }, wheel: { price: 15, difficulty: 3, vendor: "eoe", description: "Check wheel generation compatibility. Ring and center colors are priced as one assembly." }, engraving: { price: 0, difficulty: 1, vendor: "eoe", description: "Confirm engraving service with the shell vendor; enter their quote in the parts list." } };
-    DEFAULT = { schemaVersion: 2, board: "7g", storage: "quad", capacity: 512, battery: "2000", body: "thin", finish: "bp-silver-stock-stainless", front: "fp-metal-silver", wheel: "cw-white", button: "cb-metal-silver", bezel: "db-white", hold: "hs-thin-black", buttonBundle: "none", preinstalled: false, engravingStyle: "universal", capacityMark: "512GB", screen: "keep", connectivity: "original", bluetooth: "off", qi: "off", airtag: "off", taptic: "off", firmware: "apple", bypass: "off", engraving: "", engravingPrice: 0, prices: {}, view: "three", xray: false, theme: "system" };
-    PRESETS = { stock: { ...DEFAULT, board: "6g", storage: "hdd", capacity: 128, battery: "stock", capacityMark: "80GB" }, daily: { ...DEFAULT, board: "7g", storage: "quad", capacity: 512, battery: "3000", body: "thick", hold: "hs-thick-black", connectivity: "eoe", taptic: "on", firmware: "rockbox", front: "fp-metal-black", wheel: "cw-black", button: "cb-metal-black" }, audiophile: { ...DEFAULT, board: "7g", storage: "sata", capacity: 512, battery: "3000", body: "thick", hold: "hs-thick-black", firmware: "rockbox" } };
-    SOURCES = [["iFlash board compatibility", "https://www.iflash.xyz/store/iflash-compatibility/"], ["iFlash battery fit guide", "https://www.iflash.xyz/3rd-party-extended-battery-guide/"], ["Rockbox iPod Classic manual", "https://download.rockbox.org/daily/manual/rockbox-ipod6g/rockbox-build.html"], ["Classic Connect 2 specifications", "https://moonlit.market/products/classic-connect-2"], ["Classic Connect 2 enclosure and ports", "https://moonlit.market/pages/classic-connect-2"], ["Classic Connect 2 adapter fit", "https://moonlit.market/pages/compatibility"]];
+    MEDIA_PRICES = {
+      udual: [15, 25, 45, 95, 180],
+      dual: [15, 25, 45, 95, 180],
+      m2: [20, 30, 50, 90, 180],
+      solo: [15, 25, 45, 95, 185],
+      quad: [15, 25, 45, 95, 180],
+      sata: [20, 30, 50, 90, 180],
+      cf: [100, 190, 350, 700, 1400]
+    };
+    COSMETICS = {
+      front: {
+        price: 22,
+        difficulty: 3,
+        vendor: "eoe",
+        description: "Clear plastic reveals the selected internals. Check replacement faceplate fit for A1238."
+      },
+      wheel: {
+        price: 15,
+        difficulty: 3,
+        vendor: "eoe",
+        description: "Check wheel generation compatibility. Ring and center colors are priced as one assembly."
+      },
+      engraving: {
+        price: 0,
+        difficulty: 1,
+        vendor: "eoe",
+        description: "Confirm engraving service with the shell vendor; enter their quote in the parts list."
+      }
+    };
+    DEFAULT = {
+      schemaVersion: 2,
+      board: "7g",
+      storage: "quad",
+      capacity: 512,
+      battery: "2000",
+      body: "thin",
+      finish: "bp-silver-stock-stainless",
+      front: "fp-metal-silver",
+      wheel: "cw-white",
+      button: "cb-metal-silver",
+      bezel: "db-white",
+      hold: "hs-thin-black",
+      buttonBundle: "none",
+      preinstalled: false,
+      engravingStyle: "universal",
+      capacityMark: "512GB",
+      screen: "keep",
+      connectivity: "original",
+      bluetooth: "off",
+      qi: "off",
+      airtag: "off",
+      taptic: "off",
+      firmware: "apple",
+      bypass: "off",
+      engraving: "",
+      engravingPrice: 0,
+      prices: {},
+      view: "three",
+      xray: false,
+      theme: "system"
+    };
+    PRESETS = {
+      stock: {
+        ...DEFAULT,
+        board: "6g",
+        storage: "hdd",
+        capacity: 128,
+        battery: "stock",
+        capacityMark: "80GB"
+      },
+      daily: {
+        ...DEFAULT,
+        board: "7g",
+        storage: "quad",
+        capacity: 512,
+        battery: "3000",
+        body: "thick",
+        hold: "hs-thick-black",
+        connectivity: "eoe",
+        taptic: "on",
+        firmware: "rockbox",
+        front: "fp-metal-black",
+        wheel: "cw-black",
+        button: "cb-metal-black"
+      },
+      audiophile: {
+        ...DEFAULT,
+        board: "7g",
+        storage: "sata",
+        capacity: 512,
+        battery: "3000",
+        body: "thick",
+        hold: "hs-thick-black",
+        firmware: "rockbox"
+      }
+    };
+    SOURCES = [
+      [
+        "iFlash board compatibility",
+        "https://www.iflash.xyz/store/iflash-compatibility/"
+      ],
+      [
+        "iFlash battery fit guide",
+        "https://www.iflash.xyz/3rd-party-extended-battery-guide/"
+      ],
+      [
+        "Rockbox iPod Classic manual",
+        "https://download.rockbox.org/daily/manual/rockbox-ipod6g/rockbox-build.html"
+      ],
+      [
+        "Classic Connect 2 specifications",
+        "https://moonlit.market/products/classic-connect-2"
+      ],
+      [
+        "Classic Connect 2 enclosure and ports",
+        "https://moonlit.market/pages/classic-connect-2"
+      ],
+      [
+        "Classic Connect 2 adapter fit",
+        "https://moonlit.market/pages/compatibility"
+      ]
+    ];
     isKit = (s) => ["eoe", "moon"].includes(s.connectivity);
     hasBT = (s) => isKit(s) || s.bluetooth === "aptx";
     hasQi = (s) => s.connectivity === "moon" || s.qi === "on";
     hasTaptic = (s) => s.connectivity === "moon" || s.taptic !== "off";
     selected = (s, k) => CATALOG[k].find((x) => x.id === s[k]);
-    rule = (id, test, level, title, message, fix) => ({ id, test, level, title, message, fix });
+    rule = (id, test, level, title, message, fix) => ({
+      id,
+      test,
+      level,
+      title,
+      message,
+      fix
+    });
     batteryCapacity = (s) => s.connectivity === "moon" ? 2e3 : s.battery === "stock" ? 650 : parseInt(s.battery, 10);
     THICK_KIT = "Requires thick body. These kits are built into a thick back plate.";
     LOW_PROFILE = "This battery only fits with low-profile adapters (iFlash Quad or uDUAL) under a thin back.";
     unlockedByThick = (key, id) => key === "connectivity" && ["eoe", "moon"].includes(id) || key === "battery" && ["3000", "3800"].includes(id) || key === "airtag" && id === "on" || key === "qi" && id === "on" || key === "taptic" && id === "kit";
     RULES = [
-      rule("crowded", (s) => s.body === "thick" && s.airtag === "on" && batteryCapacity(s) >= 3e3 && hasBT(s), "warning", "Tight internal layout", "Tight fit. Plan the internal layout before ordering.", { airtag: "off" }),
-      rule("button-fit", (s) => appearance(s, "front").material === "metal" !== (appearance(s, "button").material === "metal"), "warning", "Faceplate and center button materials do not match", "Metal faceplates take metal buttons. Plastic and crystal-clear faceplates take plastic or crystal-clear buttons. Select a matching button before ordering."),
-      rule("hold-fit", (s) => !isKit(s) && appearance(s, "hold").body !== s.body, "warning", "Headphone jack / hold assembly has the wrong depth", "Match the assembly to your thin or thick back. The U2 black-and-red assembly in this catalog is thin only. The suggested fix uses black when no matching U2 variant exists.", (s) => ({ hold: "hs-" + s.body + "-" + (s.hold.endsWith("-white") ? "white" : "black") })),
-      rule("bundle-variant", (s) => s.buttonBundle !== "none" || s.preinstalled, "info", "Bundle prices are planning allowances", "Center-button bundles add an estimated $8 to the chosen faceplate or wheel; preinstalled jack and bezel add $20 to a standard back. Confirm the selected colors/materials are offered together. Included components are not charged again."),
-      rule("kit-cosmetics", (s) => isKit(s), "info", "Back kit controls its own enclosure and small parts", "Catalog back color, engraving style, bezel and hold assembly are appearance references for this kit. They appear as included / verify in the parts list, not additional purchases. Confirm those options with the kit maker."),
-      rule("lba", (s) => s.board !== "7g" && s.storage !== "hdd" && s.capacity > 128, "warning", "Apple firmware stops at 128GB", "Both 6th and 6.5th generation boards use LBA28. Rockbox-only configurations can work around this; Apple dual boot cannot access the larger layout reliably. Choose a 7th-generation board for full capacity in Apple firmware.", { board: "7g" }),
-      rule("moonairtag", (s) => s.airtag === "on" && s.connectivity === "moon", "warning", "AirTag fit is unverified in Classic Connect 2", "The kit uses a fixed enclosure and battery layout. Changing the standard thin/thick selection does not create space. Remove AirTag or confirm a custom layout with the maker.", { airtag: "off" }),
-      rule("dock", (s) => s.connectivity === "usbc", "info", "30-pin accessories will no longer fit", "A USB-C conversion replaces the 30-pin connection. Existing docks, line-out cables and other 30-pin accessories are not retained."),
-      rule("bypass", (s) => s.bypass === "on", "info", "Capacitor bypass does not apply", "The usual Wolfson iMod procedure targets 5th / 5.5th gen boards. It is not a supported part of this A1238 build and is excluded from cost and assembly."),
-      rule("hdd", (s) => s.storage === "hdd" && batteryCapacity(s) >= 3e3 && s.connectivity !== "moon", "warning", "Hard drive and large cell may collide", "A thick back is not a fit guarantee with the original hard drive. Use flash storage or a stock-size cell.", { storage: "quad" }),
-      rule("moonhdd", (s) => s.connectivity === "moon" && s.storage === "hdd", "warning", "Classic Connect 2 requires flash storage", "Its enclosure does not fit the original mechanical hard drive. Check the maker\u2019s approved adapter list, then select a supported flash setup."),
-      rule("mooncap", (s) => s.connectivity === "moon" && s.capacity > 1024, "warning", "Beyond the kit\u2019s advertised capacity", "The kit advertises up to 1TB. Confirm a larger configuration with the maker before purchasing.", { capacity: 1024 }),
-      rule("moonsata", (s) => s.connectivity === "moon" && ["sata", "quad", "solo"].includes(s.storage), "warning", "Confirm the kit\u2019s adapter fit", "The maker lists CF-ZIF and other specific adapters. Solo needs PCB trimming; Quad and Sata are not on the approved list. Check the vendor compatibility guide before buying.", void 0),
-      rule("eoedock", (s) => s.connectivity === "eoe", "info", "Confirm kit dock and codec support", "The EOE listing confirms USB-C and Bluetooth, but does not establish aptX, Qi, exact depth or retained dock compatibility. Verify these with the seller."),
-      rule("moonparts", (s) => s.connectivity === "moon", "info", "Kit battery, haptics, Qi and Bluetooth are included", "The kit is about 0.5 mm thicker than a thin Classic and retains 30-pin. Battery, back, Bluetooth, Qi and taptic costs are replaced by the kit. USB-C data requires soldering; exterior finishes are previews only."),
-      rule("tracks", (s) => s.storage !== "hdd" && s.capacity >= 1024, "info", "Storage capacity is not a track-count guarantee", "Apple firmware has library / RAM limits; large libraries can fail before the drive is full. Rockbox handles files differently. Confirm card compatibility and format."),
-      rule("cfmedia", (s) => s.storage === "cf" && s.capacity >= 512, "warning", "High-capacity CompactFlash is not a confirmed kit", "These are budget placeholders, not verified available compatible cards. Select a tested card from the adapter maker or use iFlash Quad.", { storage: "quad" })
+      rule(
+        "crowded",
+        (s) => s.body === "thick" && s.airtag === "on" && batteryCapacity(s) >= 3e3 && hasBT(s),
+        "warning",
+        "Tight internal layout",
+        "Tight fit. Plan the internal layout before ordering.",
+        { airtag: "off" }
+      ),
+      rule(
+        "button-fit",
+        (s) => appearance(s, "front").material === "metal" !== (appearance(s, "button").material === "metal"),
+        "warning",
+        "Faceplate and center button materials do not match",
+        "Metal faceplates take metal buttons. Plastic and crystal-clear faceplates take plastic or crystal-clear buttons. Select a matching button before ordering."
+      ),
+      rule(
+        "hold-fit",
+        (s) => !isKit(s) && appearance(s, "hold").body !== s.body,
+        "warning",
+        "Headphone jack / hold assembly has the wrong depth",
+        "Match the assembly to your thin or thick back. The U2 black-and-red assembly in this catalog is thin only. The suggested fix uses black when no matching U2 variant exists.",
+        (s) => ({
+          hold: "hs-" + s.body + "-" + (s.hold.endsWith("-white") ? "white" : "black")
+        })
+      ),
+      rule(
+        "bundle-variant",
+        (s) => s.buttonBundle !== "none" || s.preinstalled,
+        "info",
+        "Bundle prices are planning allowances",
+        "Center-button bundles add an estimated $8 to the chosen faceplate or wheel; preinstalled jack and bezel add $20 to a standard back. Confirm the selected colors/materials are offered together. Included components are not charged again."
+      ),
+      rule(
+        "kit-cosmetics",
+        (s) => isKit(s),
+        "info",
+        "Back kit controls its own enclosure and small parts",
+        "Catalog back color, engraving style, bezel and hold assembly are appearance references for this kit. They appear as included / verify in the parts list, not additional purchases. Confirm those options with the kit maker."
+      ),
+      rule(
+        "lba",
+        (s) => s.board !== "7g" && s.storage !== "hdd" && s.capacity > 128,
+        "warning",
+        "Apple firmware stops at 128GB",
+        "Both 6th and 6.5th generation boards use LBA28. Rockbox-only configurations can work around this; Apple dual boot cannot access the larger layout reliably. Choose a 7th-generation board for full capacity in Apple firmware.",
+        { board: "7g" }
+      ),
+      rule(
+        "moonairtag",
+        (s) => s.airtag === "on" && s.connectivity === "moon",
+        "warning",
+        "AirTag fit is unverified in Classic Connect 2",
+        "The kit uses a fixed enclosure and battery layout. Changing the standard thin/thick selection does not create space. Remove AirTag or confirm a custom layout with the maker.",
+        { airtag: "off" }
+      ),
+      rule(
+        "dock",
+        (s) => s.connectivity === "usbc",
+        "info",
+        "30-pin accessories will no longer fit",
+        "A USB-C conversion replaces the 30-pin connection. Existing docks, line-out cables and other 30-pin accessories are not retained."
+      ),
+      rule(
+        "bypass",
+        (s) => s.bypass === "on",
+        "info",
+        "Capacitor bypass does not apply",
+        "The usual Wolfson iMod procedure targets 5th / 5.5th gen boards. It is not a supported part of this A1238 build and is excluded from cost and assembly."
+      ),
+      rule(
+        "hdd",
+        (s) => s.storage === "hdd" && batteryCapacity(s) >= 3e3 && s.connectivity !== "moon",
+        "warning",
+        "Hard drive and large cell may collide",
+        "A thick back is not a fit guarantee with the original hard drive. Use flash storage or a stock-size cell.",
+        { storage: "quad" }
+      ),
+      rule(
+        "moonhdd",
+        (s) => s.connectivity === "moon" && s.storage === "hdd",
+        "warning",
+        "Classic Connect 2 requires flash storage",
+        "Its enclosure does not fit the original mechanical hard drive. Check the maker\u2019s approved adapter list, then select a supported flash setup."
+      ),
+      rule(
+        "mooncap",
+        (s) => s.connectivity === "moon" && s.capacity > 1024,
+        "warning",
+        "Beyond the kit\u2019s advertised capacity",
+        "The kit advertises up to 1TB. Confirm a larger configuration with the maker before purchasing.",
+        { capacity: 1024 }
+      ),
+      rule(
+        "moonsata",
+        (s) => s.connectivity === "moon" && ["sata", "quad", "solo"].includes(s.storage),
+        "warning",
+        "Confirm the kit\u2019s adapter fit",
+        "The maker lists CF-ZIF and other specific adapters. Solo needs PCB trimming; Quad and Sata are not on the approved list. Check the vendor compatibility guide before buying.",
+        void 0
+      ),
+      rule(
+        "eoedock",
+        (s) => s.connectivity === "eoe",
+        "info",
+        "Confirm kit dock and codec support",
+        "The EOE listing confirms USB-C and Bluetooth, but does not establish aptX, Qi, exact depth or retained dock compatibility. Verify these with the seller."
+      ),
+      rule(
+        "moonparts",
+        (s) => s.connectivity === "moon",
+        "info",
+        "Kit battery, haptics, Qi and Bluetooth are included",
+        "The kit is about 0.5 mm thicker than a thin Classic and retains 30-pin. Battery, back, Bluetooth, Qi and taptic costs are replaced by the kit. USB-C data requires soldering; exterior finishes are previews only."
+      ),
+      rule(
+        "tracks",
+        (s) => s.storage !== "hdd" && s.capacity >= 1024,
+        "info",
+        "Storage capacity is not a track-count guarantee",
+        "Apple firmware has library / RAM limits; large libraries can fail before the drive is full. Rockbox handles files differently. Confirm card compatibility and format."
+      ),
+      rule(
+        "cfmedia",
+        (s) => s.storage === "cf" && s.capacity >= 512,
+        "warning",
+        "High-capacity CompactFlash is not a confirmed kit",
+        "These are budget placeholders, not verified available compatible cards. Select a tested card from the adapter maker or use iFlash Quad.",
+        { storage: "quad" }
+      )
     ];
-    warnings = (s) => [...RULES.filter((r) => r.test(s)).map(({ test, fix, ...r }) => ({ ...r, fix: typeof fix === "function" ? fix(s) : fix })), ...["connectivity", "battery", "storage", "qi", "taptic", "airtag", "finish"].flatMap((key) => {
-      const c = optionConstraint(s, key, s[key]);
-      return c ? [{ id: "fit-" + key, level: "warning", title: (key === "finish" ? "Backplate" : key[0].toUpperCase() + key.slice(1)) + " conflicts with this build", ...c }] : [];
-    })];
+    warnings = (s) => [
+      ...RULES.filter((r) => r.test(s)).map(({ test, fix, ...r }) => ({
+        ...r,
+        fix: typeof fix === "function" ? fix(s) : fix
+      })),
+      ...[
+        "connectivity",
+        "battery",
+        "storage",
+        "qi",
+        "taptic",
+        "airtag",
+        "finish"
+      ].flatMap((key) => {
+        const c = optionConstraint(s, key, s[key]);
+        return c ? [
+          {
+            id: "fit-" + key,
+            level: "warning",
+            title: (key === "finish" ? "Backplate" : key[0].toUpperCase() + key.slice(1)) + " conflicts with this build",
+            ...c
+          }
+        ] : [];
+      })
+    ];
     encode = (s) => encodeURIComponent(JSON.stringify(s));
   }
 });
@@ -2566,7 +3443,8 @@ function finishPlateNormals(geometry) {
   const g = toCreasedNormals(geometry, Math.PI / 3), p = g.attributes.position, n = g.attributes.normal;
   for (let i = 0; i < p.count; i += 3) {
     const a = new THREE.Vector3().fromBufferAttribute(p, i), b = new THREE.Vector3().fromBufferAttribute(p, i + 1), c = new THREE.Vector3().fromBufferAttribute(p, i + 2), v = b.sub(a).cross(c.sub(a)).normalize();
-    if (Math.abs(v.z) > 0.99999) for (let j = 0; j < 3; j++) n.setXYZ(i + j, 0, 0, Math.sign(v.z));
+    if (Math.abs(v.z) > 0.99999)
+      for (let j = 0; j < 3; j++) n.setXYZ(i + j, 0, 0, Math.sign(v.z));
   }
   return g;
 }
@@ -2588,9 +3466,20 @@ function readShellCache(scene) {
   const { schemaVersion, plate, wall } = scene.userData;
   const variants = /* @__PURE__ */ new Map();
   scene.traverse((mesh) => {
-    if (mesh.isMesh) variants.set(mesh.userData.variantKey, { ...mesh.userData, geometry: mesh.geometry });
+    if (mesh.isMesh)
+      variants.set(mesh.userData.variantKey, {
+        ...mesh.userData,
+        geometry: mesh.geometry
+      });
   });
-  if (schemaVersion !== 1 || !plate || wall !== 0.02 || variants.size !== 6 || !["thin", "thick"].every((body) => ["original", "usbc", "moon"].every((layout) => variants.has(body + ":" + layout)))) throw new Error("The baked shell asset is incomplete. Regenerate it with npm run bake:shells.");
+  if (schemaVersion !== 1 || !plate || wall !== 0.02 || variants.size !== 6 || !["thin", "thick"].every(
+    (body) => ["original", "usbc", "moon"].every(
+      (layout) => variants.has(body + ":" + layout)
+    )
+  ))
+    throw new Error(
+      "The baked shell asset is incomplete. Regenerate it with npm run bake:shells."
+    );
   return { variants, plate, wall };
 }
 var init_model_geometry = __esm({
@@ -2619,18 +3508,36 @@ async function createViewer(host, initial) {
   const camera = new THREE2.PerspectiveCamera(36, 1, 0.1, 80);
   camera.position.set(4, 1.8, 8);
   const renderer = new THREE2.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, matchMedia("(max-width: 700px)").matches ? 1.25 : 1.5));
+  renderer.setPixelRatio(
+    Math.min(
+      devicePixelRatio,
+      matchMedia("(max-width: 700px)").matches ? 1.25 : 1.5
+    )
+  );
   renderer.setSize(host.clientWidth, host.clientHeight);
   renderer.outputColorSpace = THREE2.SRGBColorSpace;
   renderer.toneMapping = THREE2.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.9;
   host.append(renderer.domElement);
-  renderer.domElement.setAttribute("aria-label", "Interactive 3D iPod. Drag to rotate and scroll to zoom.");
+  renderer.domElement.setAttribute(
+    "aria-label",
+    "Interactive 3D iPod. Drag to rotate and scroll to zoom."
+  );
   renderer.domElement.tabIndex = 0;
   const assetStarted = performance.now();
   let gltf, baked, hdr;
   try {
-    [gltf, baked, hdr] = await Promise.all([new GLTFLoader().loadAsync(window.IPOD_MODEL_DATA || "./assets/ipod_classic.glb"), new GLTFLoader().loadAsync(window.IPOD_SHELL_DATA || "./assets/shells.glb"), new RGBELoader().loadAsync(window.IPOD_HDR_DATA || "./assets/studio_small_09_1k.hdr")]);
+    [gltf, baked, hdr] = await Promise.all([
+      new GLTFLoader().loadAsync(
+        window.IPOD_MODEL_DATA || "./assets/ipod_classic.glb"
+      ),
+      new GLTFLoader().loadAsync(
+        window.IPOD_SHELL_DATA || "./assets/shells.glb"
+      ),
+      new RGBELoader().loadAsync(
+        window.IPOD_HDR_DATA || "./assets/studio_small_09_1k.hdr"
+      )
+    ]);
   } catch (error) {
     renderer.dispose();
     host.replaceChildren();
@@ -2688,23 +3595,34 @@ async function createViewer(host, initial) {
   function verticalUV(g) {
     g.computeBoundingBox();
     const b = g.boundingBox, p = g.attributes.position, uv = [];
-    for (let i = 0; i < p.count; i++) uv.push((p.getX(i) - b.min.x) / Math.max(1e-3, b.max.x - b.min.x), (p.getY(i) - b.min.y) / Math.max(1e-3, b.max.y - b.min.y));
+    for (let i = 0; i < p.count; i++)
+      uv.push(
+        (p.getX(i) - b.min.x) / Math.max(1e-3, b.max.x - b.min.x),
+        (p.getY(i) - b.min.y) / Math.max(1e-3, b.max.y - b.min.y)
+      );
     g.setAttribute("uv", new THREE2.Float32BufferAttribute(uv, 2));
   }
   gltf.scene.traverse((node) => {
-    if (!node.isMesh || !["Material.006", "Screen", "Wheel"].includes(node.material.name)) return;
+    if (!node.isMesh || !["Material.006", "Screen", "Wheel"].includes(node.material.name))
+      return;
     let geometry = node.geometry.clone().applyMatrix4(node.matrixWorld);
     geometry.translate(-origin.x, -origin.y, -origin.z);
     const name = node.material.name;
     if (name === "Material.006") geometry = finishPlateNormals(geometry);
-    let mat = new THREE2.MeshPhysicalMaterial({ color: 11184810, roughness: 0.25, metalness: 0.5 });
+    let mat = new THREE2.MeshPhysicalMaterial({
+      color: 11184810,
+      roughness: 0.25,
+      metalness: 0.5
+    });
     if (name === "Material.006") {
       const flat = geometry.index ? geometry.toNonIndexed() : geometry;
       const p = flat.attributes.position;
       const a = [], b = [];
       for (let i = 0; i < p.count; i += 3) {
         let button2 = true;
-        for (let j = 0; j < 3; j++) if (Math.hypot(p.getX(i + j) + 2e-3, p.getY(i + j) + 0.872) > 0.4) button2 = false;
+        for (let j = 0; j < 3; j++)
+          if (Math.hypot(p.getX(i + j) + 2e-3, p.getY(i + j) + 0.872) > 0.4)
+            button2 = false;
         (button2 ? b : a).push(i, i + 1, i + 2);
       }
       const split = (indices) => {
@@ -2712,15 +3630,23 @@ async function createViewer(host, initial) {
         for (const key2 of Object.keys(flat.attributes)) {
           const attr = flat.attributes[key2];
           const values = [];
-          for (const i of indices) for (let j = 0; j < attr.itemSize; j++) values.push(attr.array[i * attr.itemSize + j]);
-          g.setAttribute(key2, new THREE2.Float32BufferAttribute(values, attr.itemSize));
+          for (const i of indices)
+            for (let j = 0; j < attr.itemSize; j++)
+              values.push(attr.array[i * attr.itemSize + j]);
+          g.setAttribute(
+            key2,
+            new THREE2.Float32BufferAttribute(values, attr.itemSize)
+          );
         }
         return g;
       };
       geometry = split(a);
       const buttonGeometry = split(b);
       verticalUV(buttonGeometry);
-      const button = new THREE2.Mesh(buttonGeometry, new THREE2.MeshPhysicalMaterial({ roughness: 0.35 }));
+      const button = new THREE2.Mesh(
+        buttonGeometry,
+        new THREE2.MeshPhysicalMaterial({ roughness: 0.35 })
+      );
       front.add(button);
       parts.button = button;
     }
@@ -2728,11 +3654,21 @@ async function createViewer(host, initial) {
     if (name === "Screen") {
       const p = geometry.attributes.position;
       const uv = [];
-      for (let i = 0; i < p.count; i++) uv.push((p.getX(i) + 1.028) / 2.06, (p.getY(i) - 0.318) / 1.54);
+      for (let i = 0; i < p.count; i++)
+        uv.push((p.getX(i) + 1.028) / 2.06, (p.getY(i) - 0.318) / 1.54);
       geometry.setAttribute("uv", new THREE2.Float32BufferAttribute(uv, 2));
-      mat = new THREE2.MeshPhysicalMaterial({ roughness: 0.3, metalness: 0, emissive: 16777215, color: 0, emissiveIntensity: 1, toneMapped: false, envMapIntensity: 0 });
+      mat = new THREE2.MeshPhysicalMaterial({
+        roughness: 0.3,
+        metalness: 0,
+        emissive: 16777215,
+        color: 0,
+        emissiveIntensity: 1,
+        toneMapped: false,
+        envMapIntensity: 0
+      });
     }
-    if (name === "Wheel") mat = new THREE2.MeshPhysicalMaterial({ roughness: 0.5, metalness: 0 });
+    if (name === "Wheel")
+      mat = new THREE2.MeshPhysicalMaterial({ roughness: 0.5, metalness: 0 });
     const mesh = new THREE2.Mesh(geometry, mat);
     mesh.name = name;
     parts[name] = mesh;
@@ -2748,7 +3684,11 @@ async function createViewer(host, initial) {
     t.anisotropy = renderer.capabilities.getMaxAnisotropy();
     return t;
   }
-  const surface = (color, rough = 0.5, metal = 0.1) => new THREE2.MeshPhysicalMaterial({ color, roughness: rough, metalness: metal });
+  const surface = (color, rough = 0.5, metal = 0.1) => new THREE2.MeshPhysicalMaterial({
+    color,
+    roughness: rough,
+    metalness: metal
+  });
   function box(w, h, d, color, x, y, z, group2 = inside) {
     const m = new THREE2.Mesh(new THREE2.BoxGeometry(w, h, d), surface(color));
     m.position.set(x, y, z);
@@ -2756,16 +3696,30 @@ async function createViewer(host, initial) {
     return m;
   }
   function label(parent, text, w, h, z, color = "#ffffff", background = "#234b3a") {
-    const map = texture((c, cw, ch) => {
-      c.fillStyle = background;
-      c.fillRect(0, 0, cw, ch);
-      c.fillStyle = color;
-      c.textAlign = "center";
-      c.textBaseline = "middle";
-      c.font = "600 44px Arial";
-      c.fillText(text, cw / 2, ch / 2);
-    }, 512, 128);
-    const m = new THREE2.Mesh(new THREE2.PlaneGeometry(w, h), new THREE2.MeshPhysicalMaterial({ map, transparent: false, roughness: 1, emissive: 16777215, emissiveMap: map, emissiveIntensity: 0.3 }));
+    const map = texture(
+      (c, cw, ch) => {
+        c.fillStyle = background;
+        c.fillRect(0, 0, cw, ch);
+        c.fillStyle = color;
+        c.textAlign = "center";
+        c.textBaseline = "middle";
+        c.font = "600 44px Arial";
+        c.fillText(text, cw / 2, ch / 2);
+      },
+      512,
+      128
+    );
+    const m = new THREE2.Mesh(
+      new THREE2.PlaneGeometry(w, h),
+      new THREE2.MeshPhysicalMaterial({
+        map,
+        transparent: false,
+        roughness: 1,
+        emissive: 16777215,
+        emissiveMap: map,
+        emissiveIntensity: 0.3
+      })
+    );
     m.position.z = z;
     parent.add(m);
     return m;
@@ -2780,8 +3734,26 @@ async function createViewer(host, initial) {
   flabel.position.y = -0.77;
   const sockets = [];
   for (let i = 0; i < 4; i++) {
-    const card = box(0.34, 0.58, 0.06, "#202428", -0.64 + i * 0.425, -0.14, 0.067, flash);
-    const stripe = box(0.27, 0.1, 0.01, "#caab54", 0, -0.22, 0.04, new THREE2.Group());
+    const card = box(
+      0.34,
+      0.58,
+      0.06,
+      "#202428",
+      -0.64 + i * 0.425,
+      -0.14,
+      0.067,
+      flash
+    );
+    const stripe = box(
+      0.27,
+      0.1,
+      0.01,
+      "#caab54",
+      0,
+      -0.22,
+      0.04,
+      new THREE2.Group()
+    );
     card.add(stripe);
     sockets.push(card);
   }
@@ -2790,20 +3762,38 @@ async function createViewer(host, initial) {
   battery.position.set(0, -0.79, -0.01);
   const cell = box(1.48, 1.6, 0.13, "#d1d2d0", 0, 0, 0, battery);
   const tape = box(1.5, 0.17, 0.135, "#dbb650", 0, 0.71, 0, battery);
-  const battLabel = label(battery, "2000 mAh", 1.2, 0.28, 0.072, "#343a3e", "#d1d2d0");
+  const battLabel = label(
+    battery,
+    "2000 mAh",
+    1.2,
+    0.28,
+    0.072,
+    "#343a3e",
+    "#d1d2d0"
+  );
   const bt = box(0.64, 0.4, 0.065, "#25628c", -0.65, -1.57, 0.04);
   label(bt, "BT", 0.36, 0.17, 0.035, "#ffffff", "#25628c");
   const taptic = box(0.65, 0.2, 0.1, "#60656b", 0.61, -1.64, 0.04);
   label(taptic, "TAPTIC", 0.5, 0.1, 0.055, "#fff", "#60656b");
-  const airtag = new THREE2.Mesh(new THREE2.CylinderGeometry(0.35, 0.35, 0.09, 40), surface("#deded7", 0.28, 0.7));
+  const airtag = new THREE2.Mesh(
+    new THREE2.CylinderGeometry(0.35, 0.35, 0.09, 40),
+    surface("#deded7", 0.28, 0.7)
+  );
   airtag.rotation.x = Math.PI / 2;
   airtag.position.set(0.61, -1.14, 0.085);
   inside.add(airtag);
-  const qi = new THREE2.Mesh(new THREE2.TorusGeometry(0.72, 0.028, 8, 64), surface("#bb7946", 0.3, 0.6));
+  const qi = new THREE2.Mesh(
+    new THREE2.TorusGeometry(0.72, 0.028, 8, 64),
+    surface("#bb7946", 0.3, 0.6)
+  );
   qi.position.set(0, -0.15, -0.09);
   inside.add(qi);
-  for (const variant of shellCache.variants.values()) verticalUV(variant.geometry);
-  const shell = new THREE2.Mesh(shellCache.variants.get("thin:original").geometry, surface("#aaa", 0.2, 1));
+  for (const variant of shellCache.variants.values())
+    verticalUV(variant.geometry);
+  const shell = new THREE2.Mesh(
+    shellCache.variants.get("thin:original").geometry,
+    surface("#aaa", 0.2, 1)
+  );
   shell.name = "Procedural back shell";
   rear.add(shell);
   let activeShell;
@@ -2821,8 +3811,25 @@ async function createViewer(host, initial) {
     g.position.x = x;
     bottomEdge.add(g);
     const ring = rounded(w - 3e-3, h - 3e-3, Math.min(h / 2 - 2e-3, 0.038));
-    ring.holes.push(new THREE2.Path(rounded(w - 0.028, h - 0.025, Math.min((h - 0.025) / 2, 0.03)).getPoints(20)));
-    const lip = edgePlane(ring, new THREE2.MeshPhysicalMaterial({ metalness: 0.3, roughness: 0.3, side: THREE2.DoubleSide }), g, 1e-3);
+    ring.holes.push(
+      new THREE2.Path(
+        rounded(
+          w - 0.028,
+          h - 0.025,
+          Math.min((h - 0.025) / 2, 0.03)
+        ).getPoints(20)
+      )
+    );
+    const lip = edgePlane(
+      ring,
+      new THREE2.MeshPhysicalMaterial({
+        metalness: 0.3,
+        roughness: 0.3,
+        side: THREE2.DoubleSide
+      }),
+      g,
+      1e-3
+    );
     const cavity = box(w - 8e-3, 0.014, h - 8e-3, "#07090c", 0, 0.05, 0, g);
     cavity.material.roughness = 0.95;
     cavity.material.metalness = 0;
@@ -2835,25 +3842,68 @@ async function createViewer(host, initial) {
   const headphoneHole = new THREE2.Path();
   headphoneHole.absarc(0, 0, 0.053, 0, Math.PI * 2, true);
   headphoneRing.holes.push(headphoneHole);
-  const jack = edgePlane(headphoneRing, surface("#171b20", 0.4, 0), topEdge, -1e-3, true);
+  const jack = edgePlane(
+    headphoneRing,
+    surface("#171b20", 0.4, 0),
+    topEdge,
+    -1e-3,
+    true
+  );
   jack.material.side = THREE2.DoubleSide;
   jack.position.x = 0.78;
-  const jackInterior = new THREE2.Mesh(new THREE2.CylinderGeometry(0.052, 0.052, 0.014, 32), surface("#07090c", 0.9, 0));
+  const jackInterior = new THREE2.Mesh(
+    new THREE2.CylinderGeometry(0.052, 0.052, 0.014, 32),
+    surface("#07090c", 0.9, 0)
+  );
   jackInterior.position.set(0.78, -0.045, 0);
   topEdge.add(jackInterior);
-  const holdWell = box(0.343, 0.012, 0.054, "#07090c", -0.68, -0.038, 0, topEdge);
+  const holdWell = box(
+    0.343,
+    0.012,
+    0.054,
+    "#07090c",
+    -0.68,
+    -0.038,
+    0,
+    topEdge
+  );
   const hold = box(0.325, 0.012, 0.045, "#fff", -0.68, -0.012, 0, topEdge), holdSlider = box(0.12, 0.018, 0.044, "#fff", -0.74, -1e-3, 0, topEdge);
-  const engraving = new THREE2.Mesh(new THREE2.PlaneGeometry(1.85, 2.9), new THREE2.MeshPhysicalMaterial({ transparent: true, depthWrite: false, roughness: 0.8, metalness: 0.1 }));
+  const engraving = new THREE2.Mesh(
+    new THREE2.PlaneGeometry(1.85, 2.9),
+    new THREE2.MeshPhysicalMaterial({
+      transparent: true,
+      depthWrite: false,
+      roughness: 0.8,
+      metalness: 0.1
+    })
+  );
   engraving.rotation.y = Math.PI;
   engraving.position.set(0, 0, -0.201);
   rear.add(engraving);
-  const glass = new THREE2.Mesh(new THREE2.PlaneGeometry(2.055, 1.535), new THREE2.MeshPhysicalMaterial({ color: "#fff", roughness: 0.035, metalness: 0, transmission: 0, thickness: 8e-3, ior: 1.46, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 0.3, transparent: true, opacity: 0.055, depthWrite: false }));
+  const glass = new THREE2.Mesh(
+    new THREE2.PlaneGeometry(2.055, 1.535),
+    new THREE2.MeshPhysicalMaterial({
+      color: "#fff",
+      roughness: 0.035,
+      metalness: 0,
+      transmission: 0,
+      thickness: 8e-3,
+      ior: 1.46,
+      clearcoat: 1,
+      clearcoatRoughness: 0.04,
+      envMapIntensity: 0.3,
+      transparent: true,
+      opacity: 0.055,
+      depthWrite: false
+    })
+  );
   glass.position.set(2e-3, 1.088, 0.158);
   front.add(glass);
   function fillPart(c, w, h, part) {
     const colors = part.colors;
     const paint = colors.length > 1 ? c.createLinearGradient(0, 0, 0, h) : colors[0];
-    if (colors.length > 1) colors.forEach((v, i) => paint.addColorStop(i / (colors.length - 1), v));
+    if (colors.length > 1)
+      colors.forEach((v, i) => paint.addColorStop(i / (colors.length - 1), v));
     c.fillStyle = paint;
     c.fillRect(0, 0, w, h);
     if (part.family === "atomic" && colors.length > 1) {
@@ -2866,7 +3916,15 @@ async function createViewer(host, initial) {
         c.globalAlpha = 0.05 + rand() * 0.15;
         c.fillStyle = colors[Math.floor(rand() * colors.length)];
         c.beginPath();
-        c.ellipse(rand() * w, rand() * h, 2 + rand() * 45, 1 + rand() * 18, rand() * Math.PI, 0, Math.PI * 2);
+        c.ellipse(
+          rand() * w,
+          rand() * h,
+          2 + rand() * 45,
+          1 + rand() * 18,
+          rand() * Math.PI,
+          0,
+          Math.PI * 2
+        );
         c.fill();
       }
       c.globalAlpha = 1;
@@ -2878,10 +3936,19 @@ async function createViewer(host, initial) {
   };
   function applyPart(mesh, part, xray = false, keepMap = false) {
     const spec = surfaceSpec(part), alpha = xray ? 0.12 : 1;
-    material(mesh, part.colors.length > 1 || keepMap ? "#ffffff" : part.hex, spec.roughness, spec.metalness, alpha);
+    material(
+      mesh,
+      part.colors.length > 1 || keepMap ? "#ffffff" : part.hex,
+      spec.roughness,
+      spec.metalness,
+      alpha
+    );
     const m = mesh.material;
-    const transmission = part.clear && !xray ? 0.9 : 0, iridescence = /rainbow|polychrome|iridescent/i.test(part.id + " " + part.family) ? 0.75 : 0, anisotropy = /brushed/i.test(part.id + " " + part.name) ? 0.6 : 0;
-    if (!!m.transmission !== !!transmission || !!m.iridescence !== !!iridescence || !!m.anisotropy !== !!anisotropy) m.needsUpdate = true;
+    const transmission = part.clear && !xray ? 0.9 : 0, iridescence = /rainbow|polychrome|iridescent/i.test(
+      part.id + " " + part.family
+    ) ? 0.75 : 0, anisotropy = /brushed/i.test(part.id + " " + part.name) ? 0.6 : 0;
+    if (!!m.transmission !== !!transmission || !!m.iridescence !== !!iridescence || !!m.anisotropy !== !!anisotropy)
+      m.needsUpdate = true;
     m.transmission = transmission;
     m.thickness = part.clear ? 0.025 : 0;
     m.ior = 1.35;
@@ -2898,13 +3965,21 @@ async function createViewer(host, initial) {
     mesh.renderOrder = xray ? 4 : 0;
     if (!keepMap && mesh.userData.catalogId !== part.id) {
       mesh.userData.catalogId = part.id;
-      replaceMap(mesh, part.colors.length > 1 ? texture((c, w, h) => fillPart(c, w, h, part)) : null);
+      replaceMap(
+        mesh,
+        part.colors.length > 1 ? texture((c, w, h) => fillPart(c, w, h, part)) : null
+      );
     }
   }
   let state2 = initial, lastWheel = "", lastScreen = "", lastEngraving = "", lastBattery = "", lastFlash = "";
   const targets = /* @__PURE__ */ new Map();
   const material = (mesh, color, rough, metal, alpha = 1) => {
-    targets.set(mesh, { color: new THREE2.Color(color), roughness: rough, metalness: metal, opacity: alpha });
+    targets.set(mesh, {
+      color: new THREE2.Color(color),
+      roughness: rough,
+      metalness: metal,
+      opacity: alpha
+    });
     mesh.material.transparent = alpha < 1;
     mesh.material.depthWrite = alpha === 1;
     mesh.material.side = alpha < 1 ? THREE2.DoubleSide : THREE2.FrontSide;
@@ -2931,8 +4006,19 @@ async function createViewer(host, initial) {
     applyPart(usb.lip, bezelPart, s.xray);
     applyPart(jack, holdPart, s.xray);
     applyPart(hold, holdPart, s.xray);
-    applyPart(holdSlider, { ...holdPart, id: holdPart.id + "-slider", hex: holdPart.id.includes("u2") ? "#c8102e" : holdPart.hex, colors: [holdPart.id.includes("u2") ? "#c8102e" : holdPart.hex] }, s.xray);
-    activeShell = shellCache.variants.get(s.body + ":" + (s.connectivity === "original" ? "original" : s.connectivity === "moon" ? "moon" : "usbc"));
+    applyPart(
+      holdSlider,
+      {
+        ...holdPart,
+        id: holdPart.id + "-slider",
+        hex: holdPart.id.includes("u2") ? "#c8102e" : holdPart.hex,
+        colors: [holdPart.id.includes("u2") ? "#c8102e" : holdPart.hex]
+      },
+      s.xray
+    );
+    activeShell = shellCache.variants.get(
+      s.body + ":" + (s.connectivity === "original" ? "original" : s.connectivity === "moon" ? "moon" : "usbc")
+    );
     shell.geometry = activeShell.geometry;
     bottomEdge.position.set(0, -activeShell.height / 2, activeShell.centerZ);
     topEdge.position.set(0, activeShell.height / 2, activeShell.centerZ);
@@ -2944,60 +4030,74 @@ async function createViewer(host, initial) {
     const wkey = s.wheel + s.button;
     if (wkey !== lastWheel) {
       lastWheel = wkey;
-      replaceMap(parts.Wheel, texture((c, w, h) => {
-        fillPart(c, w, h, wheelPart);
-        c.save();
-        c.beginPath();
-        c.arc(w / 2, h / 2, w * 0.175, 0, Math.PI * 2);
-        c.clip();
-        fillPart(c, w, h, buttonPart);
-        c.restore();
-        c.fillStyle = luminance(wheelPart.hex) < 0.48 ? "#eeeff1" : "#404750";
-        c.textAlign = "center";
-        c.textBaseline = "middle";
-        c.font = "500 32px Arial";
-        c.fillText("MENU", 256, 66);
-        c.font = "bold 37px Arial";
-        c.fillText("\u25C0\u25C0", 67, 256);
-        c.fillText("\u25B6\u25B6", 443, 256);
-        c.fillText("\u25B6\u2161", 256, 442);
-      }));
+      replaceMap(
+        parts.Wheel,
+        texture((c, w, h) => {
+          fillPart(c, w, h, wheelPart);
+          c.save();
+          c.beginPath();
+          c.arc(w / 2, h / 2, w * 0.175, 0, Math.PI * 2);
+          c.clip();
+          fillPart(c, w, h, buttonPart);
+          c.restore();
+          c.fillStyle = luminance(wheelPart.hex) < 0.48 ? "#eeeff1" : "#404750";
+          c.textAlign = "center";
+          c.textBaseline = "middle";
+          c.font = "500 32px Arial";
+          c.fillText("MENU", 256, 66);
+          c.font = "bold 37px Arial";
+          c.fillText("\u25C0\u25C0", 67, 256);
+          c.fillText("\u25B6\u25B6", 443, 256);
+          c.fillText("\u25B6\u2161", 256, 442);
+        })
+      );
     }
     applyPart(parts.Wheel, wheelPart, s.xray, true);
     const skey = s.firmware + s.capacity + s.storage + s.screen;
     if (skey !== lastScreen) {
       lastScreen = skey;
-      replaceMap(parts.Screen, texture((c, w, h) => {
-        const rb = s.firmware === "rockbox";
-        c.fillStyle = rb ? "#131b27" : "#f5f7ee";
-        c.fillRect(0, 0, w, h);
-        c.fillStyle = rb ? "#2e4865" : "#c7d1d6";
-        c.fillRect(0, 0, w, 44);
-        c.fillStyle = rb ? "#e8eef7" : "#1e282a";
-        c.font = "600 25px Arial";
-        c.fillText(rb ? "Rockbox" : "iPod", 18, 31);
-        c.strokeStyle = rb ? "#c6dce8" : "#445755";
-        c.lineWidth = 3;
-        c.strokeRect(459, 13, 33, 17);
-        c.fillStyle = "#4e7967";
-        c.fillRect(462, 16, 26, 11);
-        c.fillStyle = rb ? "#76aee2" : "#2d7fbe";
-        c.fillRect(0, 54, w, 54);
-        c.fillStyle = "#fff";
-        c.font = "600 30px Arial";
-        c.fillText(rb ? "Files" : "Music", 20, 91);
-        c.fillText("\u203A", 474, 91);
-        c.fillStyle = rb ? "#d1dcea" : "#333b3e";
-        c.font = "28px Arial";
-        const items = rb ? ["Database", "Now Playing", "Settings", "Playlists"] : ["Videos", "Photos", "Podcasts", "Settings"];
-        items.forEach((x, i) => {
-          c.fillText(x, 20, 145 + i * 53);
-          c.fillText("\u203A", 474, 145 + i * 53);
-        });
-        c.font = "19px Arial";
-        c.fillStyle = rb ? "#91a9c2" : "#687176";
-        c.fillText(s.storage === "hdd" ? "80 GB" : s.capacity >= 1024 ? s.capacity / 1024 + " TB" : s.capacity + " GB", 20, 366);
-      }, 512, 384));
+      replaceMap(
+        parts.Screen,
+        texture(
+          (c, w, h) => {
+            const rb = s.firmware === "rockbox";
+            c.fillStyle = rb ? "#131b27" : "#f5f7ee";
+            c.fillRect(0, 0, w, h);
+            c.fillStyle = rb ? "#2e4865" : "#c7d1d6";
+            c.fillRect(0, 0, w, 44);
+            c.fillStyle = rb ? "#e8eef7" : "#1e282a";
+            c.font = "600 25px Arial";
+            c.fillText(rb ? "Rockbox" : "iPod", 18, 31);
+            c.strokeStyle = rb ? "#c6dce8" : "#445755";
+            c.lineWidth = 3;
+            c.strokeRect(459, 13, 33, 17);
+            c.fillStyle = "#4e7967";
+            c.fillRect(462, 16, 26, 11);
+            c.fillStyle = rb ? "#76aee2" : "#2d7fbe";
+            c.fillRect(0, 54, w, 54);
+            c.fillStyle = "#fff";
+            c.font = "600 30px Arial";
+            c.fillText(rb ? "Files" : "Music", 20, 91);
+            c.fillText("\u203A", 474, 91);
+            c.fillStyle = rb ? "#d1dcea" : "#333b3e";
+            c.font = "28px Arial";
+            const items = rb ? ["Database", "Now Playing", "Settings", "Playlists"] : ["Videos", "Photos", "Podcasts", "Settings"];
+            items.forEach((x, i) => {
+              c.fillText(x, 20, 145 + i * 53);
+              c.fillText("\u203A", 474, 145 + i * 53);
+            });
+            c.font = "19px Arial";
+            c.fillStyle = rb ? "#91a9c2" : "#687176";
+            c.fillText(
+              s.storage === "hdd" ? "80 GB" : s.capacity >= 1024 ? s.capacity / 1024 + " TB" : s.capacity + " GB",
+              20,
+              366
+            );
+          },
+          512,
+          384
+        )
+      );
     }
     parts.Screen.material.transparent = s.xray;
     parts.Screen.material.opacity = s.xray ? 0.15 : 1;
@@ -3005,82 +4105,120 @@ async function createViewer(host, initial) {
     const bk = s.connectivity === "moon" ? "KIT BATTERY" : s.battery === "stock" ? "650 mAh" : batteryCapacity(s) + " mAh";
     if (bk !== lastBattery) {
       lastBattery = bk;
-      replaceMap(battLabel, texture((c, w, h) => {
-        c.fillStyle = "#d1d2d0";
-        c.fillRect(0, 0, w, h);
-        c.fillStyle = "#303538";
-        c.font = "600 46px Arial";
-        c.textAlign = "center";
-        c.fillText(bk, w / 2, 78);
-      }, 512, 128));
+      replaceMap(
+        battLabel,
+        texture(
+          (c, w, h) => {
+            c.fillStyle = "#d1d2d0";
+            c.fillRect(0, 0, w, h);
+            c.fillStyle = "#303538";
+            c.font = "600 46px Arial";
+            c.textAlign = "center";
+            c.fillText(bk, w / 2, 78);
+          },
+          512,
+          128
+        )
+      );
     }
-    battery.scale.set(s.battery === "stock" && s.connectivity !== "moon" ? 0.65 : 1, s.battery === "stock" && s.connectivity !== "moon" ? 0.65 : 1, ["3000", "3800"].includes(s.battery) && s.connectivity !== "moon" ? 1.3 : 1);
+    battery.scale.set(
+      s.battery === "stock" && s.connectivity !== "moon" ? 0.65 : 1,
+      s.battery === "stock" && s.connectivity !== "moon" ? 0.65 : 1,
+      ["3000", "3800"].includes(s.battery) && s.connectivity !== "moon" ? 1.3 : 1
+    );
     flash.visible = true;
-    pcb.material.color.set(s.storage === "hdd" ? "#b5bbc0" : s.storage === "sata" ? "#264758" : "#2d8059");
-    sockets.forEach((x, i) => x.visible = s.storage === "quad" || i === 1 && s.storage !== "hdd");
+    pcb.material.color.set(
+      s.storage === "hdd" ? "#b5bbc0" : s.storage === "sata" ? "#264758" : "#2d8059"
+    );
+    sockets.forEach(
+      (x, i) => x.visible = s.storage === "quad" || i === 1 && s.storage !== "hdd"
+    );
     if (s.storage !== lastFlash) {
       lastFlash = s.storage;
-      replaceMap(flabel, texture((c, w, h) => {
-        c.fillStyle = s.storage === "hdd" ? "#b5bbc0" : "#24583e";
-        c.fillRect(0, 0, w, h);
-        c.fillStyle = s.storage === "hdd" ? "#30383f" : "#fff";
-        c.font = "bold 44px Arial";
-        c.textAlign = "center";
-        c.fillText(s.storage === "hdd" ? "80GB HDD" : "iFlash " + s.storage.toUpperCase(), w / 2, 80);
-      }, 512, 128));
+      replaceMap(
+        flabel,
+        texture(
+          (c, w, h) => {
+            c.fillStyle = s.storage === "hdd" ? "#b5bbc0" : "#24583e";
+            c.fillRect(0, 0, w, h);
+            c.fillStyle = s.storage === "hdd" ? "#30383f" : "#fff";
+            c.font = "bold 44px Arial";
+            c.textAlign = "center";
+            c.fillText(
+              s.storage === "hdd" ? "80GB HDD" : "iFlash " + s.storage.toUpperCase(),
+              w / 2,
+              80
+            );
+          },
+          512,
+          128
+        )
+      );
     }
     bt.visible = hasBT(s);
     taptic.visible = hasTaptic(s);
     airtag.visible = s.airtag === "on";
     qi.visible = hasQi(s);
-    const engravingKey = [s.engraving, s.finish, s.engravingStyle, s.capacityMark].join("|");
+    const engravingKey = [
+      s.engraving,
+      s.finish,
+      s.engravingStyle,
+      s.capacityMark
+    ].join("|");
     if (engravingKey !== lastEngraving) {
       lastEngraving = engravingKey;
-      replaceMap(engraving, texture((c, w, h) => {
-        c.clearRect(0, 0, w, h);
-        c.fillStyle = luminance(backPart.hex) < 0.5 ? "#e8e9eb" : "#353b42";
-        c.textAlign = "center";
-        c.textBaseline = "middle";
-        if (s.engravingStyle !== "blank") {
-          c.save();
-          c.translate(w / 2, 175);
-          c.beginPath();
-          c.ellipse(-22, 5, 48, 61, -0.12, 0, Math.PI * 2);
-          c.ellipse(23, 5, 48, 61, 0.12, 0, Math.PI * 2);
-          c.fill();
-          c.globalCompositeOperation = "destination-out";
-          c.beginPath();
-          c.arc(69, -15, 23, 0, Math.PI * 2);
-          c.fill();
-          c.globalCompositeOperation = "source-over";
-          c.beginPath();
-          c.ellipse(12, -76, 13, 28, 0.7, 0, Math.PI * 2);
-          c.fill();
-          c.restore();
-        }
-        if (["universal", "capacity", "u2"].includes(s.engravingStyle)) {
-          c.font = "500 48px Arial";
-          c.fillText("iPod", w / 2, 340);
-        }
-        if (s.engravingStyle === "universal") {
-          c.font = "22px Arial";
-          c.fillText("Designed by Apple in California", w / 2, 650);
-          c.fillText("Model A1238", w / 2, 683);
-        }
-        if (s.engravingStyle === "u2") {
-          c.font = "700 80px Arial";
-          c.fillText("U2", w / 2, 525);
-          c.font = "22px Arial";
-          c.fillText("SPECIAL EDITION", w / 2, 590);
-        }
-        if (s.engravingStyle === "capacity") {
-          c.font = "500 58px Arial";
-          c.fillText(s.capacityMark, w / 2, 625, 450);
-        }
-        c.font = "500 30px Arial";
-        const lines = s.engraving.match(/.{1,30}(\s|$)|.{1,30}/g) || [];
-        lines.slice(0, 3).forEach((line, i) => c.fillText(line, w / 2, 780 + i * 43));
-      }, 640, 1024));
+      replaceMap(
+        engraving,
+        texture(
+          (c, w, h) => {
+            c.clearRect(0, 0, w, h);
+            c.fillStyle = luminance(backPart.hex) < 0.5 ? "#e8e9eb" : "#353b42";
+            c.textAlign = "center";
+            c.textBaseline = "middle";
+            if (s.engravingStyle !== "blank") {
+              c.save();
+              c.translate(w / 2, 175);
+              c.beginPath();
+              c.ellipse(-22, 5, 48, 61, -0.12, 0, Math.PI * 2);
+              c.ellipse(23, 5, 48, 61, 0.12, 0, Math.PI * 2);
+              c.fill();
+              c.globalCompositeOperation = "destination-out";
+              c.beginPath();
+              c.arc(69, -15, 23, 0, Math.PI * 2);
+              c.fill();
+              c.globalCompositeOperation = "source-over";
+              c.beginPath();
+              c.ellipse(12, -76, 13, 28, 0.7, 0, Math.PI * 2);
+              c.fill();
+              c.restore();
+            }
+            if (["universal", "capacity", "u2"].includes(s.engravingStyle)) {
+              c.font = "500 48px Arial";
+              c.fillText("iPod", w / 2, 340);
+            }
+            if (s.engravingStyle === "universal") {
+              c.font = "22px Arial";
+              c.fillText("Designed by Apple in California", w / 2, 650);
+              c.fillText("Model A1238", w / 2, 683);
+            }
+            if (s.engravingStyle === "u2") {
+              c.font = "700 80px Arial";
+              c.fillText("U2", w / 2, 525);
+              c.font = "22px Arial";
+              c.fillText("SPECIAL EDITION", w / 2, 590);
+            }
+            if (s.engravingStyle === "capacity") {
+              c.font = "500 58px Arial";
+              c.fillText(s.capacityMark, w / 2, 625, 450);
+            }
+            c.font = "500 30px Arial";
+            const lines = s.engraving.match(/.{1,30}(\s|$)|.{1,30}/g) || [];
+            lines.slice(0, 3).forEach((line, i) => c.fillText(line, w / 2, 780 + i * 43));
+          },
+          640,
+          1024
+        )
+      );
     }
     engraving.visible = s.engravingStyle !== "blank" || !!s.engraving;
   }
@@ -3088,23 +4226,46 @@ async function createViewer(host, initial) {
     host.dataset.pose = "";
     touch();
     controls.autoRotate = false;
-    const pos = { front: [0, 0, 8], back: [0, 0, -8], three: [4, 1.8, 8], exploded: [6, 2, 10] }[view];
+    const pos = {
+      front: [0, 0, 8],
+      back: [0, 0, -8],
+      three: [4, 1.8, 8],
+      exploded: [6, 2, 10]
+    }[view];
     if (animate) flight = new THREE2.Vector3(...pos);
     else camera.position.set(...pos);
   }
-  const shadowMap = texture((c, w, h) => {
-    const g = c.createRadialGradient(w / 2, h / 2, 5, w / 2, h / 2, w / 2);
-    g.addColorStop(0, "rgba(17,24,31,.22)");
-    g.addColorStop(0.4, "rgba(17,24,31,.10)");
-    g.addColorStop(1, "rgba(17,24,31,0)");
-    c.fillStyle = g;
-    c.fillRect(0, 0, w, h);
-  }, 128, 128);
-  const shadow = new THREE2.Mesh(new THREE2.PlaneGeometry(4.6, 2.8), new THREE2.MeshPhysicalMaterial({ map: shadowMap, color: "#101820", transparent: true, opacity: 0.35, depthWrite: false, roughness: 1, metalness: 0 }));
+  const shadowMap = texture(
+    (c, w, h) => {
+      const g = c.createRadialGradient(w / 2, h / 2, 5, w / 2, h / 2, w / 2);
+      g.addColorStop(0, "rgba(17,24,31,.22)");
+      g.addColorStop(0.4, "rgba(17,24,31,.10)");
+      g.addColorStop(1, "rgba(17,24,31,0)");
+      c.fillStyle = g;
+      c.fillRect(0, 0, w, h);
+    },
+    128,
+    128
+  );
+  const shadow = new THREE2.Mesh(
+    new THREE2.PlaneGeometry(4.6, 2.8),
+    new THREE2.MeshPhysicalMaterial({
+      map: shadowMap,
+      color: "#101820",
+      transparent: true,
+      opacity: 0.35,
+      depthWrite: false,
+      roughness: 1,
+      metalness: 0
+    })
+  );
   shadow.rotation.x = -Math.PI / 2;
   shadow.position.y = -2.12;
   scene.add(shadow);
-  const target = new THREE2.WebGLRenderTarget(1, 1, { type: THREE2.HalfFloatType, samples: Math.min(4, renderer.capabilities.maxSamples) });
+  const target = new THREE2.WebGLRenderTarget(1, 1, {
+    type: THREE2.HalfFloatType,
+    samples: Math.min(4, renderer.capabilities.maxSamples)
+  });
   const composer = new EffectComposer(renderer, target);
   composer.addPass(new RenderPass(scene, camera));
   const ao = new SSAOPass(scene, camera, 1, 1, 12);
@@ -3118,12 +4279,21 @@ async function createViewer(host, initial) {
   bloomComposer.addPass(new RenderPass(scene, camera));
   const bloom = new UnrealBloomPass(new THREE2.Vector2(1, 1), 0.12, 0.25, 0.55);
   bloomComposer.addPass(bloom);
-  const combine = new ShaderPass({ uniforms: { tDiffuse: { value: null }, bloomTexture: { value: null } }, vertexShader: "varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}", fragmentShader: "uniform sampler2D tDiffuse;uniform sampler2D bloomTexture;varying vec2 vUv;void main(){vec4 base=texture2D(tDiffuse,vUv);vec3 glow=texture2D(bloomTexture,vUv).rgb;gl_FragColor=vec4(base.rgb+glow,base.a);}" });
+  const combine = new ShaderPass({
+    uniforms: { tDiffuse: { value: null }, bloomTexture: { value: null } },
+    vertexShader: "varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
+    fragmentShader: "uniform sampler2D tDiffuse;uniform sampler2D bloomTexture;varying vec2 vUv;void main(){vec4 base=texture2D(tDiffuse,vUv);vec3 glow=texture2D(bloomTexture,vUv).rgb;gl_FragColor=vec4(base.rgb+glow,base.a);}"
+  });
   composer.addPass(combine);
   composer.addPass(new OutputPass());
   const smaa = new SMAAPass();
   composer.addPass(smaa);
-  const dark = new THREE2.MeshPhysicalMaterial({ color: 0, metalness: 0, roughness: 1, envMapIntensity: 0 });
+  const dark = new THREE2.MeshPhysicalMaterial({
+    color: 0,
+    metalness: 0,
+    roughness: 1,
+    envMapIntensity: 0
+  });
   const savedMaterials = /* @__PURE__ */ new Map();
   function renderFrame() {
     const environment2 = scene.environment;
@@ -3153,7 +4323,10 @@ async function createViewer(host, initial) {
     renderer.setSize(w, h);
     composer.setPixelRatio(renderer.getPixelRatio() * qualityScale);
     composer.setSize(w, h);
-    ao.setSize(Math.ceil(w * renderer.getPixelRatio() * qualityScale * 0.65), Math.ceil(h * renderer.getPixelRatio() * qualityScale * 0.65));
+    ao.setSize(
+      Math.ceil(w * renderer.getPixelRatio() * qualityScale * 0.65),
+      Math.ceil(h * renderer.getPixelRatio() * qualityScale * 0.65)
+    );
     bloomComposer.setPixelRatio(0.6);
     bloomComposer.setSize(w, h);
     camera.aspect = w / h;
@@ -3176,7 +4349,41 @@ async function createViewer(host, initial) {
   let alive = true, lastTime = performance.now(), sampleStart = lastTime, frames = 0, fps = 0, slowWindows = 0;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   function metrics() {
-    return { fps, qualityScale, pixelRatio: renderer.getPixelRatio(), width: host.clientWidth, height: host.clientHeight, msaa: target.samples, hdri: "Studio Small 09 \xB7 1K", bodyDepth: activeShell.depth, shellTriangles: (shell.geometry.index?.count ?? shell.geometry.attributes.position.count) / 3, shellSource: "baked", assetLoadMs, shellVariants: shellCache.variants.size, plate: shellCache.plate, wall: shellCache.wall, portCenter: +bottomEdge.position.z.toFixed(4), portY: +bottomEdge.position.y.toFixed(4), topCenter: +topEdge.position.z.toFixed(4), portNormal: [0, -1, 0], ports: [dock, usb].filter((p) => p.group.visible).map((p) => ({ kind: p === dock ? "30-pin" : "USB-C", width: p.w, height: p.h, center: [p.group.position.x, bottomEdge.position.y, bottomEdge.position.z], normal: [0, -1, 0], rearOffset: rear.position.z })), camera: camera.position.toArray().map((v) => +v.toFixed(3)), idle: controls.autoRotate, ao: ao.enabled };
+    return {
+      fps,
+      qualityScale,
+      pixelRatio: renderer.getPixelRatio(),
+      width: host.clientWidth,
+      height: host.clientHeight,
+      msaa: target.samples,
+      hdri: "Studio Small 09 \xB7 1K",
+      bodyDepth: activeShell.depth,
+      shellTriangles: (shell.geometry.index?.count ?? shell.geometry.attributes.position.count) / 3,
+      shellSource: "baked",
+      assetLoadMs,
+      shellVariants: shellCache.variants.size,
+      plate: shellCache.plate,
+      wall: shellCache.wall,
+      portCenter: +bottomEdge.position.z.toFixed(4),
+      portY: +bottomEdge.position.y.toFixed(4),
+      topCenter: +topEdge.position.z.toFixed(4),
+      portNormal: [0, -1, 0],
+      ports: [dock, usb].filter((p) => p.group.visible).map((p) => ({
+        kind: p === dock ? "30-pin" : "USB-C",
+        width: p.w,
+        height: p.h,
+        center: [
+          p.group.position.x,
+          bottomEdge.position.y,
+          bottomEdge.position.z
+        ],
+        normal: [0, -1, 0],
+        rearOffset: rear.position.z
+      })),
+      camera: camera.position.toArray().map((v) => +v.toFixed(3)),
+      idle: controls.autoRotate,
+      ao: ao.enabled
+    };
   }
   function frame() {
     if (!alive) return;
@@ -3193,17 +4400,33 @@ async function createViewer(host, initial) {
       const now = new THREE2.Spherical().setFromVector3(camera.position), to = new THREE2.Spherical().setFromVector3(flight);
       now.radius = THREE2.MathUtils.lerp(now.radius, to.radius, lerp);
       now.phi = THREE2.MathUtils.lerp(now.phi, to.phi, lerp);
-      now.theta += Math.atan2(Math.sin(to.theta - now.theta), Math.cos(to.theta - now.theta)) * lerp;
+      now.theta += Math.atan2(
+        Math.sin(to.theta - now.theta),
+        Math.cos(to.theta - now.theta)
+      ) * lerp;
       camera.position.setFromSpherical(now);
       if (camera.position.distanceTo(flight) < 0.015) flight = null;
     }
     const explode = state2.view === "exploded";
-    front.position.z = THREE2.MathUtils.lerp(front.position.z, explode ? 1.35 : 0, lerp);
-    rear.position.z = THREE2.MathUtils.lerp(rear.position.z, explode ? -1.2 : 0, lerp);
-    inside.position.z = THREE2.MathUtils.lerp(inside.position.z, explode ? 0.25 : 0, lerp);
+    front.position.z = THREE2.MathUtils.lerp(
+      front.position.z,
+      explode ? 1.35 : 0,
+      lerp
+    );
+    rear.position.z = THREE2.MathUtils.lerp(
+      rear.position.z,
+      explode ? -1.2 : 0,
+      lerp
+    );
+    inside.position.z = THREE2.MathUtils.lerp(
+      inside.position.z,
+      explode ? 0.25 : 0,
+      lerp
+    );
     for (const [m, t] of targets) {
       m.material.color.lerp(t.color, lerp);
-      for (const k of ["roughness", "metalness", "opacity"]) m.material[k] = THREE2.MathUtils.lerp(m.material[k], t[k], lerp);
+      for (const k of ["roughness", "metalness", "opacity"])
+        m.material[k] = THREE2.MathUtils.lerp(m.material[k], t[k], lerp);
     }
     controls.autoRotate = !reduced.matches && !interacting && !flight && !explode && time - lastInteraction > 7e3;
     controls.update(dt);
@@ -3230,26 +4453,31 @@ async function createViewer(host, initial) {
   update(initial);
   angle(initial.view, false);
   frame();
-  return { update, angle, metrics, dispose() {
-    alive = false;
-    ro.disconnect();
-    controls.dispose();
-    document.removeEventListener("pointerdown", touch);
-    composer.dispose();
-    bloomComposer.dispose();
-    ao.dispose();
-    bloom.dispose();
-    smaa.dispose();
-    dark.dispose();
-    renderer.dispose();
-    environment.dispose();
-    for (const v of shellCache.variants.values()) v.geometry.dispose();
-    scene.traverse((x) => {
-      x.geometry?.dispose();
-      x.material?.map?.dispose();
-      x.material?.dispose();
-    });
-  } };
+  return {
+    update,
+    angle,
+    metrics,
+    dispose() {
+      alive = false;
+      ro.disconnect();
+      controls.dispose();
+      document.removeEventListener("pointerdown", touch);
+      composer.dispose();
+      bloomComposer.dispose();
+      ao.dispose();
+      bloom.dispose();
+      smaa.dispose();
+      dark.dispose();
+      renderer.dispose();
+      environment.dispose();
+      for (const v of shellCache.variants.values()) v.geometry.dispose();
+      scene.traverse((x) => {
+        x.geometry?.dispose();
+        x.material?.map?.dispose();
+        x.material?.dispose();
+      });
+    }
+  };
 }
 var init_viewer = __esm({
   async "dist/viewer.js"() {
@@ -3270,8 +4498,15 @@ var searches = {};
 var showUnlocks = false;
 var $ = (s) => document.querySelector(s);
 var $$ = (s) => [...document.querySelectorAll(s)];
-var esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-var money = (n) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(n);
+var esc = (v) => String(v).replace(
+  /[&<>"']/g,
+  (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]
+);
+var money = (n) => new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 2
+}).format(n);
 var cap = (n) => n >= 1024 ? n / 1024 + "TB" : n + "GB";
 var fixLabel = (fix) => fix?.body && Object.keys(fix).length === 1 ? "Switch to " + fix.body : fix?.body ? "Switch to " + fix.body + " + back kit" : "Choose compatible back kit";
 var choice = (key) => `<div class="options" role="group" aria-label="${esc(key)}">${CATALOG[key].map((p) => {
@@ -3285,9 +4520,17 @@ var runtimeLine = () => {
 };
 var catalogResults = (key) => {
   const query = (searches[key] || "").toLowerCase().trim();
-  const parts = APPEARANCE[key].filter((p) => (key !== "finish" || p.bodies.includes(state.body)) && query.split(/\s+/).every((q) => (p.name + " " + p.family + " " + (FAMILY_NAMES[p.family] || "") + " " + p.vendor + " " + p.id).toLowerCase().includes(q)));
+  const parts = APPEARANCE[key].filter(
+    (p) => (key !== "finish" || p.bodies.includes(state.body)) && query.split(/\s+/).every(
+      (q) => (p.name + " " + p.family + " " + (FAMILY_NAMES[p.family] || "") + " " + p.vendor + " " + p.id).toLowerCase().includes(q)
+    )
+  );
   const families = [...new Set(parts.map((p) => p.family))];
-  return parts.length ? families.map((family) => `<section class="swatch-family"><h4>${esc(FAMILY_NAMES[family] || family)} <span>${parts.filter((p) => p.family === family).length}</span></h4><div class="catalog-grid">${parts.filter((p) => p.family === family).map((p) => `<button class="catalog-swatch ${p.clear ? "is-clear" : ""} ${state[key] === p.id ? "selected" : ""}" data-key="${key}" data-value="${p.id}" aria-label="${esc(APPEARANCE_LABELS[key] + ": " + p.name + " \xB7 " + (FAMILY_NAMES[p.family] || p.family) + " \xB7 from " + money(p.price) + " \xB7 Vendor: " + p.vendor)}" aria-pressed="${state[key] === p.id}" title="${esc(p.name + " \xB7 From " + money(p.price) + " \xB7 Vendor: " + p.vendor)}"><span class="color-sample" style="--paint:${paintCSS(p)}">${state[key] === p.id ? "\u2713" : ""}</span><span class="vendor-mini">${esc(p.vendor)}</span><span class="swatch-tooltip" aria-hidden="true">${esc(p.name)}<br>From ${money(p.price)} \xB7 Vendor: ${esc(p.vendor)}</span></button>`).join("")}</div></section>`).join("") : '<p class="catalog-empty">No colors match this search. <button data-clear-search="' + key + '">Clear filter</button></p>';
+  return parts.length ? families.map(
+    (family) => `<section class="swatch-family"><h4>${esc(FAMILY_NAMES[family] || family)} <span>${parts.filter((p) => p.family === family).length}</span></h4><div class="catalog-grid">${parts.filter((p) => p.family === family).map(
+      (p) => `<button class="catalog-swatch ${p.clear ? "is-clear" : ""} ${state[key] === p.id ? "selected" : ""}" data-key="${key}" data-value="${p.id}" aria-label="${esc(APPEARANCE_LABELS[key] + ": " + p.name + " \xB7 " + (FAMILY_NAMES[p.family] || p.family) + " \xB7 from " + money(p.price) + " \xB7 Vendor: " + p.vendor)}" aria-pressed="${state[key] === p.id}" title="${esc(p.name + " \xB7 From " + money(p.price) + " \xB7 Vendor: " + p.vendor)}"><span class="color-sample" style="--paint:${paintCSS(p)}">${state[key] === p.id ? "\u2713" : ""}</span><span class="vendor-mini">${esc(p.vendor)}</span><span class="swatch-tooltip" aria-hidden="true">${esc(p.name)}<br>From ${money(p.price)} \xB7 Vendor: ${esc(p.vendor)}</span></button>`
+    ).join("")}</div></section>`
+  ).join("") : '<p class="catalog-empty">No colors match this search. <button data-clear-search="' + key + '">Clear filter</button></p>';
 };
 var catalogPicker = (key, label) => {
   const p = appearance(state, key);
@@ -3300,33 +4543,130 @@ function renderConfigure() {
   const first = !$("#configure-panel").children.length;
   const g = (id, n, t, s, b) => group(id, n, t, s, b, first ? id === "front" : open.has("group-" + id));
   $("#configure-panel").innerHTML = [
-    g("front", 1, "Faceplate", appearance(state, "front").name, catalogPicker("front", "Faceplates") + bundleToggle("front") + `<p class="hint">Difficulty ${COSMETICS.front.difficulty}/5. Catalog colors are approximations. Clear finishes reveal the schematic internals.</p>`),
-    g("back", 2, "Backplate", state.connectivity === "moon" ? "Classic Connect enclosure" : (state.body === "thin" ? "Thin" : "Thick") + " \xB7 " + appearance(state, "finish").name, catalogPicker("finish", "Backplates") + `<h3 class="subhead">Body</h3><div class="capacity" role="group" aria-label="Body depth">${["thin", "thick"].map((id) => `<button data-key="body" data-value="${id}" class="${state.body === id ? "selected" : ""}" aria-pressed="${state.body === id}">${id === "thin" ? "Thin \xB7 10.5 mm" : "Thick \xB7 13.5 mm"}</button>`).join("")}</div><p class="hint">Listed price is for the lowest variant. Thick-body allowance: +${money(BUNDLE_ESTIMATES.thickBody)}; actual price varies.</p><label class="field-label" for="engraving-style">Factory engraving style</label><select class="text-field" id="engraving-style" data-select="engravingStyle">${appearance(state, "finish").engravingStyles.map((id) => `<option value="${id}" ${state.engravingStyle === id ? "selected" : ""}>${esc(ENGRAVING_STYLES[id])}</option>`).join("")}</select>${state.engravingStyle === "capacity" ? `<label class="field-label capacity-label" for="capacity-mark">Capacity text on back</label><input id="capacity-mark" class="text-field" data-input="capacityMark" maxlength="24" value="${esc(state.capacityMark)}" placeholder="512GB"><p class="hint">Cosmetic text only; storage capacity is set in Storage.</p>` : ""}<label class="bundle-toggle"><input type="checkbox" data-toggle="preinstalled" ${state.preinstalled ? "checked" : ""} ${isKit(state) ? "disabled" : ""}><span>Preinstalled headphone jack & dock bezel <strong>+${money(BUNDLE_ESTIMATES.preinstalled)} estimate</strong><small>Uses the selected Details parts and removes their separate charges.${isKit(state) ? " The current kit already supplies its own enclosure." : ""}</small></span></label><p class="hint">Choose the jack and bezel under Details. Factory engraving choices follow this color\u2019s catalog availability. Custom text remains available below.</p><button class="quiet" data-view="back">View the back \u2192</button><h3 class="subhead">Port & back kits</h3>` + choice("connectivity")),
-    g("wheel", 3, "Click wheel", appearance(state, "wheel").name, catalogPicker("wheel", "Click wheels") + bundleToggle("wheel") + '<p class="hint">Difficulty 3/5. Atomic patterns are procedural approximations; verify the actual vendor photo.</p>'),
-    g("button", 4, "Center button", appearance(state, "button").name, catalogPicker("button", "Center buttons") + '<p class="hint">Metal faceplates take metal buttons. Plastic and transparent fronts take plastic or crystal-clear buttons. Mixing them creates a warning. Difficulty 2/5.</p>' + (state.buttonBundle !== "none" ? '<p class="included-note">Included with your ' + state.buttonBundle + " bundle; no separate button charge.</p>" : "")),
-    g("board", 5, "Logic board", state.board === "7g" ? "7th generation" : state.board === "65g" ? "6.5 generation" : "Original 6th generation", choice("board")),
-    g("storage", 6, "Storage", selected(state, "storage").name + " \xB7 " + (state.storage === "hdd" ? "80GB" : cap(state.capacity)), choice("storage") + (state.storage !== "hdd" ? '<h3 class="subhead">Total capacity</h3><div class="capacity" role="group" aria-label="Storage capacity">' + CAPACITIES.map((n) => `<button data-key="capacity" data-value="${n}" class="${state.capacity === n ? "selected" : ""}" aria-pressed="${state.capacity === n}">${cap(n)}</button>`).join("") + '</div><p class="hint">Adapter and storage media are priced separately. Quad capacity is the total across one to four cards. Card capacity is advertised decimal capacity.</p>' : "")),
-    g("battery", 7, "Battery", state.connectivity === "moon" ? "Included in kit" : selected(state, "battery").name, (state.connectivity === "moon" ? '<p class="hint">Classic Connect 2 includes its own battery. Your separate battery choice is retained for switching back, but excluded from this kit\u2019s estimate.</p>' : choice("battery")) + runtimeLine()),
-    g("screen", 8, "Screen", state.screen === "keep" ? "Keep original" : "Stock replacement", choice("screen")),
-    g("wireless", 9, "Wireless", hasBT(state) ? "Bluetooth" + (hasQi(state) ? " + Qi" : "") : "Wired audio", isKit(state) ? '<p class="hint">Bluetooth is included in your back kit. The original 3.5 mm audio jack remains usable. Confirm the selected kit\u2019s codecs.</p>' : '<h3 class="subhead">Bluetooth</h3>' + choice("bluetooth")),
-    g("feel", 10, "Feel & firmware", state.firmware === "rockbox" ? "Rockbox" : "Apple firmware", '<h3 class="subhead">Firmware</h3>' + choice("firmware") + '<h3 class="subhead">Haptic feedback</h3>' + (state.connectivity === "moon" ? '<p class="hint">Haptics are included in Classic Connect 2.</p>' : choice("taptic")) + '<h3 class="subhead">Audio capacitor bypass</h3>' + choice("bypass")),
-    g("details", 11, "Details", appearance(state, "bezel").name + " \xB7 " + appearance(state, "hold").name, '<h3 class="subhead">Dock bezel</h3>' + catalogPicker("bezel", "Dock bezels") + '<h3 class="subhead">Headphone jack & hold switch</h3>' + catalogPicker("hold", "Hold assemblies") + '<p class="hint">Difficulty 3/5. Match the jack assembly\u2019s body depth. The tiny top switch and bottom bezel use these colors in the viewer.</p>' + (state.preinstalled || isKit(state) ? '<p class="included-note">These parts are included in the selected back bundle or kit. Confirm variant availability with the seller.</p>' : "")),
-    g("cosmetic", 12, "Engraving", state.engraving || "No engraving", `<label class="field-label" for="engraving">Back engraving <span>Optional \xB7 up to 80 characters</span></label><input class="text-field" id="engraving" data-input="engraving" maxlength="80" value="${esc(state.engraving)}" placeholder="A thousand songs. All yours."><p class="hint">${COSMETICS.engraving.description} Difficulty ${COSMETICS.engraving.difficulty}/5 when ordered engraved.</p><button class="quiet" data-view="back">View the back \u2192</button>`)
+    g(
+      "front",
+      1,
+      "Faceplate",
+      appearance(state, "front").name,
+      catalogPicker("front", "Faceplates") + bundleToggle("front") + `<p class="hint">Difficulty ${COSMETICS.front.difficulty}/5. Catalog colors are approximations. Clear finishes reveal the schematic internals.</p>`
+    ),
+    g(
+      "back",
+      2,
+      "Backplate",
+      state.connectivity === "moon" ? "Classic Connect enclosure" : (state.body === "thin" ? "Thin" : "Thick") + " \xB7 " + appearance(state, "finish").name,
+      catalogPicker("finish", "Backplates") + `<h3 class="subhead">Body</h3><div class="capacity" role="group" aria-label="Body depth">${["thin", "thick"].map((id) => `<button data-key="body" data-value="${id}" class="${state.body === id ? "selected" : ""}" aria-pressed="${state.body === id}">${id === "thin" ? "Thin \xB7 10.5 mm" : "Thick \xB7 13.5 mm"}</button>`).join("")}</div><p class="hint">Listed price is for the lowest variant. Thick-body allowance: +${money(BUNDLE_ESTIMATES.thickBody)}; actual price varies.</p><label class="field-label" for="engraving-style">Factory engraving style</label><select class="text-field" id="engraving-style" data-select="engravingStyle">${appearance(
+        state,
+        "finish"
+      ).engravingStyles.map(
+        (id) => `<option value="${id}" ${state.engravingStyle === id ? "selected" : ""}>${esc(ENGRAVING_STYLES[id])}</option>`
+      ).join(
+        ""
+      )}</select>${state.engravingStyle === "capacity" ? `<label class="field-label capacity-label" for="capacity-mark">Capacity text on back</label><input id="capacity-mark" class="text-field" data-input="capacityMark" maxlength="24" value="${esc(state.capacityMark)}" placeholder="512GB"><p class="hint">Cosmetic text only; storage capacity is set in Storage.</p>` : ""}<label class="bundle-toggle"><input type="checkbox" data-toggle="preinstalled" ${state.preinstalled ? "checked" : ""} ${isKit(state) ? "disabled" : ""}><span>Preinstalled headphone jack & dock bezel <strong>+${money(BUNDLE_ESTIMATES.preinstalled)} estimate</strong><small>Uses the selected Details parts and removes their separate charges.${isKit(state) ? " The current kit already supplies its own enclosure." : ""}</small></span></label><p class="hint">Choose the jack and bezel under Details. Factory engraving choices follow this color\u2019s catalog availability. Custom text remains available below.</p><button class="quiet" data-view="back">View the back \u2192</button><h3 class="subhead">Port & back kits</h3>` + choice("connectivity")
+    ),
+    g(
+      "wheel",
+      3,
+      "Click wheel",
+      appearance(state, "wheel").name,
+      catalogPicker("wheel", "Click wheels") + bundleToggle("wheel") + '<p class="hint">Difficulty 3/5. Atomic patterns are procedural approximations; verify the actual vendor photo.</p>'
+    ),
+    g(
+      "button",
+      4,
+      "Center button",
+      appearance(state, "button").name,
+      catalogPicker("button", "Center buttons") + '<p class="hint">Metal faceplates take metal buttons. Plastic and transparent fronts take plastic or crystal-clear buttons. Mixing them creates a warning. Difficulty 2/5.</p>' + (state.buttonBundle !== "none" ? '<p class="included-note">Included with your ' + state.buttonBundle + " bundle; no separate button charge.</p>" : "")
+    ),
+    g(
+      "board",
+      5,
+      "Logic board",
+      state.board === "7g" ? "7th generation" : state.board === "65g" ? "6.5 generation" : "Original 6th generation",
+      choice("board")
+    ),
+    g(
+      "storage",
+      6,
+      "Storage",
+      selected(state, "storage").name + " \xB7 " + (state.storage === "hdd" ? "80GB" : cap(state.capacity)),
+      choice("storage") + (state.storage !== "hdd" ? '<h3 class="subhead">Total capacity</h3><div class="capacity" role="group" aria-label="Storage capacity">' + CAPACITIES.map(
+        (n) => `<button data-key="capacity" data-value="${n}" class="${state.capacity === n ? "selected" : ""}" aria-pressed="${state.capacity === n}">${cap(n)}</button>`
+      ).join("") + '</div><p class="hint">Adapter and storage media are priced separately. Quad capacity is the total across one to four cards. Card capacity is advertised decimal capacity.</p>' : "")
+    ),
+    g(
+      "battery",
+      7,
+      "Battery",
+      state.connectivity === "moon" ? "Included in kit" : selected(state, "battery").name,
+      (state.connectivity === "moon" ? '<p class="hint">Classic Connect 2 includes its own battery. Your separate battery choice is retained for switching back, but excluded from this kit\u2019s estimate.</p>' : choice("battery")) + runtimeLine()
+    ),
+    g(
+      "screen",
+      8,
+      "Screen",
+      state.screen === "keep" ? "Keep original" : "Stock replacement",
+      choice("screen")
+    ),
+    g(
+      "wireless",
+      9,
+      "Wireless",
+      hasBT(state) ? "Bluetooth" + (hasQi(state) ? " + Qi" : "") : "Wired audio",
+      isKit(state) ? '<p class="hint">Bluetooth is included in your back kit. The original 3.5 mm audio jack remains usable. Confirm the selected kit\u2019s codecs.</p>' : '<h3 class="subhead">Bluetooth</h3>' + choice("bluetooth")
+    ),
+    g(
+      "feel",
+      10,
+      "Feel & firmware",
+      state.firmware === "rockbox" ? "Rockbox" : "Apple firmware",
+      '<h3 class="subhead">Firmware</h3>' + choice("firmware") + '<h3 class="subhead">Haptic feedback</h3>' + (state.connectivity === "moon" ? '<p class="hint">Haptics are included in Classic Connect 2.</p>' : choice("taptic")) + '<h3 class="subhead">Audio capacitor bypass</h3>' + choice("bypass")
+    ),
+    g(
+      "details",
+      11,
+      "Details",
+      appearance(state, "bezel").name + " \xB7 " + appearance(state, "hold").name,
+      '<h3 class="subhead">Dock bezel</h3>' + catalogPicker("bezel", "Dock bezels") + '<h3 class="subhead">Headphone jack & hold switch</h3>' + catalogPicker("hold", "Hold assemblies") + '<p class="hint">Difficulty 3/5. Match the jack assembly\u2019s body depth. The tiny top switch and bottom bezel use these colors in the viewer.</p>' + (state.preinstalled || isKit(state) ? '<p class="included-note">These parts are included in the selected back bundle or kit. Confirm variant availability with the seller.</p>' : "")
+    ),
+    g(
+      "cosmetic",
+      12,
+      "Engraving",
+      state.engraving || "No engraving",
+      `<label class="field-label" for="engraving">Back engraving <span>Optional \xB7 up to 80 characters</span></label><input class="text-field" id="engraving" data-input="engraving" maxlength="80" value="${esc(state.engraving)}" placeholder="A thousand songs. All yours."><p class="hint">${COSMETICS.engraving.description} Difficulty ${COSMETICS.engraving.difficulty}/5 when ordered engraved.</p><button class="quiet" data-view="back">View the back \u2192</button>`
+    )
   ].join("");
   const wireless = $("#group-wireless .group-content");
-  wireless.insertAdjacentHTML("beforeend", '<h3 class="subhead">Wireless charging</h3>' + (state.connectivity === "moon" ? '<p class="hint">Qi-compatible charging is included in Classic Connect 2.</p>' : choice("qi")) + '<h3 class="subhead">Location tracking</h3>' + choice("airtag") + '<div class="blocked"><strong>Wi-Fi requires a different project</strong><p>There is no Wi-Fi add-on for the stock Classic logic board. A Raspberry Pi replacement replaces the core hardware and is incompatible with this configurator.</p><button disabled aria-describedby="wifi-note">Wi-Fi unavailable</button><span id="wifi-note" hidden>Requires full logic-board replacement with a computer.</span></div>');
+  wireless.insertAdjacentHTML(
+    "beforeend",
+    '<h3 class="subhead">Wireless charging</h3>' + (state.connectivity === "moon" ? '<p class="hint">Qi-compatible charging is included in Classic Connect 2.</p>' : choice("qi")) + '<h3 class="subhead">Location tracking</h3>' + choice("airtag") + '<div class="blocked"><strong>Wi-Fi requires a different project</strong><p>There is no Wi-Fi add-on for the stock Classic logic board. A Raspberry Pi replacement replaces the core hardware and is incompatible with this configurator.</p><button disabled aria-describedby="wifi-note">Wi-Fi unavailable</button><span id="wifi-note" hidden>Requires full logic-board replacement with a computer.</span></div>'
+  );
 }
 function renderParts() {
   const rows = bom(state);
-  $("#parts-panel").innerHTML = '<h3 class="panel-title">Your parts list</h3><p class="panel-copy">Edit base prices to match quotes or mark owned parts at $0. Estimated bundle/body additions are shown separately and always added to the base. Edits are saved in your link.</p><div class="export-actions"><button data-action="copy-bom">Copy as text</button><button data-action="csv">Download CSV</button></div>' + rows.map((r) => `<div class="bom-row"><div><strong>${esc(r.name)}</strong><a href="${esc(r.url)}" target="_blank" rel="noreferrer">${esc(r.vendor)} \u2197</a>${r.vendor === "EOE" ? '<span class="vendor-tag">Vendor: EOE</span>' : ""}${r.description ? `<small class="bom-detail">${esc(r.description)}</small>` : ""}</div>${r.included ? '<span class="included-label">Included<br>$0.00</span>' : `<div class="bom-price-block"><label class="bom-price">$<input type="number" min="0" max="100000" step="0.01" aria-label="Price: ${esc(r.name)}" data-price="${esc(r.key)}" value="${r.editablePrice}"></label>${r.extra ? `<small>+${money(r.extra)} additions<br><strong>${money(r.price)} total</strong></small>` : ""}</div>`}</div>`).join("") + (state.connectivity === "moon" ? '<p class="hint">Included in Classic Connect 2: enclosure, battery, Bluetooth, Qi receiver and haptics. These are charged once as a kit.</p>' : "") + '<div class="breakdown"><h4 class="subhead">By category</h4>' + Object.entries(rows.reduce((a, r) => (a[r.group] = (a[r.group] || 0) + r.price, a), {})).map(([k, v]) => `<div class="subtotal"><span>${k}</span><span>${money(v)}</span></div>`).join("") + '</div><p class="hint">Donor iPod already owned. Tax, shipping, tools, labor and unpriced custom fabrication are not included. DIY electrical mods may require extra regulators, wiring and insulation.</p>';
+  $("#parts-panel").innerHTML = '<h3 class="panel-title">Your parts list</h3><p class="panel-copy">Edit base prices to match quotes or mark owned parts at $0. Estimated bundle/body additions are shown separately and always added to the base. Edits are saved in your link.</p><div class="export-actions"><button data-action="copy-bom">Copy as text</button><button data-action="csv">Download CSV</button></div>' + rows.map(
+    (r) => `<div class="bom-row"><div><strong>${esc(r.name)}</strong><a href="${esc(r.url)}" target="_blank" rel="noreferrer">${esc(r.vendor)} \u2197</a>${r.vendor === "EOE" ? '<span class="vendor-tag">Vendor: EOE</span>' : ""}${r.description ? `<small class="bom-detail">${esc(r.description)}</small>` : ""}</div>${r.included ? '<span class="included-label">Included<br>$0.00</span>' : `<div class="bom-price-block"><label class="bom-price">$<input type="number" min="0" max="100000" step="0.01" aria-label="Price: ${esc(r.name)}" data-price="${esc(r.key)}" value="${r.editablePrice}"></label>${r.extra ? `<small>+${money(r.extra)} additions<br><strong>${money(r.price)} total</strong></small>` : ""}</div>`}</div>`
+  ).join("") + (state.connectivity === "moon" ? '<p class="hint">Included in Classic Connect 2: enclosure, battery, Bluetooth, Qi receiver and haptics. These are charged once as a kit.</p>' : "") + '<div class="breakdown"><h4 class="subhead">By category</h4>' + Object.entries(
+    rows.reduce(
+      (a, r) => (a[r.group] = (a[r.group] || 0) + r.price, a),
+      {}
+    )
+  ).map(
+    ([k, v]) => `<div class="subtotal"><span>${k}</span><span>${money(v)}</span></div>`
+  ).join("") + '</div><p class="hint">Donor iPod already owned. Tax, shipping, tools, labor and unpriced custom fabrication are not included. DIY electrical mods may require extra regulators, wiring and insulation.</p>';
 }
 function renderGuide() {
   const steps = guide(state), minutes = steps.reduce((a, s) => a + s.minutes, 0), hours = minutes / 60;
-  $("#guide-panel").innerHTML = `<h3 class="panel-title">Your assembly plan</h3><p class="panel-copy">Allow roughly ${hours.toFixed(1)}\u2013${(hours * 1.5).toFixed(1)} hours for hands-on work, plus music transfer. Maximum difficulty ${Math.max(...steps.map((s) => s.difficulty))}/5.</p><p class="hint">1 = simple setup \xB7 3 = delicate disassembly \xB7 5 = advanced soldering / fabrication. Resolve fit warnings first. This is an order-of-work guide; follow detailed maker instructions.</p>` + steps.map((s, i) => `<div class="step"><div class="step-num">${i + 1}</div><div><h4>${s.name}</h4><p>${esc(s.detail)}</p><p class="step-meta">Difficulty ${s.difficulty}/5 \xB7 about ${s.minutes} min</p></div></div>`).join("");
+  $("#guide-panel").innerHTML = `<h3 class="panel-title">Your assembly plan</h3><p class="panel-copy">Allow roughly ${hours.toFixed(1)}\u2013${(hours * 1.5).toFixed(1)} hours for hands-on work, plus music transfer. Maximum difficulty ${Math.max(...steps.map((s) => s.difficulty))}/5.</p><p class="hint">1 = simple setup \xB7 3 = delicate disassembly \xB7 5 = advanced soldering / fabrication. Resolve fit warnings first. This is an order-of-work guide; follow detailed maker instructions.</p>` + steps.map(
+    (s, i) => `<div class="step"><div class="step-num">${i + 1}</div><div><h4>${s.name}</h4><p>${esc(s.detail)}</p><p class="step-meta">Difficulty ${s.difficulty}/5 \xB7 about ${s.minutes} min</p></div></div>`
+  ).join("");
 }
 function renderWarnings() {
   const notes = warnings(state), n = notes.filter((n2) => n2.level === "warning").length;
-  $("#compatibility").innerHTML = `<div class="compat-header">Compatibility check <span>${n ? n + " to review" : "No known conflicts"}</span></div>` + (notes.length ? notes.map((r) => `<div class="notice ${r.level}"><strong>${esc(r.title)}</strong><p>${esc(r.message)}</p>${r.fix ? `<button data-fix="${r.id}">${r.fix.hold ? "Use matching " + state.body + " assembly" : r.fix.body ? fixLabel(r.fix) : "Apply suggested fix"} \u2192</button>` : ""}</div>`).join("") : '<div class="compat-ok">No known conflicts for these selections. Confirm exact part dimensions with the vendor.</div>');
+  $("#compatibility").innerHTML = `<div class="compat-header">Compatibility check <span>${n ? n + " to review" : "No known conflicts"}</span></div>` + (notes.length ? notes.map(
+    (r) => `<div class="notice ${r.level}"><strong>${esc(r.title)}</strong><p>${esc(r.message)}</p>${r.fix ? `<button data-fix="${r.id}">${r.fix.hold ? "Use matching " + state.body + " assembly" : r.fix.body ? fixLabel(r.fix) : "Apply suggested fix"} \u2192</button>` : ""}</div>`
+  ).join("") : '<div class="compat-ok">No known conflicts for these selections. Confirm exact part dimensions with the vendor.</div>');
   $("#estimate-note").textContent = n ? `${n} compatibility ${n === 1 ? "warning" : "warnings"} to review \xB7 estimates exclude tax & shipping.` : "Adjust prices in the parts list \xB7 excludes tax & shipping.";
 }
 function renderSummary() {
@@ -3342,13 +4682,24 @@ function renderSummary() {
   });
   $("#xray").setAttribute("aria-pressed", state.xray);
   $("#inside-legend").hidden = !(state.xray || state.view === "exploded" || appearance(state, "front").clear);
-  $("#inside-legend").innerHTML = ["Logic board", selected(state, "storage").name, state.connectivity === "moon" ? "Kit battery" : selected(state, "battery").name, hasBT(state) ? "Bluetooth" : null, hasQi(state) ? "Qi coil" : null, hasTaptic(state) ? "Taptic motor" : null, state.airtag === "on" ? "AirTag" : null].filter(Boolean).map((s) => `<span>${esc(s)}</span>`).join("");
+  $("#inside-legend").innerHTML = [
+    "Logic board",
+    selected(state, "storage").name,
+    state.connectivity === "moon" ? "Kit battery" : selected(state, "battery").name,
+    hasBT(state) ? "Bluetooth" : null,
+    hasQi(state) ? "Qi coil" : null,
+    hasTaptic(state) ? "Taptic motor" : null,
+    state.airtag === "on" ? "AirTag" : null
+  ].filter(Boolean).map((s) => `<span>${esc(s)}</span>`).join("");
 }
 function applyTheme() {
   const dark = state.theme === "dark" || state.theme === "system" && matchMedia("(prefers-color-scheme: dark)").matches;
   document.documentElement.dataset.theme = dark ? "dark" : "light";
   $("#theme").title = "Theme: " + state.theme;
-  $("#theme").setAttribute("aria-label", "Theme: " + state.theme + ". Click to change.");
+  $("#theme").setAttribute(
+    "aria-label",
+    "Theme: " + state.theme + ". Click to change."
+  );
 }
 function save() {
   try {
@@ -3375,7 +4726,8 @@ function set(patch, { renderForm = true } = {}) {
   if (state.body === "thin" && patch.body === "thick") showUnlocks = true;
   const notes = [];
   state = normalize({ ...state, ...patch }, notes);
-  if (notes.length) restoreNotices = [.../* @__PURE__ */ new Set([...restoreNotices, ...notes])];
+  if (notes.length)
+    restoreNotices = [.../* @__PURE__ */ new Set([...restoreNotices, ...notes])];
   save();
   if (renderForm) render();
   else {
@@ -3394,7 +4746,8 @@ function tab(name, scroll = false) {
     b.setAttribute("aria-selected", active);
     b.tabIndex = active ? 0 : -1;
   });
-  for (const id of ["configure", "parts", "guide"]) $("#" + id + "-panel").hidden = id !== name;
+  for (const id of ["configure", "parts", "guide"])
+    $("#" + id + "-panel").hidden = id !== name;
   if (scroll) $(".tabs").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 var toastTimer;
@@ -3416,7 +4769,9 @@ async function copy(text, title) {
   }
 }
 function exportBOM() {
-  return "CLASSIC STUDIO \xB7 PARTS LIST\n\n" + bom(state).map((r) => `${r.group} | ${r.name} | ${r.vendor} | ${money(r.price)} | ${r.url}`).join("\n") + "\n\nEstimated total: " + money(bom(state).reduce((a, r) => a + r.price, 0)) + "\nExcludes tax, shipping, tools and labor.\n\nCOMPATIBILITY\n" + warnings(state).map((r) => r.title + ": " + r.message).join("\n");
+  return "CLASSIC STUDIO \xB7 PARTS LIST\n\n" + bom(state).map(
+    (r) => `${r.group} | ${r.name} | ${r.vendor} | ${money(r.price)} | ${r.url}`
+  ).join("\n") + "\n\nEstimated total: " + money(bom(state).reduce((a, r) => a + r.price, 0)) + "\nExcludes tax, shipping, tools and labor.\n\nCOMPATIBILITY\n" + warnings(state).map((r) => r.title + ": " + r.message).join("\n");
 }
 document.addEventListener("click", (e) => {
   const b = e.target.closest("button");
@@ -3430,7 +4785,9 @@ document.addEventListener("click", (e) => {
     renderConfigure();
   }
   if (b.dataset.key) {
-    set({ [b.dataset.key]: b.dataset.key === "capacity" ? Number(b.dataset.value) : b.dataset.value });
+    set({
+      [b.dataset.key]: b.dataset.key === "capacity" ? Number(b.dataset.value) : b.dataset.value
+    });
     $("#preset").value = "";
   }
   if (b.dataset.view) set({ view: b.dataset.view });
@@ -3444,7 +4801,9 @@ document.addEventListener("click", (e) => {
   }
   if (b.dataset.action === "copy-bom") copy(exportBOM(), "Parts list");
   if (b.dataset.action === "csv") {
-    const blob = new Blob([csv(bom(state))], { type: "text/csv;charset=utf-8" });
+    const blob = new Blob([csv(bom(state))], {
+      type: "text/csv;charset=utf-8"
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -3462,12 +4821,22 @@ function commitPrice(input) {
     return;
   }
   input.setCustomValidity("");
-  state = normalize({ ...state, prices: { ...state.prices, [input.dataset.price]: price } });
+  state = normalize({
+    ...state,
+    prices: { ...state.prices, [input.dataset.price]: price }
+  });
   save();
   renderSummary();
   renderConfigure();
-  const totals = Object.entries(bom(state).reduce((a, r) => (a[r.group] = (a[r.group] || 0) + r.price, a), {}));
-  $("#parts-panel .breakdown").innerHTML = '<h4 class="subhead">By category</h4>' + totals.map(([k, v]) => `<div class="subtotal"><span>${k}</span><span>${money(v)}</span></div>`).join("");
+  const totals = Object.entries(
+    bom(state).reduce(
+      (a, r) => (a[r.group] = (a[r.group] || 0) + r.price, a),
+      {}
+    )
+  );
+  $("#parts-panel .breakdown").innerHTML = '<h4 class="subhead">By category</h4>' + totals.map(
+    ([k, v]) => `<div class="subtotal"><span>${k}</span><span>${money(v)}</span></div>`
+  ).join("");
 }
 document.addEventListener("input", (e) => {
   if (e.target.dataset.search) {
@@ -3478,7 +4847,8 @@ document.addEventListener("input", (e) => {
   if (e.target.dataset.price) commitPrice(e.target);
   if (e.target.dataset.input) {
     set({ [e.target.dataset.input]: e.target.value }, { renderForm: false });
-    if (e.target.dataset.input === "engraving") $("#group-cosmetic .group-selection").textContent = e.target.value || "No engraving";
+    if (e.target.dataset.input === "engraving")
+      $("#group-cosmetic .group-selection").textContent = e.target.value || "No engraving";
   }
 });
 document.addEventListener("change", (e) => {
@@ -3486,8 +4856,10 @@ document.addEventListener("change", (e) => {
     const key = e.target.dataset.bundle;
     set({ buttonBundle: e.target.checked ? key : "none" });
   }
-  if (e.target.dataset.toggle) set({ [e.target.dataset.toggle]: e.target.checked });
-  if (e.target.dataset.select) set({ [e.target.dataset.select]: e.target.value });
+  if (e.target.dataset.toggle)
+    set({ [e.target.dataset.toggle]: e.target.checked });
+  if (e.target.dataset.select)
+    set({ [e.target.dataset.select]: e.target.value });
   if (e.target.dataset.price) {
     commitPrice(e.target);
     if (!e.target.validity.valid) e.target.reportValidity();
@@ -3513,7 +4885,10 @@ $("#share").addEventListener("click", () => {
   copy(location.href, "Build link");
 });
 $("#xray").addEventListener("click", () => set({ xray: !state.xray }));
-$("#review-parts").addEventListener("click", () => tab(currentTab === "parts" ? "configure" : "parts", true));
+$("#review-parts").addEventListener(
+  "click",
+  () => tab(currentTab === "parts" ? "configure" : "parts", true)
+);
 $("#theme").addEventListener("click", () => {
   const themes = ["system", "light", "dark"];
   set({ theme: themes[(themes.indexOf(state.theme) + 1) % 3] });
@@ -3542,8 +4917,13 @@ window.addEventListener("hashchange", () => {
   $("#preset").value = "";
   toast("Build restored from link");
 });
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
-$("#sources-list").innerHTML = SOURCES.map(([n, url]) => `<a href="${url}" target="_blank" rel="noreferrer">${n} \u2197</a>`).join("");
+matchMedia("(prefers-color-scheme: dark)").addEventListener(
+  "change",
+  applyTheme
+);
+$("#sources-list").innerHTML = SOURCES.map(
+  ([n, url]) => `<a href="${url}" target="_blank" rel="noreferrer">${n} \u2197</a>`
+).join("");
 render();
 tab("configure");
 var context = document.modelContext;
@@ -3551,22 +4931,100 @@ var lifecycle = new AbortController();
 if (context?.registerTool) {
   const register = (t) => {
     try {
-      Promise.resolve(context.registerTool(t, { signal: lifecycle.signal })).catch(() => {
+      Promise.resolve(
+        context.registerTool(t, { signal: lifecycle.signal })
+      ).catch(() => {
       });
     } catch {
     }
   };
-  register({ name: "read_ipod_build", title: "Read iPod build", description: "Read the current iPod configuration, estimated parts and compatibility warnings.", inputSchema: { type: "object", properties: {}, additionalProperties: false }, annotations: { readOnlyHint: true }, execute: () => ({ configuration: state, parts: bom(state), warnings: warnings(state), total: Number(bom(state).reduce((a, r) => a + r.price, 0).toFixed(2)), runtime: runtimeEstimate(state), rendering: viewer?.metrics() ?? null }) });
-  register({ name: "configure_ipod_build", title: "Configure iPod build", description: "Change selected options in the visible iPod configurator. Wi-Fi is unavailable.", inputSchema: { type: "object", properties: { changes: { type: "object", properties: Object.fromEntries([...Object.entries(CATALOG).map(([k, v]) => [k, { type: "string", enum: v.map((x) => x.id) }]), ["capacity", { type: "number", enum: CAPACITIES }], ...Object.entries(APPEARANCE).map(([k, v]) => [k, { type: "string", enum: v.map((p) => p.id) }]), ["buttonBundle", { type: "string", enum: ["none", "front", "wheel"] }], ["preinstalled", { type: "boolean" }], ["engravingStyle", { type: "string", enum: Object.keys(ENGRAVING_STYLES) }], ["capacityMark", { type: "string", maxLength: 24 }], ["engraving", { type: "string", maxLength: 80 }]]), additionalProperties: false } }, required: ["changes"], additionalProperties: false }, annotations: { readOnlyHint: false }, execute: (input) => {
-    if (!input?.changes || typeof input.changes !== "object" || Array.isArray(input.changes)) throw new Error("changes must be an object");
-    const permitted = /* @__PURE__ */ new Set([...Object.keys(CATALOG), "capacity", ...Object.keys(APPEARANCE), "buttonBundle", "preinstalled", "engravingStyle", "capacityMark", "engraving"]);
-    const candidate = normalize({ ...state, ...input.changes });
-    for (const [k, v] of Object.entries(input.changes)) {
-      if (!permitted.has(k) || candidate[k] !== v) throw new Error("Invalid option: " + k);
+  register({
+    name: "read_ipod_build",
+    title: "Read iPod build",
+    description: "Read the current iPod configuration, estimated parts and compatibility warnings.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+      additionalProperties: false
+    },
+    annotations: { readOnlyHint: true },
+    execute: () => ({
+      configuration: state,
+      parts: bom(state),
+      warnings: warnings(state),
+      total: Number(
+        bom(state).reduce((a, r) => a + r.price, 0).toFixed(2)
+      ),
+      runtime: runtimeEstimate(state),
+      rendering: viewer?.metrics() ?? null
+    })
+  });
+  register({
+    name: "configure_ipod_build",
+    title: "Configure iPod build",
+    description: "Change selected options in the visible iPod configurator. Wi-Fi is unavailable.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        changes: {
+          type: "object",
+          properties: Object.fromEntries([
+            ...Object.entries(CATALOG).map(([k, v]) => [
+              k,
+              { type: "string", enum: v.map((x) => x.id) }
+            ]),
+            ["capacity", { type: "number", enum: CAPACITIES }],
+            ...Object.entries(APPEARANCE).map(([k, v]) => [
+              k,
+              { type: "string", enum: v.map((p) => p.id) }
+            ]),
+            [
+              "buttonBundle",
+              { type: "string", enum: ["none", "front", "wheel"] }
+            ],
+            ["preinstalled", { type: "boolean" }],
+            [
+              "engravingStyle",
+              { type: "string", enum: Object.keys(ENGRAVING_STYLES) }
+            ],
+            ["capacityMark", { type: "string", maxLength: 24 }],
+            ["engraving", { type: "string", maxLength: 80 }]
+          ]),
+          additionalProperties: false
+        }
+      },
+      required: ["changes"],
+      additionalProperties: false
+    },
+    annotations: { readOnlyHint: false },
+    execute: (input) => {
+      if (!input?.changes || typeof input.changes !== "object" || Array.isArray(input.changes))
+        throw new Error("changes must be an object");
+      const permitted = /* @__PURE__ */ new Set([
+        ...Object.keys(CATALOG),
+        "capacity",
+        ...Object.keys(APPEARANCE),
+        "buttonBundle",
+        "preinstalled",
+        "engravingStyle",
+        "capacityMark",
+        "engraving"
+      ]);
+      const candidate = normalize({ ...state, ...input.changes });
+      for (const [k, v] of Object.entries(input.changes)) {
+        if (!permitted.has(k) || candidate[k] !== v)
+          throw new Error("Invalid option: " + k);
+      }
+      set(input.changes);
+      return {
+        configuration: state,
+        total: Number(
+          bom(state).reduce((a, r) => a + r.price, 0).toFixed(2)
+        ),
+        warnings: warnings(state)
+      };
     }
-    set(input.changes);
-    return { configuration: state, total: Number(bom(state).reduce((a, r) => a + r.price, 0).toFixed(2)), warnings: warnings(state) };
-  } });
+  });
   window.addEventListener("pagehide", () => lifecycle.abort(), { once: true });
 }
 async function loadViewer() {
@@ -3576,7 +5034,11 @@ async function loadViewer() {
     $("#viewer-status")?.remove();
     window.__viewerReady = true;
   } catch (error) {
-    if (!$("#viewer-status")) $("#viewer").insertAdjacentHTML("beforeend", '<div id="viewer-status"></div>');
+    if (!$("#viewer-status"))
+      $("#viewer").insertAdjacentHTML(
+        "beforeend",
+        '<div id="viewer-status"></div>'
+      );
     $("#viewer-status").innerHTML = 'The 3D preview could not load. Check your connection and WebGL support.<button id="retry-viewer">Retry preview</button>';
     $("#retry-viewer").onclick = () => location.reload();
     console.error("Viewer error:", error);
