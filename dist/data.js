@@ -1,3 +1,4 @@
+import {EOE,APPEARANCE,FAMILY_NAMES,APPEARANCE_LABELS,appearance,LEGACY_IDS,LEGACY_APPROXIMATE,nearestBack,BUNDLE_ESTIMATES,ENGRAVING_STYLES} from './catalog.js';
 // Edit all names, prices, vendors, explanations and compatibility rules here.
 // Prices are planning allowances in USD, not live quotes. Updated 2026-09-12.
 export const VENDORS={iflash:{name:'iFlash',url:'https://www.iflash.xyz/store/'},eoe:{name:'Elite Obsolete Electronics',url:'https://eoe.works/'},moon:{name:'moonlit.market',url:'https://moonlit.market/products/classic-connect-2'},used:{name:'Used parts / eBay',url:'https://www.ebay.com/'},apple:{name:'Apple',url:'https://www.apple.com/airtag/'},rockbox:{name:'Rockbox',url:'https://www.rockbox.org/'},diy:{name:'DIY parts supplier',url:'https://www.digikey.com/'}};
@@ -16,13 +17,11 @@ taptic:[o('off','Original wheel feedback',0,1,'Keep the original audible click.'
 firmware:[o('apple','Apple firmware',0,1,'Familiar menus, ALAC and gapless playback. FLAC needs conversion. Sync with compatible desktop software.','apple'),o('rockbox','Rockbox · dual boot',0,3,'FLAC, ALAC, gapless playback and themes. Dual boot is supported; battery capacity adjusts runtime estimates, not the battery percentage gauge.','rockbox')],
 bypass:[o('off','Standard audio circuit',0,1,'Keep the Cirrus-based audio path.'),o('on','Audio capacitor bypass',0,5,'Informational only: the common iMod capacitor bypass is for Wolfson-based 5th / 5.5th gen boards, not these 6th / 7th gen boards.','diy')]
 };
-export const COLORS={black:{name:'Black',hex:'#252629'},silver:{name:'Silver',hex:'#b9bdc2'},white:{name:'White',hex:'#f0f0eb'},red:{name:'Red',hex:'#a62d36'},blue:{name:'Blue',hex:'#376ba5'},gold:{name:'Gold',hex:'#c7a060'},transparent:{name:'Clear',hex:'#d1e7eb'}};
-export const FINISHES={polished:{name:'Polished stainless',hex:'#d4d7da',roughness:.14,metalness:1},brushed:{name:'Brushed stainless',hex:'#b5bcc4',roughness:.44,metalness:1},black:{name:'Black',hex:'#32353a',roughness:.28,metalness:.8},gold:{name:'Gold',hex:'#cda74f',roughness:.24,metalness:1},blue:{name:'Blue',hex:'#3c6994',roughness:.29,metalness:.8},red:{name:'Red',hex:'#9a3541',roughness:.3,metalness:.75},custom:{name:'Custom color',hex:'#668576',roughness:.35,metalness:.75}};
 export const CAPACITIES=[128,256,512,1024,2048];
 export const MEDIA_PRICES={solo:[15,25,45,95,185],quad:[15,25,45,95,180],sata:[20,30,50,90,180],cf:[100,190,350,700,1400]};
 export const COSMETICS={front:{price:22,difficulty:3,vendor:'eoe',description:'Clear plastic reveals the selected internals. Check replacement faceplate fit for A1238.'},wheel:{price:15,difficulty:3,vendor:'eoe',description:'Check wheel generation compatibility. Ring and center colors are priced as one assembly.'},engraving:{price:0,difficulty:1,vendor:'eoe',description:'Confirm engraving service with the shell vendor; enter their quote in the parts list.'}};
-export const DEFAULT={board:'7g',storage:'quad',capacity:512,battery:'2000',body:'thin',finish:'polished',customFinish:'#668576',front:'silver',wheel:'white',button:'white',screen:'keep',connectivity:'original',bluetooth:'off',qi:'off',airtag:'off',taptic:'off',firmware:'apple',bypass:'off',engraving:'',frontPrice:COSMETICS.front.price,wheelPrice:COSMETICS.wheel.price,engravingPrice:COSMETICS.engraving.price,prices:{},view:'three',xray:false,theme:'system'};
-export const PRESETS={stock:{...DEFAULT,board:'6g',storage:'hdd',capacity:128,battery:'stock',front:'silver'},daily:{...DEFAULT,board:'7g',storage:'quad',capacity:512,battery:'3000',body:'thick',connectivity:'eoe',taptic:'on',firmware:'rockbox',front:'black',wheel:'black',button:'black'},audiophile:{...DEFAULT,board:'7g',storage:'sata',capacity:512,battery:'3000',body:'thick',firmware:'rockbox',front:'silver'}};
+export const DEFAULT={schemaVersion:2,board:'7g',storage:'quad',capacity:512,battery:'2000',body:'thin',finish:'bp-silver-stock-stainless',front:'fp-metal-silver',wheel:'cw-white',button:'cb-metal-silver',bezel:'db-white',hold:'hs-thin-black',buttonBundle:'none',preinstalled:false,engravingStyle:'universal',capacityMark:'512GB',screen:'keep',connectivity:'original',bluetooth:'off',qi:'off',airtag:'off',taptic:'off',firmware:'apple',bypass:'off',engraving:'',engravingPrice:0,prices:{},view:'three',xray:false,theme:'system'};
+export const PRESETS={stock:{...DEFAULT,board:'6g',storage:'hdd',capacity:128,battery:'stock',capacityMark:'80GB'},daily:{...DEFAULT,board:'7g',storage:'quad',capacity:512,battery:'3000',body:'thick',hold:'hs-thick-black',connectivity:'eoe',taptic:'on',firmware:'rockbox',front:'fp-metal-black',wheel:'cw-black',button:'cb-metal-black'},audiophile:{...DEFAULT,board:'7g',storage:'sata',capacity:512,battery:'3000',body:'thick',hold:'hs-thick-black',firmware:'rockbox'}};
 export const SOURCES=[['iFlash board compatibility','https://www.iflash.xyz/store/iflash-compatibility/'],['iFlash battery fit guide','https://www.iflash.xyz/3rd-party-extended-battery-guide/'],['Rockbox iPod Classic manual','https://download.rockbox.org/daily/manual/rockbox-ipod6g/rockbox-build.html'],['Classic Connect 2 specifications','https://moonlit.market/products/classic-connect-2'],['Classic Connect 2 enclosure and ports','https://moonlit.market/pages/classic-connect-2'],['Classic Connect 2 adapter fit','https://moonlit.market/pages/compatibility']];
 export const isKit=s=>['eoe','moon'].includes(s.connectivity);
 export const hasBT=s=>isKit(s)||s.bluetooth==='aptx';
@@ -31,6 +30,11 @@ export const hasTaptic=s=>s.connectivity==='moon'||s.taptic==='on';
 export const selected=(s,k)=>CATALOG[k].find(x=>x.id===s[k]);
 const rule=(id,test,level,title,message,fix)=>({id,test,level,title,message,fix});
 export const RULES=[
+rule('button-fit',s=>(appearance(s,'front').material==='metal')!==(appearance(s,'button').material==='metal'),'warning','Faceplate and center button materials do not match','Metal faceplates take metal buttons. Plastic and crystal-clear faceplates take plastic or crystal-clear buttons. Select a matching button before ordering.'),
+rule('hold-fit',s=>!isKit(s)&&appearance(s,'hold').body!==s.body,'warning','Headphone jack / hold assembly has the wrong depth','Match the assembly to your thin or thick back. The U2 black-and-red assembly in this catalog is thin only.'),
+rule('bundle-variant',s=>s.buttonBundle!=='none'||s.preinstalled,'info','Bundle prices are planning allowances','Center-button bundles add an estimated $8 to the chosen faceplate or wheel; preinstalled jack and bezel add $20 to a standard back. Confirm the selected colors/materials are offered together. Included components are not charged again.'),
+rule('kit-cosmetics',s=>isKit(s),'info','Back kit controls its own enclosure and small parts','Catalog back color, engraving style, bezel and hold assembly are appearance references for this kit. They appear as included / verify in the parts list, not additional purchases. Confirm those options with the kit maker.'),
+
 rule('lba',s=>s.board!=='7g'&&s.storage!=='hdd'&&s.capacity>128,'warning','Apple firmware stops at 128GB','Both 6th and 6.5th generation boards use LBA28. Rockbox-only configurations can work around this; Apple dual boot cannot access the larger layout reliably. Choose a 7th-generation board for full capacity in Apple firmware.',{board:'7g'}),
 rule('battery',s=>s.battery==='3000'&&s.body==='thin'&&s.connectivity!=='moon','warning','3000 mAh needs a thick back','This planner requires a thick back for the selected 3000 mAh cell. Exact battery dimensions still matter.',{body:'thick'}),
 rule('kit',s=>s.connectivity==='eoe'&&s.body==='thin','warning','Connectivity kit needs its deeper enclosure','Use thick as a conservative space allowance for this generic kit. Verify the specific seller’s dimensions; kit fit is not documented in this planner.',{body:'thick'}),
@@ -51,26 +55,30 @@ rule('tracks',s=>s.storage!=='hdd'&&s.capacity>=1024,'info','Storage capacity is
 rule('cfmedia',s=>s.storage==='cf'&&s.capacity>=512,'warning','High-capacity CompactFlash is not a confirmed kit','These are budget placeholders, not verified available compatible cards. Select a tested card from the adapter maker or use iFlash Quad.',{storage:'quad'})
 ];
 export const warnings=s=>RULES.filter(r=>r.test(s)).map(({test,...r})=>r);
+export function appearanceKey(s,key){if(key==='front'||key==='wheel')return key+':'+s[key];if(key==='finish')return 'back:'+s.finish+':'+s.body+':'+s.engravingStyle;return key+':'+s[key];}
 export function bom(s){
- const rows=[];const add=(key,group,name,price,vendor,description='',included=false)=>{const v=VENDORS[vendor]||VENDORS.eoe;rows.push({key,group,name,price:included?0:(s.prices[key]??price),basePrice:price,vendor:v.name,url:v.url,description,included});};
- for(const [key,group] of [['board','Logic board'],['storage','Storage'],['battery','Battery'],['body','Back plate'],['connectivity','Connectivity'],['screen','Screen'],['bluetooth','Wireless'],['qi','Wireless'],['airtag','Wireless'],['taptic','Feel'],['firmware','Firmware']]){
+ const rows=[];const add=(key,group,name,basePrice,vendor,description='',included=false,url=null,extra=0)=>{const v=VENDORS[vendor]||{name:vendor,url:'https://eoe.works/'};const editablePrice=s.prices[key]??basePrice;rows.push({key,group,name,price:included?0:Math.round((editablePrice+extra)*100)/100,basePrice,editablePrice,extra,vendor:v.name,url:url??v.url,description,included});};
+ for(const [key,group] of [['board','Logic board'],['storage','Storage'],['battery','Battery'],['connectivity','Connectivity'],['screen','Screen'],['bluetooth','Wireless'],['qi','Wireless'],['airtag','Wireless'],['taptic','Feel'],['firmware','Firmware']]){
   const p=selected(s,key);if(['bluetooth','qi','airtag','taptic'].includes(key)&&p.id==='off')continue;
   if(key==='connectivity'&&p.id==='original')continue;
-  if(key==='body'&&isKit(s))continue;
   if(key==='battery'&&s.connectivity==='moon')continue;
-  const inc=(key==='bluetooth'&&isKit(s))||(['qi','taptic'].includes(key)&&s.connectivity==='moon');
-  if(inc)continue;
-  add(key+':'+p.id,group,p.name+(key==='body'?' · '+FINISHES[s.finish].name:''),p.price,p.vendor,p.description);
+  if((key==='bluetooth'&&isKit(s))||(['qi','taptic'].includes(key)&&s.connectivity==='moon'))continue;
+  add(key+':'+p.id,group,p.name,p.price,p.vendor,p.description);
   if(key==='firmware'&&p.id==='apple')rows.at(-1).url='https://support.apple.com/ipod';
   if(key==='storage'&&p.id!=='hdd')rows.at(-1).url='https://www.iflash.xyz/store/iflash-'+p.id+'/';
   if(key==='connectivity'&&p.id==='eoe')rows.at(-1).url='https://eoe.works/products/backplate-mod-kit-usb-c-internal-bluetooth-5-2-for-apple-ipod-video-5th-5-5-a1136-ipod-classic-6th-7th-a1238';
   if(key==='connectivity'&&p.id==='usbc')rows.at(-1).url='https://eoe.works/products/new-usb-c-dock-replacement-for-apple-ipod-video-5th-5-5-a1136-ipod-classic-6th-7th-a1238';
  }
  if(s.storage!=='hdd'){const kind=s.storage==='sata'?'mSATA SSD':s.storage==='cf'?'CompactFlash card':'microSD media';add(`media:${s.storage}:${s.capacity}`,'Storage',`${s.capacity>=1024?s.capacity/1024+'TB':s.capacity+'GB'} ${kind}`,MEDIA_PRICES[s.storage][CAPACITIES.indexOf(s.capacity)],'used','Media allowance; verify compatibility. Quad total can be spread over up to four cards.');}
- add('front:'+s.front,'Front plate',COLORS[s.front].name+' front plate',s.frontPrice,'eoe');
- add('wheel:'+s.wheel+':'+s.button,'Click wheel',COLORS[s.wheel].name+' wheel / '+COLORS[s.button].name+' button',s.wheelPrice,'eoe');
- if(s.body==='thick'&&!isKit(s))add('hold:thick','Back plate','Thick headphone-jack / hold-switch assembly',20,'eoe','Fit depends on your replacement shell.');
- if(s.engraving.trim())add('engraving','Cosmetics','Engraving: '+s.engraving,s.engravingPrice,'eoe','Confirm engraving service with seller.');
+ for(const [key,group] of [['front','Front plate'],['wheel','Click wheel'],['button','Center button'],['finish','Back plate'],['bezel','Details'],['hold','Details']]){
+  const part=appearance(s,key);let included=false,extra=0,detail='',name=part.name+' ('+(FAMILY_NAMES[part.family]||part.family)+') '+APPEARANCE_LABELS[key].toLowerCase();
+  if(key==='front'||key==='wheel'){if(s.buttonBundle===key){extra=BUNDLE_ESTIMATES[key==='front'?'frontButton':'wheelButton'];name+=' + '+appearance(s,'button').name+' center button';detail='Includes selected center button. Bundle surcharge is an estimate.';}}
+  if(key==='button'&&s.buttonBundle!=='none'){included=true;detail='Included with '+(s.buttonBundle==='front'?'faceplate':'click wheel')+'.';}
+  if(key==='finish'){name=part.name+' back · '+s.body+' · '+ENGRAVING_STYLES[s.engravingStyle]+(s.engravingStyle==='capacity'?' '+s.capacityMark:'');extra=(s.body==='thick'?(s.prices['back-premium:'+s.finish+':'+s.body]??BUNDLE_ESTIMATES.thickBody):0)+(s.preinstalled?BUNDLE_ESTIMATES.preinstalled:0);if(s.preinstalled){name+=' + preinstalled jack & bezel';detail='Includes '+appearance(s,'hold').name+' '+appearance(s,'hold').body+' jack and '+appearance(s,'bezel').name+' bezel. Confirm bundle availability.';}if(isKit(s)){included=true;detail='Kit enclosure: color/style is a reference; verify with the kit maker.';}}
+  if(['bezel','hold'].includes(key)&&(s.preinstalled||isKit(s))){included=true;detail=isKit(s)?'Kit detail reference; verify the chosen variant.':'Included with preinstalled backplate bundle.';}
+  add(appearanceKey(s,key),group,name,part.price,part.vendor,detail,included,part.url,extra);
+ }
+ if(s.engraving.trim())add('engraving','Cosmetics','Custom engraving: '+s.engraving,s.engravingPrice,'eoe','Custom text is additional to the selected factory engraving style. Confirm service availability.');
  return rows;
 }
 export function guide(s){const steps=[{name:'Open and inspect the donor',detail:'Back up music. Discharge and disconnect the battery. Opening A1238 metal clips is usually the hardest mechanical step.',difficulty:4,minutes:40}];
@@ -80,13 +88,39 @@ if(s.storage!=='hdd')add('Install and restore flash storage','Fit compatible med
 add('Set up and test firmware',s.firmware==='rockbox'?'Restore Apple firmware first, then follow the current Rockbox iPod Classic manual. Test dual boot and library access.':'Restore with compatible Apple desktop software and test sync, audio and controls.',s.firmware==='rockbox'?3:2,s.firmware==='rockbox'?35:20);
 add(s.connectivity==='moon'?'Fit the kit battery':'Fit and insulate the battery','Use the cell supplier’s fit guidance. Avoid pinching, bending or compressing lithium cells.',3,20);
 add('Fit the back and connectivity',s.connectivity==='original'?'Check the matching hold-switch and headphone-jack assembly. Leave the shell open for testing.':'Follow the kit maker’s wiring instructions. Verify charging, USB data and both wired and wireless audio as applicable.',s.connectivity==='original'?3:5,s.connectivity==='original'?20:65);
-add('Fit the front, wheel and LCD','Seat the wheel and LCD flex cables, check alignment, and test every button before snapping shut.',3,35);
+add('Fit the front, wheel, center button and LCD',appearance(s,'front').name+' faceplate; '+appearance(s,'wheel').name+' wheel; '+appearance(s,'button').name+' center button. '+(s.buttonBundle!=='none'?'Center button is ordered with the '+s.buttonBundle+'; verify its material. ':'')+'Seat flex cables and test every button before closing.',3,35);
+add(s.preinstalled&&!isKit(s)?'Check the preinstalled jack and dock bezel':'Fit and test the small details',appearance(s,'hold').name+' '+appearance(s,'hold').body+' headphone/hold assembly and '+appearance(s,'bezel').name+' dock bezel. '+(isKit(s)?'Confirm that these references match the chosen kit.':s.preinstalled?'Vendor installs these with the back; test hold, audio and port alignment.':'Match the body depth, insulate the ribbon and test hold, audio and port alignment.'),s.preinstalled?2:3,s.preinstalled?10:25);
+add('Confirm back color and factory engraving',appearance(s,'finish').name+' · '+s.body+' · '+ENGRAVING_STYLES[s.engravingStyle]+(s.engravingStyle==='capacity'?' · '+s.capacityMark:'')+'. '+(isKit(s)?'Kit customization must be confirmed with its maker.':'Order this factory variant before assembly. Capacity text is a cosmetic marking; it does not change storage.'),1,5);
 if(s.bluetooth==='aptx'&&!isKit(s))add('Wire and test the Bluetooth transmitter','Test analog audio, isolation, antenna placement and the 3.5 mm jack.',5,55);
 if(s.qi==='on'&&s.connectivity!=='moon')add('Build the Qi window and charging circuit','A steel back is incompatible without modification. Test receiver alignment, insulation and charging heat.',5,60);
 if(s.taptic==='on'&&s.connectivity!=='moon')add('Install and test taptic feedback','Follow a proven driver-circuit design and insulate the motor and wiring.',5,40);
 if(s.airtag==='on')add('Fit AirTag and regulated power','Use a regulated 3V supply and verify antenna reception before fixing the board in place.',5,60);
 add('Finish, test and close',s.engraving?'Confirm engraving with the shell vendor before assembly. Check clearances, charging, audio and controls before closing.':'Check clearances, charging, audio and controls. Close only when the build is fully tested.',3,25);return steps;}
-export function normalize(input){const s={...DEFAULT,prices:{}};if(!input||typeof input!=='object')return s;for(const k of Object.keys(CATALOG))if(CATALOG[k].some(o=>o.id===input[k]))s[k]=input[k];for(const k of ['front','wheel','button'])if(Object.hasOwn(COLORS,input[k]))s[k]=input[k];if(Object.hasOwn(FINISHES,input.finish))s.finish=input.finish;if(CAPACITIES.includes(input.capacity))s.capacity=input.capacity;if(/^#[0-9a-f]{6}$/i.test(input.customFinish||''))s.customFinish=input.customFinish;for(const k of ['frontPrice','wheelPrice','engravingPrice'])if(Number.isFinite(input[k])&&input[k]>=0&&input[k]<=10000)s[k]=input[k];s.engraving=String(input.engraving||'').slice(0,80);if(['front','back','three','exploded'].includes(input.view))s.view=input.view;if(['system','light','dark'].includes(input.theme))s.theme=input.theme;s.xray=input.xray===true;if(input.prices&&typeof input.prices==='object')for(const [k,v]of Object.entries(input.prices))if(/^[a-z0-9:_-]{1,100}$/.test(k)&&Number.isFinite(v)&&v>=0&&v<=100000)s.prices[k]=v;return s;}
+export function normalize(input,notices=[]){const s={...DEFAULT,prices:{}};if(!input||typeof input!=='object'||Array.isArray(input))return s;const legacy=input.schemaVersion!==2;
+ for(const k of Object.keys(CATALOG))if(CATALOG[k].some(o=>o.id===input[k]))s[k]=input[k];
+ for(const key of Object.keys(APPEARANCE)){const original=input[key];let id=original;if(legacy&&key==='finish'&&original==='custom')id=nearestBack(input.customFinish);else if(legacy&&Object.hasOwn(LEGACY_IDS[key]??{},original))id=LEGACY_IDS[key][original];
+  if(APPEARANCE[key].some(p=>p.id===id)){s[key]=id;if(id!==original&&LEGACY_APPROXIMATE[key]?.includes(original))notices.push(APPEARANCE_LABELS[key]+': '+original+' was matched to '+appearance(s,key).name+'.');}
+  else if(original!==undefined)notices.push(APPEARANCE_LABELS[key]+': unavailable option replaced with '+appearance(s,key).name+'.');
+ }
+ if(legacy&&!input.hold)s.hold=s.body==='thick'?'hs-thick-black':'hs-thin-black';
+ if(CAPACITIES.includes(input.capacity))s.capacity=input.capacity;
+ for(const k of ['engravingPrice'])if(Number.isFinite(input[k])&&input[k]>=0&&input[k]<=10000)s[k]=input[k];
+ s.engraving=String(input.engraving||'').slice(0,80);s.capacityMark=String(input.capacityMark??(legacy?(s.storage==='hdd'?'80GB':s.capacity>=1024?s.capacity/1024+'TB':s.capacity+'GB'):DEFAULT.capacityMark)).slice(0,24);
+ if(['front','back','three','exploded'].includes(input.view))s.view=input.view;if(['system','light','dark'].includes(input.theme))s.theme=input.theme;s.xray=input.xray===true;
+ if(['none','front','wheel'].includes(input.buttonBundle))s.buttonBundle=input.buttonBundle;s.preinstalled=input.preinstalled===true;
+ const styles=appearance(s,'finish').engravingStyles;const desired=input.engravingStyle??(legacy?'blank':DEFAULT.engravingStyle);s.engravingStyle=styles.includes(desired)?desired:styles[0];if(input.engravingStyle&&!styles.includes(desired))notices.push('Engraving style changed to '+ENGRAVING_STYLES[s.engravingStyle]+' for this back color.');
+ if(input.prices&&typeof input.prices==='object')for(const [k,v]of Object.entries(input.prices))if(/^[a-z0-9:_-]{1,240}$/.test(k)&&Number.isFinite(v)&&v>=0&&v<=100000)s.prices[k]=v;
+ if(legacy){
+  const old=input.prices??{};const migrate=(oldKey,newKey)=>{if(Number.isFinite(old[oldKey])&&old[oldKey]>=0&&old[oldKey]<=100000)s.prices[newKey]=old[oldKey];};
+  migrate('front:'+input.front,appearanceKey(s,'front'));migrate('body:'+s.body,appearanceKey(s,'finish'));if(Number.isFinite(old['body:'+s.body])&&old['body:'+s.body]>=0&&old['body:'+s.body]<=100000)s.prices['back-premium:'+s.finish+':'+s.body]=0;
+  if(Number.isFinite(input.frontPrice)&&input.frontPrice!==22&&input.frontPrice>=0&&input.frontPrice<=100000)s.prices[appearanceKey(s,'front')]=input.frontPrice;
+  const wheelQuote=old['wheel:'+input.wheel+':'+input.button]??(input.wheelPrice!==15?input.wheelPrice:undefined);if(Number.isFinite(wheelQuote)&&wheelQuote>=0&&wheelQuote<=100000){s.prices[appearanceKey(s,'wheel')]=wheelQuote;s.prices[appearanceKey(s,'button')]=0;notices.push('Your saved wheel/button assembly quote is retained; its button is shown at $0.');}
+  if(!input.hold){s.prices[appearanceKey(s,'hold')]=s.body==='thick'?(Number.isFinite(old['hold:thick'])&&old['hold:thick']>=0&&old['hold:thick']<=100000?old['hold:thick']:20):0;}
+  if(!input.bezel)s.prices[appearanceKey(s,'bezel')]=0;
+  notices.unshift('Older build restored. Matching EOE colors are selected; original small parts are treated as owned.');
+ }
+ return s;
+}
 export const encode=s=>encodeURIComponent(JSON.stringify(s));
-export function decode(hash){try{return normalize(JSON.parse(decodeURIComponent(hash.replace(/^#/,''))));}catch{return normalize(null);}}
+export function decode(hash,notices=[]){try{const value=JSON.parse(decodeURIComponent(hash.replace(/^#/,'')));if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Invalid configuration');return normalize(value,notices);}catch{notices.push('This saved link could not be read. The default build has been restored.');return normalize(null);}}
 export function csv(rows){const esc=v=>'"'+String(v).replace(/^[=+@-]/,"'$&").replaceAll('"','""')+'"';return '\uFEFF'+[['Group','Part','Vendor','Estimated USD','Link'],...rows.map(r=>[r.group,r.name,r.vendor,r.price.toFixed(2),r.url])].map(r=>r.map(esc).join(',')).join('\r\n');}

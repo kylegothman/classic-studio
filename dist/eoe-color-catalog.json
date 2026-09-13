@@ -1,0 +1,2239 @@
+{
+ "source": "Elite Obsolete Electronics (eoe.works), collection: iPod Classic 6th & 7th Generation Replacement Parts A1238, surveyed 2026-09-13",
+ "notes": [
+  "Hex values are approximations chosen from the product names for on-screen rendering; they are not vendor-supplied.",
+  "Prices are the lowest listed variant. Faceplates and click wheels are usually cheaper without the bundled center button; backplates are cheaper without the pre-installed headphone jack and dock bezel.",
+  "Metal faceplates take metal center buttons; plastic and transparent faceplates take plastic or crystal clear center buttons.",
+  "Every backplate color is sold in both Thin and Thick; thick adds about $3 on some colors.",
+  "Search URL is used for the link because product handles were not captured for every item."
+ ],
+ "faceplates": [
+  {
+   "id": "fp-metal-black",
+   "name": "Black",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#141414",
+   "price": 16.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Black+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-charcoal-gray",
+   "name": "Charcoal Gray",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#3a3a3c",
+   "price": 16.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Charcoal+Gray+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-silver",
+   "name": "Silver",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#c9c9cc",
+   "price": 16.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Silver+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-pebble-grey",
+   "name": "Pebble Grey",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#9a9793",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Pebble+Grey+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-white-matte",
+   "name": "White Matte",
+   "material": "metal",
+   "finish": "matte",
+   "color": "#f2f2f0",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=White+Matte+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-red",
+   "name": "Red",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#c8102e",
+   "price": 21.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Red+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-rose-gold-pink",
+   "name": "Rose Gold Pink",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#d9a08f",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Rose+Gold+Pink+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-starlight",
+   "name": "Starlight",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#e8e2d6",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Starlight+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-fairy-pink-matte",
+   "name": "Fairy Pink Matte",
+   "material": "metal",
+   "finish": "matte",
+   "color": "#f0b9c8",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Fairy+Pink+Matte+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-cosmic-orange",
+   "name": "Cosmic Orange",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#ff6a13",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Cosmic+Orange+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-terracotta-orange",
+   "name": "Terracotta Orange",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#c4623a",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Terracotta+Orange+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-bronze",
+   "name": "Bronze",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#8c6a3f",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Bronze+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-gold",
+   "name": "Gold",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#d4af37",
+   "price": 21.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Gold+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-champagne-gold",
+   "name": "Champagne Gold",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#e6d3a3",
+   "price": 21.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Champagne+Gold+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-yellow",
+   "name": "Yellow",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#f5c400",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Yellow+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-lime-green",
+   "name": "Lime Green",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#9ccc2e",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Lime+Green+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-green",
+   "name": "Green",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#2e8b3d",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Green+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-jungle-green",
+   "name": "Jungle Green",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#1f5e3a",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Jungle+Green+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-natural-green",
+   "name": "Natural Green",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#6f8f5a",
+   "price": 24.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Natural+Green+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-teal-green",
+   "name": "Teal Green",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#1f8a8a",
+   "price": 19.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Teal+Green+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-mint-green",
+   "name": "Mint Green",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#a8e6c1",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Mint+Green+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-arctic-blue",
+   "name": "Arctic Blue",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#bfe3f2",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Arctic+Blue+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-sky-blue",
+   "name": "Sky Blue",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#7fbfe8",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Sky+Blue+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-matte-baby-blue",
+   "name": "Matte Baby Blue",
+   "material": "metal",
+   "finish": "matte",
+   "color": "#a9c9e8",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Matte+Baby+Blue+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-periwinkle-blue",
+   "name": "Periwinkle Blue",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#8a9be6",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Periwinkle+Blue+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-blue",
+   "name": "Blue",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#1e5bd6",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Blue+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-sapphire-blue",
+   "name": "Sapphire Blue",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#0f3d91",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Sapphire+Blue+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-purple",
+   "name": "Purple",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#6a3fb5",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Purple+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-midnight-purple",
+   "name": "Midnight Purple",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#3a2159",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Midnight+Purple+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-hot-pink",
+   "name": "Hot Pink",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#ff3f9a",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Hot+Pink+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-light-pink",
+   "name": "Light Pink",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#f7c6d9",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Light+Pink+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-earth-brown",
+   "name": "Earth Brown",
+   "material": "metal",
+   "finish": "metal",
+   "color": "#5c4033",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Earth+Brown+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-gradient-green-and-red",
+   "name": "Gradient Green & Red",
+   "material": "metal",
+   "finish": "gradient",
+   "color": "#2e8b3d->#c8102e",
+   "price": 19.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Gradient+Green+%26+Red+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-metal-gradient-pink-and-blue",
+   "name": "Gradient Pink & Blue",
+   "material": "metal",
+   "finish": "gradient",
+   "color": "#ff6fb5->#3b82f6",
+   "price": 19.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Gradient+Pink+%26+Blue+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-black",
+   "name": "Black",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#141414",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Black+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-light-grey",
+   "name": "Light Grey",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#c7c7c7",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Light+Grey+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-white",
+   "name": "White",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#f5f5f5",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=White+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-sand-dune",
+   "name": "Sand Dune",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#d8c3a5",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Sand+Dune+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-red",
+   "name": "Red",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#d32f2f",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Red+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-orange",
+   "name": "Orange",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#f57c00",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Orange+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-yellow",
+   "name": "Yellow",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#fbc02d",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Yellow+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-green",
+   "name": "Green",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#43a047",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Green+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-light-blue",
+   "name": "Light Blue",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#81d4fa",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Light+Blue+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-blue",
+   "name": "Blue",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#1e88e5",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Blue+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-electric-blue",
+   "name": "Electric Blue",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#0057ff",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Electric+Blue+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-purple",
+   "name": "Purple",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#7e57c2",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Purple+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-pink",
+   "name": "Pink",
+   "material": "plastic",
+   "finish": "plastic",
+   "color": "#f48fb1",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Pink+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-crystal-clear",
+   "name": "Crystal Clear",
+   "material": "plastic",
+   "finish": "transparent",
+   "color": "#ffffff",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Crystal+Clear+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-black-crystal-clear",
+   "name": "Black Crystal Clear",
+   "material": "plastic",
+   "finish": "transparent",
+   "color": "#222222",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Black+Crystal+Clear+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-red-crystal-clear",
+   "name": "Red Crystal Clear",
+   "material": "plastic",
+   "finish": "transparent",
+   "color": "#e53935",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Red+Crystal+Clear+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-orange-crystal-clear",
+   "name": "Orange Crystal Clear",
+   "material": "plastic",
+   "finish": "transparent",
+   "color": "#fb8c00",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Orange+Crystal+Clear+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-yellow-crystal-clear",
+   "name": "Yellow Crystal Clear",
+   "material": "plastic",
+   "finish": "transparent",
+   "color": "#fdd835",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Yellow+Crystal+Clear+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-green-crystal-clear",
+   "name": "Green Crystal Clear",
+   "material": "plastic",
+   "finish": "transparent",
+   "color": "#43a047",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Green+Crystal+Clear+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-blue-crystal-clear",
+   "name": "Blue Crystal Clear",
+   "material": "plastic",
+   "finish": "transparent",
+   "color": "#1e88e5",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Blue+Crystal+Clear+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-indigo-crystal-clear",
+   "name": "Indigo Crystal Clear",
+   "material": "plastic",
+   "finish": "transparent",
+   "color": "#3f51b5",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Indigo+Crystal+Clear+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-purple-crystal-clear",
+   "name": "Purple Crystal Clear",
+   "material": "plastic",
+   "finish": "transparent",
+   "color": "#8e24aa",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Purple+Crystal+Clear+Faceplate+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "fp-plastic-pink-crystal-clear",
+   "name": "Pink Crystal Clear",
+   "material": "plastic",
+   "finish": "transparent",
+   "color": "#ec407a",
+   "price": 23.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Pink+Crystal+Clear+Faceplate+iPod+Classic+6th+7th+A1238"
+  }
+ ],
+ "clickWheels": [
+  {
+   "id": "cw-black",
+   "name": "Black",
+   "finish": "standard",
+   "color": "#1a1a1a",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Black+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-grey",
+   "name": "Grey",
+   "finish": "standard",
+   "color": "#8e8e8e",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Grey+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-white",
+   "name": "White",
+   "finish": "standard",
+   "color": "#f4f4f4",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=White+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-red",
+   "name": "Red",
+   "finish": "standard",
+   "color": "#d32f2f",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Red+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-orange",
+   "name": "Orange",
+   "finish": "standard",
+   "color": "#f57c00",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Orange+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-yellow",
+   "name": "Yellow",
+   "finish": "standard",
+   "color": "#fbc02d",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Yellow+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-light-green",
+   "name": "Light Green",
+   "finish": "standard",
+   "color": "#9ccc65",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Light+Green+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-green",
+   "name": "Green",
+   "finish": "standard",
+   "color": "#43a047",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Green+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-light-blue",
+   "name": "Light Blue",
+   "finish": "standard",
+   "color": "#81d4fa",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Light+Blue+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-blue",
+   "name": "Blue",
+   "finish": "standard",
+   "color": "#1e88e5",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Blue+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-light-pink",
+   "name": "Light Pink",
+   "finish": "standard",
+   "color": "#f8bbd0",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Light+Pink+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-pink",
+   "name": "Pink",
+   "finish": "standard",
+   "color": "#f06292",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Pink+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-purple",
+   "name": "Purple",
+   "finish": "standard",
+   "color": "#7e57c2",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Purple+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-phantom-gray",
+   "name": "Phantom Gray",
+   "finish": "standard",
+   "color": "#4b4f56",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Phantom+Gray+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-steel-blue",
+   "name": "Steel Blue",
+   "finish": "standard",
+   "color": "#4682b4",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Steel+Blue+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-sandstone-pink",
+   "name": "Sandstone Pink",
+   "finish": "standard",
+   "color": "#e0b8a8",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Sandstone+Pink+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-pink-fizz",
+   "name": "Pink Fizz",
+   "finish": "standard",
+   "color": "#ff4fa3",
+   "price": 19.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Pink+Fizz+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-fully-transparent-clear",
+   "name": "Fully Transparent Clear",
+   "finish": "transparent",
+   "color": "#ffffff",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Fully+Transparent+Clear+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-transparent-clear",
+   "name": "Transparent Clear",
+   "finish": "transparent",
+   "color": "#f0f0f0",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Transparent+Clear+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-polychrome-blue-green-purple",
+   "name": "Polychrome Blue Green Purple",
+   "finish": "iridescent",
+   "color": "#3b82f6->#22c55e->#a855f7",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Polychrome+Blue+Green+Purple+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-black-crystal-clear",
+   "name": "Black Crystal Clear",
+   "finish": "transparent",
+   "color": "#222222",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Black+Crystal+Clear+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-red-crystal-clear",
+   "name": "Red Crystal Clear",
+   "finish": "transparent",
+   "color": "#e53935",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Red+Crystal+Clear+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-orange-crystal-clear",
+   "name": "Orange Crystal Clear",
+   "finish": "transparent",
+   "color": "#fb8c00",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Orange+Crystal+Clear+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-yellow-crystal-clear",
+   "name": "Yellow Crystal Clear",
+   "finish": "transparent",
+   "color": "#fdd835",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Yellow+Crystal+Clear+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-green-crystal-clear",
+   "name": "Green Crystal Clear",
+   "finish": "transparent",
+   "color": "#43a047",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Green+Crystal+Clear+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-blue-crystal-clear",
+   "name": "Blue Crystal Clear",
+   "finish": "transparent",
+   "color": "#1e88e5",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Blue+Crystal+Clear+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-indigo-crystal-clear",
+   "name": "Indigo Crystal Clear",
+   "finish": "transparent",
+   "color": "#3f51b5",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Indigo+Crystal+Clear+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-pink-crystal-clear",
+   "name": "Pink Crystal Clear",
+   "finish": "transparent",
+   "color": "#ec407a",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Pink+Crystal+Clear+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-purple-crystal-clear",
+   "name": "Purple Crystal Clear",
+   "finish": "transparent",
+   "color": "#8e24aa",
+   "price": 18.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Purple+Crystal+Clear+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-clover-green-transparent",
+   "name": "Atomic Clover Green Transparent",
+   "finish": "atomic",
+   "color": "#2e9e4f",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Clover+Green+Transparent+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-glitter-transparent",
+   "name": "Atomic Glitter Transparent",
+   "finish": "atomic",
+   "color": "#e8e8f0",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Glitter+Transparent+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-purple-transparent",
+   "name": "Atomic Purple Transparent",
+   "finish": "atomic",
+   "color": "#7c3aed",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Purple+Transparent+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-lychee-fruit-transparent",
+   "name": "Atomic Lychee Fruit Transparent",
+   "finish": "atomic",
+   "color": "#f6c1cf",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Lychee+Fruit+Transparent+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-nebula",
+   "name": "Atomic Nebula",
+   "finish": "atomic",
+   "color": "#3b1f6b->#e11d74",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Nebula+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-peach-ring",
+   "name": "Atomic Peach Ring",
+   "finish": "atomic",
+   "color": "#ffb27a->#ff7a59",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Peach+Ring+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-pink-bubblegum-transparent",
+   "name": "Atomic Pink Bubblegum Transparent",
+   "finish": "atomic",
+   "color": "#ff8fc8",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Pink+Bubblegum+Transparent+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-ruby-red-transparent",
+   "name": "Atomic Ruby Red Transparent",
+   "finish": "atomic",
+   "color": "#c2183b",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Ruby+Red+Transparent+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-storm-transparent",
+   "name": "Atomic Storm Transparent",
+   "finish": "atomic",
+   "color": "#5a6270",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Storm+Transparent+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-orange-fireball-sunset",
+   "name": "Atomic Orange Fireball Sunset",
+   "finish": "atomic",
+   "color": "#ff5722->#ffb300",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Orange+Fireball+Sunset+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-shushee-rainbow",
+   "name": "Atomic Shushee Rainbow",
+   "finish": "atomic",
+   "color": "#ff0000->#ffff00->#00ff00->#0000ff",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Shushee+Rainbow+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-surfside-aurora",
+   "name": "Atomic Surfside Aurora",
+   "finish": "atomic",
+   "color": "#22d3ee->#a78bfa",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Surfside+Aurora+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-wild-berry-transparent",
+   "name": "Atomic Wild Berry Transparent",
+   "finish": "atomic",
+   "color": "#b0306e",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Wild+Berry+Transparent+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-yellow-transparent",
+   "name": "Atomic Yellow Transparent",
+   "finish": "atomic",
+   "color": "#ffe600",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Yellow+Transparent+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-blue-ice-transparent",
+   "name": "Atomic Blue Ice Transparent",
+   "finish": "atomic",
+   "color": "#a5d8ff",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Blue+Ice+Transparent+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-gold-metallic",
+   "name": "Atomic Gold Metallic",
+   "finish": "atomic",
+   "color": "#d4af37",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Gold+Metallic+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-anodized-purple",
+   "name": "Atomic Anodized Purple",
+   "finish": "atomic",
+   "color": "#5b2c9e",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Anodized+Purple+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-twilight-plum",
+   "name": "Atomic Twilight Plum",
+   "finish": "atomic",
+   "color": "#5d2a5a",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Twilight+Plum+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-sonic-gray-blue",
+   "name": "Atomic Sonic Gray Blue",
+   "finish": "atomic",
+   "color": "#5f7f9f",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Sonic+Gray+Blue+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-slime-green",
+   "name": "Atomic Slime Green",
+   "finish": "atomic",
+   "color": "#7cff00",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Slime+Green+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-midnight-blue",
+   "name": "Atomic Midnight Blue",
+   "finish": "atomic",
+   "color": "#1b2a5b",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Midnight+Blue+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-sky-blue",
+   "name": "Atomic Sky Blue",
+   "finish": "atomic",
+   "color": "#6fc3f7",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Sky+Blue+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-yellow-dream",
+   "name": "Atomic Yellow Dream",
+   "finish": "atomic",
+   "color": "#fff176",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Yellow+Dream+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-spearmint-green",
+   "name": "Atomic Spearmint Green",
+   "finish": "atomic",
+   "color": "#3ddc97",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Spearmint+Green+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-orange-dream",
+   "name": "Atomic Orange Dream",
+   "finish": "atomic",
+   "color": "#ffab5e",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Orange+Dream+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-mica-red",
+   "name": "Atomic Mica Red",
+   "finish": "atomic",
+   "color": "#b3202b",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Mica+Red+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cw-atomic-citrus-orange-transparent",
+   "name": "Atomic Citrus Orange Transparent",
+   "finish": "atomic",
+   "color": "#ff8c00",
+   "price": 33.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Citrus+Orange+Transparent+Click+Wheel+Flex+iPod+Classic+6th+7th+A1238"
+  }
+ ],
+ "centerButtons": [
+  {
+   "id": "cb-metal-black",
+   "name": "Black",
+   "material": "metal",
+   "color": "#141414",
+   "price": 8.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Black+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-silver",
+   "name": "Silver",
+   "material": "metal",
+   "color": "#c9c9cc",
+   "price": 8.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Silver+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-pebble",
+   "name": "Pebble",
+   "material": "metal",
+   "color": "#9a9793",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Pebble+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-charcoal-gray",
+   "name": "Charcoal Gray",
+   "material": "metal",
+   "color": "#3a3a3c",
+   "price": 8.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Charcoal+Gray+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-red",
+   "name": "Red",
+   "material": "metal",
+   "color": "#c8102e",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Red+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-rose-gold",
+   "name": "Rose Gold",
+   "material": "metal",
+   "color": "#d9a08f",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Rose+Gold+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-cosmic-orange",
+   "name": "Cosmic Orange",
+   "material": "metal",
+   "color": "#ff6a13",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Cosmic+Orange+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-terracotta-orange",
+   "name": "Terracotta Orange",
+   "material": "metal",
+   "color": "#c4623a",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Terracotta+Orange+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-starlight",
+   "name": "Starlight",
+   "material": "metal",
+   "color": "#e8e2d6",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Starlight+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-gold",
+   "name": "Gold",
+   "material": "metal",
+   "color": "#d4af37",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Gold+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-yellow",
+   "name": "Yellow",
+   "material": "metal",
+   "color": "#f5c400",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Yellow+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-champagne-gold",
+   "name": "Champagne Gold",
+   "material": "metal",
+   "color": "#e6d3a3",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Champagne+Gold+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-lime-green",
+   "name": "Lime Green",
+   "material": "metal",
+   "color": "#9ccc2e",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Lime+Green+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-green",
+   "name": "Green",
+   "material": "metal",
+   "color": "#2e8b3d",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Green+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-jungle-green",
+   "name": "Jungle Green",
+   "material": "metal",
+   "color": "#1f5e3a",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Jungle+Green+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-natural-green",
+   "name": "Natural Green",
+   "material": "metal",
+   "color": "#6f8f5a",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Natural+Green+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-metal-earth-brown",
+   "name": "Earth Brown",
+   "material": "metal",
+   "color": "#5c4033",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Earth+Brown+Center+Select+Button+iPod+Classic+6th+7th+Metal+A1238"
+  },
+  {
+   "id": "cb-plastic-black",
+   "name": "Black",
+   "material": "plastic",
+   "color": "#1a1a1a",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Black+Plastic+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-plastic-grey",
+   "name": "Grey",
+   "material": "plastic",
+   "color": "#8e8e8e",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Grey+Plastic+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-plastic-white",
+   "name": "White",
+   "material": "plastic",
+   "color": "#f4f4f4",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=White+Plastic+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-plastic-red",
+   "name": "Red",
+   "material": "plastic",
+   "color": "#d32f2f",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Red+Plastic+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-plastic-orange",
+   "name": "Orange",
+   "material": "plastic",
+   "color": "#f57c00",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Orange+Plastic+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-plastic-yellow",
+   "name": "Yellow",
+   "material": "plastic",
+   "color": "#fbc02d",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Yellow+Plastic+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-plastic-green",
+   "name": "Green",
+   "material": "plastic",
+   "color": "#43a047",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Green+Plastic+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-plastic-light-blue",
+   "name": "Light Blue",
+   "material": "plastic",
+   "color": "#81d4fa",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Light+Blue+Plastic+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-plastic-blue",
+   "name": "Blue",
+   "material": "plastic",
+   "color": "#1e88e5",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Blue+Plastic+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-plastic-pink",
+   "name": "Pink",
+   "material": "plastic",
+   "color": "#f48fb1",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Pink+Plastic+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-plastic-purple",
+   "name": "Purple",
+   "material": "plastic",
+   "color": "#7e57c2",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Purple+Plastic+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-clear-transparent-crystal-clear",
+   "name": "Transparent Crystal Clear",
+   "material": "transparent",
+   "color": "#ffffff",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Transparent+Crystal+Clear+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-clear-black-crystal-clear",
+   "name": "Black Crystal Clear",
+   "material": "transparent",
+   "color": "#222222",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Black+Crystal+Clear+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-clear-red-crystal-clear",
+   "name": "Red Crystal Clear",
+   "material": "transparent",
+   "color": "#e53935",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Red+Crystal+Clear+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-clear-orange-crystal-clear",
+   "name": "Orange Crystal Clear",
+   "material": "transparent",
+   "color": "#fb8c00",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Orange+Crystal+Clear+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-clear-yellow-crystal-clear",
+   "name": "Yellow Crystal Clear",
+   "material": "transparent",
+   "color": "#fdd835",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Yellow+Crystal+Clear+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-clear-green-crystal-clear",
+   "name": "Green Crystal Clear",
+   "material": "transparent",
+   "color": "#43a047",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Green+Crystal+Clear+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-clear-blue-crystal-clear",
+   "name": "Blue Crystal Clear",
+   "material": "transparent",
+   "color": "#1e88e5",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Blue+Crystal+Clear+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-clear-indigo-crystal-clear",
+   "name": "Indigo Crystal Clear",
+   "material": "transparent",
+   "color": "#3f51b5",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Indigo+Crystal+Clear+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-clear-purple-crystal-clear",
+   "name": "Purple Crystal Clear",
+   "material": "transparent",
+   "color": "#8e24aa",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Purple+Crystal+Clear+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "cb-clear-pink-crystal-clear",
+   "name": "Pink Crystal Clear",
+   "material": "transparent",
+   "color": "#ec407a",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Pink+Crystal+Clear+Center+Select+Button+iPod+Classic+6th+7th+A1238"
+  }
+ ],
+ "backplates": {
+  "engravingStyles": {
+   "universal": "Universal (Apple logo + generic text, no capacity)",
+   "blank": "Fully blank (no engraving)",
+   "u2": "U2 Special Edition engraving",
+   "logo-only": "Apple logo only",
+   "capacity": "Capacity-marked (60GB/80GB/160GB/240GB/480GB etc.)"
+  },
+  "bodies": {
+   "thin": "10.5 mm, fits stock/650-2000mAh batteries, no Bluetooth kit",
+   "thick": "13.5 mm, required for 3000mAh+ batteries, Bluetooth/USB-C kits, AirTag"
+  },
+  "preInstalledJackAndBezelUpcharge": "about +$20 to +$23",
+  "colors": [
+   {
+    "id": "bp-silver-stock-stainless",
+    "name": "Silver (stock stainless)",
+    "color": "#cfd2d6",
+    "finish": "chrome",
+    "priceFrom": 14.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2",
+     "logo-only",
+     "capacity"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Silver+%28stock+stainless%29+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-silver-chrome",
+    "name": "Silver Chrome",
+    "color": "#e3e5e8",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2",
+     "logo-only",
+     "capacity"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Silver+Chrome+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-black",
+    "name": "Black",
+    "color": "#1c1c1e",
+    "finish": "chrome",
+    "priceFrom": 19.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Black+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-black-chrome",
+    "name": "Black Chrome",
+    "color": "#2b2b2e",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Black+Chrome+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-sangria-red",
+    "name": "Sangria Red",
+    "color": "#7b1e2b",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Sangria+Red+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-red-wine",
+    "name": "Red Wine",
+    "color": "#5e1a2a",
+    "finish": "chrome",
+    "priceFrom": 19.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Red+Wine+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-toxic-green",
+    "name": "Toxic Green",
+    "color": "#7ddc1f",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Toxic+Green+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-pine-green",
+    "name": "Pine Green",
+    "color": "#1f4d3a",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Pine+Green+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-ocean-blue",
+    "name": "Ocean Blue",
+    "color": "#1b5fa8",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Ocean+Blue+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-matte-baby-blue",
+    "name": "Matte Baby Blue",
+    "color": "#a9c9e8",
+    "finish": "matte",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "blank"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Matte+Baby+Blue+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-blue-aqua",
+    "name": "Blue Aqua",
+    "color": "#3ec6d4",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Blue+Aqua+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-storm-cloud-blue",
+    "name": "Storm Cloud Blue",
+    "color": "#5b6f8c",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Storm+Cloud+Blue+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-frost-blue",
+    "name": "Frost Blue",
+    "color": "#bfe3f2",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Frost+Blue+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-daylight-blue",
+    "name": "Daylight Blue",
+    "color": "#4aa3e8",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Daylight+Blue+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-hyper-pink",
+    "name": "Hyper Pink",
+    "color": "#ff2d95",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Hyper+Pink+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-blush-pink",
+    "name": "Blush Pink",
+    "color": "#f4b6c2",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Blush+Pink+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-wild-berry-pink-red-gradient",
+    "name": "Wild Berry Pink Red Gradient",
+    "color": "#c2185b->#e53935",
+    "finish": "gradient",
+    "priceFrom": 19.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Wild+Berry+Pink+Red+Gradient+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-violet-voltage",
+    "name": "Violet Voltage",
+    "color": "#7c3aed",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Violet+Voltage+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-purple-haze",
+    "name": "Purple Haze",
+    "color": "#8e6bbf",
+    "finish": "chrome",
+    "priceFrom": 26.99,
+    "engravingStyles": [
+     "universal"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Purple+Haze+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-plum-purple",
+    "name": "Plum Purple",
+    "color": "#5a2a6b",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Plum+Purple+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-ultraviolet-purple-blue",
+    "name": "Ultraviolet Purple Blue",
+    "color": "#4b2aa8",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Ultraviolet+Purple+Blue+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-midnight-purple",
+    "name": "Midnight Purple",
+    "color": "#3a2159",
+    "finish": "chrome",
+    "priceFrom": 26.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Midnight+Purple+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-purple-wine",
+    "name": "Purple Wine",
+    "color": "#5c1f4f",
+    "finish": "chrome",
+    "priceFrom": 23.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Purple+Wine+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-gold",
+    "name": "Gold",
+    "color": "#d4af37",
+    "finish": "chrome",
+    "priceFrom": 19.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Gold+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-rose-gold-pink",
+    "name": "Rose Gold Pink",
+    "color": "#d9a08f",
+    "finish": "chrome",
+    "priceFrom": 19.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Rose+Gold+Pink+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-rainbow",
+    "name": "Rainbow",
+    "color": "#ff0000->#ffff00->#00ff00->#0000ff->#ff00ff",
+    "finish": "iridescent",
+    "priceFrom": 19.99,
+    "engravingStyles": [
+     "universal",
+     "blank",
+     "u2"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Rainbow+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-white-matte",
+    "name": "White Matte",
+    "color": "#f2f2f0",
+    "finish": "matte",
+    "priceFrom": 19.99,
+    "engravingStyles": [
+     "universal",
+     "blank"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=White+Matte+Backplate+iPod+Classic+6th+7th+A1238"
+   },
+   {
+    "id": "bp-fairy-pink-matte",
+    "name": "Fairy Pink Matte",
+    "color": "#f0b9c8",
+    "finish": "matte",
+    "priceFrom": 19.99,
+    "engravingStyles": [
+     "universal",
+     "blank"
+    ],
+    "bodies": [
+     "thin",
+     "thick"
+    ],
+    "vendor": "EOE",
+    "url": "https://eoe.works/search?q=Fairy+Pink+Matte+Backplate+iPod+Classic+6th+7th+A1238"
+   }
+  ]
+ },
+ "dockBezels": [
+  {
+   "id": "db-white",
+   "name": "White",
+   "color": "#f4f4f4",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=White+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-grey",
+   "name": "Grey",
+   "color": "#8e8e8e",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Grey+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-black",
+   "name": "Black",
+   "color": "#1a1a1a",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Black+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-transparent-clear",
+   "name": "Transparent Clear",
+   "color": "#ffffff",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Transparent+Clear+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-red",
+   "name": "Red",
+   "color": "#d32f2f",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Red+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-orange",
+   "name": "Orange",
+   "color": "#f57c00",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Orange+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-yellow",
+   "name": "Yellow",
+   "color": "#fbc02d",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Yellow+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-green",
+   "name": "Green",
+   "color": "#43a047",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Green+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-light-blue",
+   "name": "Light Blue",
+   "color": "#81d4fa",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Light+Blue+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-blue",
+   "name": "Blue",
+   "color": "#1e88e5",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Blue+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-pink",
+   "name": "Pink",
+   "color": "#f48fb1",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Pink+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-purple",
+   "name": "Purple",
+   "color": "#7e57c2",
+   "price": 4.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Purple+Dock+Plastic+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-smoke-storm",
+   "name": "Atomic Smoke Storm",
+   "color": "#5a6270",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Smoke+Storm+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-ruby-red",
+   "name": "Atomic Ruby Red",
+   "color": "#c2183b",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Ruby+Red+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-lychee-pink",
+   "name": "Atomic Lychee Pink",
+   "color": "#f6c1cf",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Lychee+Pink+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-citrus-orange",
+   "name": "Atomic Citrus Orange",
+   "color": "#ff8c00",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Citrus+Orange+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-fluorescent-orange",
+   "name": "Atomic Fluorescent Orange",
+   "color": "#ff5f1f",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Fluorescent+Orange+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-gold-metallic",
+   "name": "Atomic Gold Metallic",
+   "color": "#d4af37",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Gold+Metallic+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-yellow",
+   "name": "Atomic Yellow",
+   "color": "#ffe600",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Yellow+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-neon-highlighter-yellow",
+   "name": "Atomic Neon Highlighter Yellow",
+   "color": "#ccff00",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Neon+Highlighter+Yellow+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-slime-green",
+   "name": "Atomic Slime Green",
+   "color": "#7cff00",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Slime+Green+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-clover-green",
+   "name": "Atomic Clover Green",
+   "color": "#2e9e4f",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Clover+Green+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-olive-green",
+   "name": "Atomic Olive Green",
+   "color": "#6b8e23",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Olive+Green+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-pine-green",
+   "name": "Atomic Pine Green",
+   "color": "#1f4d3a",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Pine+Green+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-ice-blue",
+   "name": "Atomic Ice Blue",
+   "color": "#a5d8ff",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Ice+Blue+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-twilight-plum",
+   "name": "Atomic Twilight Plum",
+   "color": "#5d2a5a",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Twilight+Plum+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-bubblegum-pink",
+   "name": "Atomic Bubblegum Pink",
+   "color": "#ff8fc8",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Bubblegum+Pink+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-purple",
+   "name": "Atomic Purple",
+   "color": "#7c3aed",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Purple+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-wild-berry",
+   "name": "Atomic Wild Berry",
+   "color": "#b0306e",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Wild+Berry+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-atomic-slime-glow-green-glow-in-dark",
+   "name": "Atomic Slime Glow Green (glow in dark)",
+   "color": "#b6ff6b",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Atomic+Slime+Glow+Green+%28glow+in+dark%29+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  },
+  {
+   "id": "db-radioactive-glow-in-the-dark",
+   "name": "Radioactive Glow in the Dark",
+   "color": "#d9ffb0",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=Radioactive+Glow+in+the+Dark+Transparent+Clear+Plastic+Dock+Bezel+iPod+Classic+6th+7th"
+  }
+ ],
+ "holdSwitchJack": [
+  {
+   "id": "hs-thin-black",
+   "name": "Black",
+   "body": "thin",
+   "color": "#1a1a1a",
+   "price": 8.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=thin+Black+Audio+Headphone+Jack+Hold+Switch+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "hs-thin-white",
+   "name": "White",
+   "body": "thin",
+   "color": "#f4f4f4",
+   "price": 8.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=thin+White+Audio+Headphone+Jack+Hold+Switch+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "hs-thick-black",
+   "name": "Black",
+   "body": "thick",
+   "color": "#1a1a1a",
+   "price": 10.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=thick+Black+Audio+Headphone+Jack+Hold+Switch+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "hs-thick-white",
+   "name": "White",
+   "body": "thick",
+   "color": "#f4f4f4",
+   "price": 9.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=thick+White+Audio+Headphone+Jack+Hold+Switch+iPod+Classic+6th+7th+A1238"
+  },
+  {
+   "id": "hs-thin-u2-black-and-red",
+   "name": "U2 Black & Red",
+   "body": "thin",
+   "color": "#1a1a1a",
+   "price": 14.99,
+   "vendor": "EOE",
+   "url": "https://eoe.works/search?q=thin+U2+Black+%26+Red+Audio+Headphone+Jack+Hold+Switch+iPod+Classic+6th+7th+A1238"
+  }
+ ]
+}

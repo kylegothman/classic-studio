@@ -49,3 +49,15 @@ https://sketchfab.com/3d-models/ipod-classic-6839a82c7c644fe5a99fce0bf11be727
 https://creativecommons.org/licenses/by/4.0/
 
 Modified materials, generated screen/wheel textures, split center-button geometry and added schematic internals. The supplied original GLB is retained. Three.js is MIT licensed: https://github.com/mrdoob/three.js/blob/dev/LICENSE
+
+## EOE color catalog update
+
+The complete supplied `dist/eoe-color-catalog.json` is loaded at runtime: 57 faceplates, 56 click wheels, 38 center buttons, 28 back colors, 31 dock bezels and 5 hold/jack assemblies. Replace the JSON file to refresh prices without editing renderer code. `dist/catalog.js` adapts the vendor schema, materials and legacy IDs. Regenerate the portable HTML after changing the JSON.
+
+Searchable swatches are grouped by finish. A selected card and hover label show the item, vendor, and from price. Factory engraving styles are limited to the chosen back color; capacity text is cosmetic and independent of storage capacity. Details contains dock bezels and depth-specific hold/jack assemblies. Mismatched face/button materials and hold/body depth produce warnings.
+
+Bundle allowances live in `BUNDLE_ESTIMATES` in `catalog.js`: $8 for one center button bundled with the faceplate OR wheel, $20 for a preinstalled jack/bezel pair, and $3 for a thick back. These are estimates, not verified variant quotes. The BOM edits base prices and adds these allowances separately. Included components appear at $0, so toggling a bundle may lower the total by replacing a more expensive standalone part.
+
+Saved links use schema version 2. Old colors map to overlapping catalog IDs, with notices for nearest replacements. Brushed stainless is mapped to stock stainless because no brushed entry appears in this catalog; custom backs use the closest catalog color. Explicit old quotes are preserved, including wheel/button assembly quotes and owned small parts. New default prices use the catalog.
+
+Verified: all 215 IDs round-trip through saved links; transparent faceplate exposes the flash board and battery; thick stock-stainless back shows 1TB capacity marking; legacy links load without errors; bundle changes alter totals without double-charging included components. The camera now travels around the device between front and back, avoiding a path through its center.
