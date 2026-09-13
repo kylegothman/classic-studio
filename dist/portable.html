@@ -2535,7 +2535,7 @@ var init_data = __esm({
     RULES = [
       rule("crowded", (s) => s.body === "thick" && s.airtag === "on" && batteryCapacity(s) >= 3e3 && hasBT(s), "warning", "Tight internal layout", "Tight fit. Plan the internal layout before ordering.", { airtag: "off" }),
       rule("button-fit", (s) => appearance(s, "front").material === "metal" !== (appearance(s, "button").material === "metal"), "warning", "Faceplate and center button materials do not match", "Metal faceplates take metal buttons. Plastic and crystal-clear faceplates take plastic or crystal-clear buttons. Select a matching button before ordering."),
-      rule("hold-fit", (s) => !isKit(s) && appearance(s, "hold").body !== s.body, "warning", "Headphone jack / hold assembly has the wrong depth", "Match the assembly to your thin or thick back. The U2 black-and-red assembly in this catalog is thin only."),
+      rule("hold-fit", (s) => !isKit(s) && appearance(s, "hold").body !== s.body, "warning", "Headphone jack / hold assembly has the wrong depth", "Match the assembly to your thin or thick back. The U2 black-and-red assembly in this catalog is thin only. The suggested fix uses black when no matching U2 variant exists.", (s) => ({ hold: "hs-" + s.body + "-" + (s.hold.endsWith("-white") ? "white" : "black") })),
       rule("bundle-variant", (s) => s.buttonBundle !== "none" || s.preinstalled, "info", "Bundle prices are planning allowances", "Center-button bundles add an estimated $8 to the chosen faceplate or wheel; preinstalled jack and bezel add $20 to a standard back. Confirm the selected colors/materials are offered together. Included components are not charged again."),
       rule("kit-cosmetics", (s) => isKit(s), "info", "Back kit controls its own enclosure and small parts", "Catalog back color, engraving style, bezel and hold assembly are appearance references for this kit. They appear as included / verify in the parts list, not additional purchases. Confirm those options with the kit maker."),
       rule("lba", (s) => s.board !== "7g" && s.storage !== "hdd" && s.capacity > 128, "warning", "Apple firmware stops at 128GB", "Both 6th and 6.5th generation boards use LBA28. Rockbox-only configurations can work around this; Apple dual boot cannot access the larger layout reliably. Choose a 7th-generation board for full capacity in Apple firmware.", { board: "7g" }),
@@ -2551,7 +2551,7 @@ var init_data = __esm({
       rule("tracks", (s) => s.storage !== "hdd" && s.capacity >= 1024, "info", "Storage capacity is not a track-count guarantee", "Apple firmware has library / RAM limits; large libraries can fail before the drive is full. Rockbox handles files differently. Confirm card compatibility and format."),
       rule("cfmedia", (s) => s.storage === "cf" && s.capacity >= 512, "warning", "High-capacity CompactFlash is not a confirmed kit", "These are budget placeholders, not verified available compatible cards. Select a tested card from the adapter maker or use iFlash Quad.", { storage: "quad" })
     ];
-    warnings = (s) => [...RULES.filter((r) => r.test(s)).map(({ test, ...r }) => r), ...["connectivity", "battery", "storage", "qi", "taptic", "airtag", "finish"].flatMap((key) => {
+    warnings = (s) => [...RULES.filter((r) => r.test(s)).map(({ test, fix, ...r }) => ({ ...r, fix: typeof fix === "function" ? fix(s) : fix })), ...["connectivity", "battery", "storage", "qi", "taptic", "airtag", "finish"].flatMap((key) => {
       const c = optionConstraint(s, key, s[key]);
       return c ? [{ id: "fit-" + key, level: "warning", title: (key === "finish" ? "Backplate" : key[0].toUpperCase() + key.slice(1)) + " conflicts with this build", ...c }] : [];
     })];
@@ -3326,7 +3326,7 @@ function renderGuide() {
 }
 function renderWarnings() {
   const notes = warnings(state), n = notes.filter((n2) => n2.level === "warning").length;
-  $("#compatibility").innerHTML = `<div class="compat-header">Compatibility check <span>${n ? n + " to review" : "No known conflicts"}</span></div>` + (notes.length ? notes.map((r) => `<div class="notice ${r.level}"><strong>${esc(r.title)}</strong><p>${esc(r.message)}</p>${r.fix ? `<button data-fix="${r.id}">${r.fix.body ? fixLabel(r.fix) : "Apply suggested fix"} \u2192</button>` : ""}</div>`).join("") : '<div class="compat-ok">No known conflicts for these selections. Confirm exact part dimensions with the vendor.</div>');
+  $("#compatibility").innerHTML = `<div class="compat-header">Compatibility check <span>${n ? n + " to review" : "No known conflicts"}</span></div>` + (notes.length ? notes.map((r) => `<div class="notice ${r.level}"><strong>${esc(r.title)}</strong><p>${esc(r.message)}</p>${r.fix ? `<button data-fix="${r.id}">${r.fix.hold ? "Use matching " + state.body + " assembly" : r.fix.body ? fixLabel(r.fix) : "Apply suggested fix"} \u2192</button>` : ""}</div>`).join("") : '<div class="compat-ok">No known conflicts for these selections. Confirm exact part dimensions with the vendor.</div>');
   $("#estimate-note").textContent = n ? `${n} compatibility ${n === 1 ? "warning" : "warnings"} to review \xB7 estimates exclude tax & shipping.` : "Adjust prices in the parts list \xB7 excludes tax & shipping.";
 }
 function renderSummary() {
