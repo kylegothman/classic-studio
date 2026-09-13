@@ -61,6 +61,10 @@ Prices are editable USD allowances dated September 12, 2026; they are not live q
 
 Source links are included in the app. This is a planning tool, not a detailed electrical modification tutorial.
 
+## License
+
+Original project code is [MIT licensed](LICENSE). The supplied iPod model remains CC BY 4.0 and the Poly Haven HDR remains CC0, as attributed below; their licenses are not replaced by MIT.
+
 ## Attribution
 
 “iPod Classic” by Jacob Mougharbel, licensed CC BY 4.0:
