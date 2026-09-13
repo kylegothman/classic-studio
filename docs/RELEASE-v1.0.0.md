@@ -2,7 +2,7 @@
 
 A client-side 3D configurator for planning mods to an iPod Classic A1238 (6th and 7th generation). Pick parts, see them on a rotatable model, check compatibility, and export a priced parts list.
 
-Live app: https://classic-studio-kyle.kyle-gothman.chatgpt.site
+Live app: https://kylegothman.github.io/classic-studio/
 
 ### Highlights
 

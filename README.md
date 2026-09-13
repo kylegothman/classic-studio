@@ -2,6 +2,8 @@
 
 A complete, client-side Three.js iPod Classic A1238 mod configurator.
 
+**Open the app: https://kylegothman.github.io/classic-studio/**
+
 ## Open the portable app
 
 Open `classic-studio.html` in a modern browser. The model, baked shells, studio HDR environment, option data, interface and styles are embedded. Three.js 0.180.0 and the optional DM Sans font load from CDNs, so the first load needs internet access. Opening the app needs no npm install or build step. Regenerating its portable HTML requires the development dependencies.
@@ -39,7 +41,7 @@ python3 build-single.py
 
 Use Node.js 22 or newer and Python 3. `npm run format` applies the pinned Prettier defaults to source, tools and tests; `npm run format:check` checks them without editing. Run `npm run bake:shells` if the model or shell generator changes. GitHub Actions runs installation, both test suites and the portable build on pushes and pull requests. The checked-in `.openai/hosting.json` identifies the existing Classic Studio Sites deployment; it contains no credentials. Forks should use their own hosting configuration before deploying.
 
-Published app: https://classic-studio-kyle.kyle-gothman.chatgpt.site/ (current access policy applies).
+Published app: https://kylegothman.github.io/classic-studio/ (deployed from `main` by GitHub Actions).
 
 ## Using the app
 

@@ -32,3 +32,7 @@ Classic Studio is a client-side Three.js configurator for planning mods to an iP
 
 - Plain, restrained UI. No emoji in the interface.
 - Prices are estimates; label them that way.
+
+## Hosting
+
+The public app is GitHub Pages at https://kylegothman.github.io/classic-studio/, deployed from `dist/` on every push to `main` by `.github/workflows/pages.yml`. Do not add other hosting links to the README.
