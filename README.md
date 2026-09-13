@@ -4,7 +4,7 @@ A complete, client-side Three.js iPod Classic A1238 mod configurator.
 
 ## Open the portable app
 
-Open `classic-studio.html` in a modern browser. The model, studio HDR environment, option data, interface and styles are embedded. Three.js 0.180.0 and the optional DM Sans font load from CDNs, so the first load needs internet access. No React, npm install or build step is required.
+Open `classic-studio.html` in a modern browser. The model, studio HDR environment, option data, interface and styles are embedded. Three.js 0.180.0, three-bvh-csg 0.0.18, three-mesh-bvh 0.9.7 and the optional DM Sans font load from CDNs, so the first load needs internet access. No React, npm install or build step is required.
 
 ## Run the editable source
 
@@ -24,7 +24,7 @@ Run `python3 build-single.py` to regenerate `outputs/classic-studio.html` after 
 
 ## Using the app
 
-Select a preset or customize the twelve groups. The initial build counts a used 7th-generation board at $80. Drag to orbit, scroll to zoom, or focus the viewer and use arrow keys. Use camera presets, X-ray, or Clear front to inspect selected internal modules. The actual GLB faceplate, back and display are used, with a separately extracted raised center button.
+Select a preset or customize the twelve groups. The initial build counts a used 7th-generation board at $80. Drag to orbit, scroll to zoom, or focus the viewer and use arrow keys. Use camera presets, X-ray, or Clear front to inspect selected internal modules. The GLB faceplate, wheel and display are retained, with a separately extracted raised center button and a procedural hollow back shell.
 
 Parts list exports include vendors, estimates and links. Build guide updates with selected work and a rough time allowance. Copy build link saves the complete selection, engraving, price overrides, view and theme in the URL hash. A local file link only works on the same file path; use the hosted app URL to share between devices. The hosted site's current access policy still applies.
 
@@ -68,12 +68,27 @@ The body selector now controls option availability through one shared constraint
 
 Thin extended-battery storage fit follows the requested matrix. AirTag and both back kits require the planner’s thick category. Qi and kit haptics require a compatible back kit; standalone taptic remains available in thin. Classic Connect 2 still has a custom enclosure, so the planner’s 13.5 mm illustration is not a claim about the vendor’s actual dimensions. EOE Qi/haptic options require vendor confirmation. Runtime uses 18 mA for a drive or 14 mA for flash, multiplied by 1.1 for Rockbox and 1.25 for Bluetooth, with 80–100% of rated capacity. Kit runtime uses an explicit 2000 mAh assumption.
 
-The rear shell and original lower strip share a depth transform. New bottom-only apertures retain fixed USB-C (0.35 × 0.125 model units) or 30-pin (0.827 × 0.098) dimensions. Their centers, headphone jack and hold switch follow the transformed shell bounds. Classic Connect depicts both ports. Front/back changes use eased spherical paths; selecting the same preset recenters the viewer. Idle rotation begins after seven seconds and stops on interaction. Reduced-motion settings disable it.
+The one-piece procedural rear shell uses fixed USB-C (0.35 × 0.125 model inches) or 30-pin (0.83 × 0.10) openings. Their centers, headphone jack and hold switch follow the selected shell depth. Classic Connect depicts both ports. Front/back changes use eased spherical paths; selecting the same preset recenters the viewer. Idle rotation begins after seven seconds and stops on interaction. Reduced-motion settings disable it.
 
 All product meshes use MeshPhysicalMaterial, with clearcoat, catalog-driven transmission/thickness, brushed-metal anisotropy support and rainbow/polychrome iridescence. The current catalog has no separate brushed finish. The screen has a subtle physical glass reflection overlay. Crease-angle normals soften the case edges. Studio Small 09 by Sergej Majboroda / Poly Haven is bundled at 1K under CC0: https://polyhaven.com/a/studio_small_09 . RGBELoader and PMREM provide the environment. A baked radial contact shadow, ACES, sRGB, 4× MSAA where supported, mild SSAO, screen-only bloom and SMAA complete the WebGL pipeline. AO is skipped for transparent/X-ray builds to avoid false occlusion. WebGPU was not adopted; keeping the existing WebGL path avoids adding a second renderer and compatibility burden.
 
-The renderer caps pixel density, computes bloom and AO below full resolution, and reduces rendering resolution after sustained low frame rates. The portable file is about 2.75 MB including the supplied GLB and HDR. CDN access is still needed for Three.js and its addons.
+The renderer caps pixel density, computes bloom and AO below full resolution, and reduces rendering resolution after sustained low frame rates. The portable file is about 2.75 MB including the supplied GLB and HDR. CDN access is still needed for Three.js, its addons and the pinned CSG/BVH libraries.
 
 Validation: `node tests/compatibility.mjs` checks the battery/storage matrix, kit restrictions and fixes, retained conflicts, runtime math, every option’s saved-link/BOM/CSV/guide path, v1/v2 restoration, all 215 catalog entries, and bundle accounting. Browser verification covered 48 port/body/preset combinations, underside inspection, clear internals and 1TB engraving. Physical laptop/phone benchmarks were not available; browser viewport measurements are reported separately from device performance.
 
 Observed local browser performance: approximately 40–55 FPS during desktop checks (1440 × 900 viewport, 764 × 614 viewer, DPR 1–1.5), and 60 FPS at a 390 × 844 phone viewport (390 × 420 viewer, DPR 1). These are measurements on the same available computer, not physical mid-range laptop or phone benchmarks. Initial shader compilation can briefly stall before the steady-state samples.
+
+
+## One-piece shell and faceplate update
+
+`viewer.js` now ignores `Shiney_Back`, `Material.016` and `Port` when creating the scene. It measures the retained faceplate at 2.440427 × 4.054299 inches and its four outline tangencies at a 0.242078-inch radius. Matching offsets keep the existing plate and its screen/wheel openings; a replacement faceplate was unnecessary.
+
+A rounded-rectangle extrusion has a 0.06-inch roll with 12 bevel segments. Subtracting an inset extrusion with three-bvh-csg makes a 0.02-inch hollow wall. The finished shell is exactly 0.39 or 0.52 inches deep, including the bevel. Its maximum outline extends 0.01 inch beyond the plate on each side; the front lip curls under the plate, whose flat face is 0.002 inch proud of the rim. One material covers the entire shell, including the sides, ends and cavity.
+
+Six variants (thin/thick × dock/USB-C/both) are cached at startup, so switching body or connector swaps a geometry without rebuilding or scaling. The dock, USB-C, 0.14-inch round headphone jack and 0.35 × 0.06-inch hold slot are CSG openings through the top/bottom walls. Recessed dark receptacles, selected-color lips and the hold slider follow their centers. Rear engraving follows the actual rear surface.
+
+Flat face triangles now have exact axial normals; only the existing bevel receives smoothed normals. This removes the diagonal highlights between the screen and the plate corners while preserving the source front geometry and independent center button.
+
+Run `npm ci` once for local geometry-test dependencies, then `npm test` (or run the two files in `tests/` separately). The static app still needs no npm build. Geometry tests load the actual GLB, verify planar normals and measured dimensions, and raycast all six shells to check hollow walls, closed backs, aperture dimensions and surrounding continuous steel. Compatibility, old-link migration and BOM/export tests pass unchanged. Browser checks cover both bodies from 3/4 and Back, top/bottom openings, transparent internals, hollow exploded/X-ray views, capacity engraving and legacy-link restoration without console errors. The regenerated portable file is opened and checked through the local HTTP preview. The browser security policy blocks direct file:// navigation, so opening it directly from disk could not be verified in this session.
+
+Matched before/after desktop measurement on September 13, 2026: **60 FPS → 60 FPS** for the settled default 3/4 view, at a 1440 × 900 browser viewport, 764 × 614 viewer, DPR 1, full quality scale and 4× MSAA. Earlier baseline samples ranged from 56 to 60 FPS while rotating; new thin/thick samples were 60 FPS. Generating all six shells took **623 ms** in the browser, with roughly 12,100–13,200 triangles per shell. This is a same-computer browser measurement, not a physical-phone benchmark, and excludes initial shader compilation.

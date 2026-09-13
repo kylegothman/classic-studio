@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {Brush,Evaluator,SUBTRACTION} from 'three-bvh-csg';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
@@ -12,6 +13,62 @@ import {SMAAPass} from 'three/addons/postprocessing/SMAAPass.js';
 import {toCreasedNormals} from 'three/addons/utils/BufferGeometryUtils.js';
 import {hasBT,hasQi,hasTaptic,batteryCapacity} from './data.js';
 import {appearance,surfaceSpec} from './catalog.js';
+
+// The source plate is the dimensional reference. Tangencies of its projected
+// outline give a radius at each corner; the largest planar triangle gives the
+// face plane (the button's raised face is deliberately not the reference).
+export function measureFaceplate(geometry){
+ geometry.computeBoundingBox();const bounds=geometry.boundingBox.clone(),size=bounds.getSize(new THREE.Vector3()),p=geometry.attributes.position;
+ const corners=[];for(const sx of [-1,1])for(const sy of [-1,1]){let tangent=-Infinity;for(let i=0;i<p.count;i++)if(Math.abs(p.getX(i)-(sx<0?bounds.min.x:bounds.max.x))<.00001)tangent=Math.max(tangent,sy*p.getY(i));corners.push((sy<0?-bounds.min.y:bounds.max.y)-tangent);}
+ const flat=geometry.index?geometry.toNonIndexed():geometry,q=flat.attributes.position;let largest=0,faceZ=0;
+ for(let i=0;i<q.count;i+=3){const a=new THREE.Vector3().fromBufferAttribute(q,i),b=new THREE.Vector3().fromBufferAttribute(q,i+1),c=new THREE.Vector3().fromBufferAttribute(q,i+2),n=b.clone().sub(a).cross(c.clone().sub(a)),area=n.length();if(n.z/area>.99999&&area>largest){largest=area;faceZ=(a.z+b.z+c.z)/3;}}
+ if(flat!==geometry)flat.dispose();const radius=corners.reduce((a,b)=>a+b,0)/4;
+ if(!Number.isFinite(radius)||radius<=0||Math.max(...corners)-Math.min(...corners)>.003)throw new Error('Front plate outline needs a new shell adapter.');
+ return {width:size.x,height:size.y,radius,cornerRadii:corners,faceZ,bounds};
+}
+
+// Weld only for smooth bevel normals, then give every coplanar face triangle
+// an exact axial normal. Long screen-to-corner triangles cannot pull a highlight
+// across the face. The source bevel and screen/wheel openings remain intact.
+export function finishPlateNormals(geometry){
+ const g=toCreasedNormals(geometry,Math.PI/3),p=g.attributes.position,n=g.attributes.normal;
+ for(let i=0;i<p.count;i+=3){const a=new THREE.Vector3().fromBufferAttribute(p,i),b=new THREE.Vector3().fromBufferAttribute(p,i+1),c=new THREE.Vector3().fromBufferAttribute(p,i+2),v=b.sub(a).cross(c.sub(a)).normalize();if(Math.abs(v.z)>.99999)for(let j=0;j<3;j++)n.setXYZ(i+j,0,0,Math.sign(v.z));}
+ return g;
+}
+
+function rounded(w,h,r){
+ const s=new THREE.Shape();s.moveTo(-w/2+r,-h/2);s.lineTo(w/2-r,-h/2);s.absarc(w/2-r,-h/2+r,r,-Math.PI/2,0);s.lineTo(w/2,h/2-r);s.absarc(w/2-r,h/2-r,r,0,Math.PI/2);s.lineTo(-w/2+r,h/2);s.absarc(-w/2+r,h/2-r,r,Math.PI/2,Math.PI);s.lineTo(-w/2,-h/2+r);s.absarc(-w/2+r,-h/2+r,r,Math.PI,Math.PI*1.5);s.closePath();return s;
+}
+
+export function buildShellCache(plate){
+ const started=performance.now(),wall=.02,bevel=.06,segments=12,width=plate.width+.02,height=plate.height+.02,radius=plate.radius+.01;
+ const evaluator=new Evaluator();evaluator.useGroups=false;
+ const brush=g=>{const b=new Brush(g);b.updateMatrixWorld();return b;};
+ const subtract=(a,g)=>{const b=brush(g),result=evaluator.evaluate(a,b,SUBTRACTION);g.dispose();return result;};
+ const extrude=(w,h,r,depth,b)=>finishPlateNormals(new THREE.ExtrudeGeometry(rounded(w-2*b,h-2*b,r-b),{depth:depth-2*b,bevelEnabled:true,bevelSize:b,bevelThickness:b,bevelSegments:segments,curveSegments:16,steps:1}));
+ // The cavity trims the front roll at the wall thickness. Account for that
+ // trim so the finished shell, not the uncut extrusion, is .39 / .52 deep.
+ let tip=0;for(let i=1;i<=segments;i++){const a=(i-1)/segments*Math.PI/2,b=i/segments*Math.PI/2,x0=bevel*Math.sin(a),x1=bevel*Math.sin(b),x=bevel-wall;if(x>=x0&&x<=x1)tip=THREE.MathUtils.lerp(bevel*Math.cos(a),bevel*Math.cos(b),(x-x0)/(x1-x0));}
+ const trim=bevel-tip,frontZ=plate.faceZ-.002,variants=new Map();
+ for(const body of ['thin','thick']){
+  const depth=body==='thin'?.39:.52,rearZ=frontZ-depth,rawDepth=depth+trim;
+  const outer=extrude(width,height,radius,rawDepth,bevel);outer.translate(0,0,rearZ+bevel);
+  const inner=extrude(width-2*wall,height-2*wall,radius-wall,rawDepth+.3,bevel-wall);inner.translate(0,0,rearZ+wall+bevel-wall);
+  const outerBrush=brush(outer),hollow=subtract(outerBrush,inner);outer.dispose();
+  const centerZ=(rearZ+frontZ)/2;
+  for(const layout of ['original','usbc','moon']){
+   let result=hollow;
+   const cut=g=>{const previous=result;result=subtract(result,g);if(previous!==hollow)previous.geometry.dispose();};
+   const slot=(w,h,x,top=false)=>{const g=new THREE.ExtrudeGeometry(rounded(w,h,Math.min(h/2,.04)),{depth:.20,bevelEnabled:false,curveSegments:12});g.rotateX(Math.PI/2);g.translate(x,(top?height/2:-height/2)+.10,centerZ);cut(g);};
+   if(layout!=='usbc')slot(.83,.10,0);if(layout!=='original')slot(.35,.125,layout==='moon'?.8:0);
+   const jack=new THREE.CylinderGeometry(.07,.07,.20,40);jack.translate(.78,height/2,centerZ);cut(jack);slot(.35,.06,-.68,true);
+   const geometry=result.geometry;geometry.computeBoundingBox();geometry.computeBoundingSphere();
+   variants.set(body+':'+layout,{geometry,depth,rearZ,frontZ,centerZ,width,height,radius,wall});
+  }
+  hollow.geometry.dispose();
+ }
+ return {variants,buildMs:Math.round(performance.now()-started),plate:{width:plate.width,height:plate.height,radius:plate.radius,cornerRadii:plate.cornerRadii,faceZ:plate.faceZ},wall};
+}
 
 // Model adapter: bake every mesh's matrixWorld into its geometry before editing.
 // This supplied GLB has X width, Y height and +Z facing forward after its parent
@@ -28,9 +85,8 @@ export async function createViewer(host,initial){
  gltf.scene.updateMatrixWorld(true);const origin=new THREE.Box3().setFromObject(gltf.scene).getCenter(new THREE.Vector3());const parts={};
  // Planar UVs keep all multicolor parts vertical in canonical world space.
  function verticalUV(g){g.computeBoundingBox();const b=g.boundingBox,p=g.attributes.position,uv=[];for(let i=0;i<p.count;i++)uv.push((p.getX(i)-b.min.x)/Math.max(.001,b.max.x-b.min.x),(p.getY(i)-b.min.y)/Math.max(.001,b.max.y-b.min.y));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));}
- gltf.scene.traverse(node=>{if(!node.isMesh)return;let geometry=node.geometry.clone().applyMatrix4(node.matrixWorld);geometry.translate(-origin.x,-origin.y,-origin.z);let name=node.material.name;
-  if(['Shiney_Back','Material.016'].includes(name)){const g=geometry.index?geometry.toNonIndexed():geometry,p=g.attributes.position,keep=[];for(let i=0;i<p.count;i+=3){const a=new THREE.Vector3().fromBufferAttribute(p,i),b=new THREE.Vector3().fromBufferAttribute(p,i+1),c=new THREE.Vector3().fromBufferAttribute(p,i+2),normal=b.clone().sub(a).cross(c.clone().sub(a)).normalize();if((a.y+b.y+c.y)/3 < -1.97&&normal.y<-.99)continue;keep.push(i,i+1,i+2);}const out=new THREE.BufferGeometry();for(const [key,attr]of Object.entries(g.attributes)){const values=[];for(const i of keep)for(let j=0;j<attr.itemSize;j++)values.push(attr.array[i*attr.itemSize+j]);out.setAttribute(key,new THREE.Float32BufferAttribute(values,attr.itemSize));}geometry=out;}
-  if(['Material.006','Shiney_Back'].includes(name))geometry=toCreasedNormals(geometry,Math.PI/5);
+ gltf.scene.traverse(node=>{if(!node.isMesh||!['Material.006','Screen','Wheel'].includes(node.material.name))return;let geometry=node.geometry.clone().applyMatrix4(node.matrixWorld);geometry.translate(-origin.x,-origin.y,-origin.z);const name=node.material.name;
+  if(name==='Material.006')geometry=finishPlateNormals(geometry);
   let mat=new THREE.MeshPhysicalMaterial({color:0xaaaaaa,roughness:.25,metalness:.5});
   // The author's faceplate material also contains the raised center button.
   // Split its triangles by radius so button color really is independent.
@@ -39,10 +95,10 @@ export async function createViewer(host,initial){
    const split=indices=>{const g=new THREE.BufferGeometry();for(const key of Object.keys(flat.attributes)){const attr=flat.attributes[key];const values=[];for(const i of indices)for(let j=0;j<attr.itemSize;j++)values.push(attr.array[i*attr.itemSize+j]);g.setAttribute(key,new THREE.Float32BufferAttribute(values,attr.itemSize));}return g;};
    geometry=split(a);const buttonGeometry=split(b);verticalUV(buttonGeometry);const button=new THREE.Mesh(buttonGeometry,new THREE.MeshPhysicalMaterial({roughness:.35}));front.add(button);parts.button=button;
   }
-  if(['Material.006','Shiney_Back','Material.016','Port'].includes(name))verticalUV(geometry);
+  if(name==='Material.006')verticalUV(geometry);
   if(name==='Screen'){const p=geometry.attributes.position;const uv=[];for(let i=0;i<p.count;i++)uv.push((p.getX(i)+1.028)/2.06,(p.getY(i)-.318)/1.54);geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));mat=new THREE.MeshPhysicalMaterial({roughness:.3,metalness:0,emissive:0xffffff,color:0x000000,emissiveIntensity:1,toneMapped:false,envMapIntensity:0});}
   if(name==='Wheel')mat=new THREE.MeshPhysicalMaterial({roughness:.5,metalness:0});
-  const mesh=new THREE.Mesh(geometry,mat);mesh.name=name;parts[name]=mesh;(['Shiney_Back','Material.016','Port'].includes(name)?rear:front).add(mesh);
+  const mesh=new THREE.Mesh(geometry,mat);mesh.name=name;parts[name]=mesh;front.add(mesh);
  });
  function texture(draw,w=512,h=512){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();return t;}
  const surface=(color,rough=.5,metal=.1)=>new THREE.MeshPhysicalMaterial({color,roughness:rough,metalness:metal});
@@ -55,24 +111,21 @@ export async function createViewer(host,initial){
  const taptic=box(.65,.20,.10,'#60656b',.61,-1.64,.04);label(taptic,'TAPTIC',.5,.10,.055,'#fff','#60656b');
  const airtag=new THREE.Mesh(new THREE.CylinderGeometry(.35,.35,.09,40),surface('#deded7',.28,.7));airtag.rotation.x=Math.PI/2;airtag.position.set(.61,-1.14,.085);inside.add(airtag);
  const qi=new THREE.Mesh(new THREE.TorusGeometry(.72,.028,8,64),surface('#bb7946',.3,.6));qi.position.set(0,-.15,-.09);inside.add(qi);
- // All authored shell-edge pieces share one depth transform. Rebuilt ports
- // have fixed real-world apertures; their centers come from the transformed bounds.
- const shellDepth=new THREE.Group();rear.add(shellDepth);for(const name of ['Shiney_Back','Material.016','Port'])shellDepth.add(parts[name]);
- // Replace the authored port's front-facing patch with a bottom-only cap,
- // recess and lip. Keep the authored lower strip joined to the back shell.
- parts.Port.visible=false;
- parts.Shiney_Back.geometry.computeBoundingBox();const shellBounds=parts.Shiney_Back.geometry.boundingBox.clone(),anchorZ=shellBounds.max.z;
- const bottomEdge=new THREE.Group(),topEdge=new THREE.Group();rear.add(bottomEdge,topEdge);bottomEdge.position.y=shellBounds.min.y-.001;topEdge.position.y=shellBounds.max.y+.004;
- function rounded(w,h,r){const shape=new THREE.Shape();shape.moveTo(-w/2+r,-h/2);shape.lineTo(w/2-r,-h/2);shape.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);shape.lineTo(w/2,h/2-r);shape.quadraticCurveTo(w/2,h/2,w/2-r,h/2);shape.lineTo(-w/2+r,h/2);shape.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);shape.lineTo(-w/2,-h/2+r);shape.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);return shape;}
+ // A single hollow steel mesh replaces all three legacy back pieces. CSG
+ // runs once; body and connector changes swap cached geometry without scaling.
+ const shellCache=buildShellCache(measureFaceplate(parts['Material.006'].geometry));
+ for(const variant of shellCache.variants.values())verticalUV(variant.geometry);
+ const shell=new THREE.Mesh(shellCache.variants.get('thin:original').geometry,surface('#aaa',.2,1));shell.name='Procedural back shell';rear.add(shell);let activeShell;
+ const bottomEdge=new THREE.Group(),topEdge=new THREE.Group();rear.add(bottomEdge,topEdge);
  function edgePlane(shape,mat,parent,y=0,top=false){const mesh=new THREE.Mesh(new THREE.ShapeGeometry(shape,20),mat);mesh.rotation.x=top?-Math.PI/2:Math.PI/2;mesh.position.y=y;parent.add(mesh);return mesh;}
- const capMaterial=new THREE.MeshPhysicalMaterial({roughness:.2,metalness:1,side:THREE.DoubleSide});const capSurface={material:capMaterial,userData:{}};let edgeCap=null,edgeSignature='';
- function port(w,h,x){const g=new THREE.Group();g.position.x=x;bottomEdge.add(g);const ring=rounded(w+.04,h+.034,.045);ring.holes.push(new THREE.Path(rounded(w,h,Math.min(h/2,.04)).getPoints(20)));const lip=edgePlane(ring,new THREE.MeshPhysicalMaterial({metalness:.85,roughness:.2,side:THREE.DoubleSide}),g,-.001);
- const cavity=box(w,h*.1,h,'#07090c',0,.012,0,g);cavity.material.roughness=.95;cavity.material.metalness=0;const tongue=box(w*.65,.014,.025,'#667078',0,.008,0,g);return {group:g,lip,w,h};}
- const dock=port(.827,.098,0),usb=port(.35,.125,0);
- const headphoneRing=new THREE.Shape();headphoneRing.absarc(0,0,.083,0,Math.PI*2);const headphoneHole=new THREE.Path();headphoneHole.absarc(0,0,.069,0,Math.PI*2,true);headphoneRing.holes.push(headphoneHole);
- const jack=edgePlane(headphoneRing,new THREE.MeshPhysicalMaterial({color:'#afb3b7',metalness:1,roughness:.16,side:THREE.DoubleSide}),topEdge,.004,true);jack.position.x=.78;
- const jackInterior=new THREE.Mesh(new THREE.CylinderGeometry(.069,.069,.06,32),surface('#07090c',.9,0));jackInterior.position.set(.78,.003,0);topEdge.add(jackInterior);
- const hold=box(.38,.014,.095,'#fff',-.68,.009,0,topEdge),holdSlider=box(.14,.018,.063,'#fff',-.74,.025,0,topEdge);
+ function port(w,h,x){const g=new THREE.Group();g.position.x=x;bottomEdge.add(g);const ring=rounded(w-.003,h-.003,Math.min(h/2-.002,.038));ring.holes.push(new THREE.Path(rounded(w-.028,h-.025,Math.min((h-.025)/2,.03)).getPoints(20)));const lip=edgePlane(ring,new THREE.MeshPhysicalMaterial({metalness:.3,roughness:.3,side:THREE.DoubleSide}),g,.001);
+ const cavity=box(w-.008,.014,h-.008,'#07090c',0,.05,0,g);cavity.material.roughness=.95;cavity.material.metalness=0;const tongue=box(w*.65,.014,.025,'#667078',0,.026,0,g);return {group:g,lip,w,h};}
+ const dock=port(.83,.10,0),usb=port(.35,.125,0);
+ const headphoneRing=new THREE.Shape();headphoneRing.absarc(0,0,.069,0,Math.PI*2);const headphoneHole=new THREE.Path();headphoneHole.absarc(0,0,.053,0,Math.PI*2,true);headphoneRing.holes.push(headphoneHole);
+ const jack=edgePlane(headphoneRing,surface('#171b20',.4,0),topEdge,-.001,true);jack.material.side=THREE.DoubleSide;jack.position.x=.78;
+ const jackInterior=new THREE.Mesh(new THREE.CylinderGeometry(.052,.052,.014,32),surface('#07090c',.9,0));jackInterior.position.set(.78,-.045,0);topEdge.add(jackInterior);
+ const holdWell=box(.343,.012,.054,'#07090c',-.68,-.038,0,topEdge);
+ const hold=box(.325,.012,.045,'#fff',-.68,-.012,0,topEdge),holdSlider=box(.12,.018,.044,'#fff',-.74,-.001,0,topEdge);
  const engraving=new THREE.Mesh(new THREE.PlaneGeometry(1.85,2.9),new THREE.MeshPhysicalMaterial({transparent:true,depthWrite:false,roughness:.8,metalness:.1}));engraving.rotation.y=Math.PI;engraving.position.set(0,0,-.201);rear.add(engraving);
  const glass=new THREE.Mesh(new THREE.PlaneGeometry(2.055,1.535),new THREE.MeshPhysicalMaterial({color:'#fff',roughness:.035,metalness:0,transmission:0,thickness:.008,ior:1.46,clearcoat:1,clearcoatRoughness:.04,envMapIntensity:.3,transparent:true,opacity:.055,depthWrite:false}));glass.position.set(.002,1.088,.158);front.add(glass);
  // Canvas textures deliberately approximate Atomic patterns. Seeded noise is
@@ -85,7 +138,8 @@ export async function createViewer(host,initial){
  const material=(mesh,color,rough,metal,alpha=1)=>{targets.set(mesh,{color:new THREE.Color(color),roughness:rough,metalness:metal,opacity:alpha});mesh.material.transparent=alpha<1;mesh.material.depthWrite=alpha===1;mesh.material.side=alpha<1?THREE.DoubleSide:THREE.FrontSide;};
  const replaceMap=(m,map)=>{m.material.map?.dispose();m.material.map=map;if(m.material.emissiveMap)m.material.emissiveMap=map;if(m.name==='Screen'){m.material.emissiveMap=map;m.material.roughness=.85;}m.material.needsUpdate=true;};
  function update(s){touch();host.dataset.pose='';state=s;const frontPart=appearance(s,'front'),wheelPart=appearance(s,'wheel'),buttonPart=appearance(s,'button'),backPart=appearance(s,'finish'),bezelPart=appearance(s,'bezel'),holdPart=appearance(s,'hold');
-  applyPart(parts['Material.006'],frontPart,s.xray);applyPart(parts.button,buttonPart,s.xray);applyPart(parts.Shiney_Back,backPart,s.xray);applyPart(parts['Material.016'],backPart,s.xray);applyPart(parts.Port,bezelPart,s.xray);applyPart(dock.lip,bezelPart,s.xray);applyPart(usb.lip,bezelPart,s.xray);applyPart(capSurface,backPart,s.xray);applyPart(hold,holdPart,s.xray);applyPart(holdSlider,{...holdPart,id:holdPart.id+'-slider',hex:holdPart.id.includes('u2')?'#c8102e':holdPart.hex,colors:[holdPart.id.includes('u2')?'#c8102e':holdPart.hex]},s.xray);
+  applyPart(parts['Material.006'],frontPart,s.xray);applyPart(parts.button,buttonPart,s.xray);applyPart(shell,backPart,s.xray);applyPart(dock.lip,bezelPart,s.xray);applyPart(usb.lip,bezelPart,s.xray);applyPart(jack,holdPart,s.xray);applyPart(hold,holdPart,s.xray);applyPart(holdSlider,{...holdPart,id:holdPart.id+'-slider',hex:holdPart.id.includes('u2')?'#c8102e':holdPart.hex,colors:[holdPart.id.includes('u2')?'#c8102e':holdPart.hex]},s.xray);
+  activeShell=shellCache.variants.get(s.body+':'+(s.connectivity==='original'?'original':s.connectivity==='moon'?'moon':'usbc'));shell.geometry=activeShell.geometry;bottomEdge.position.set(0,-activeShell.height/2,activeShell.centerZ);topEdge.position.set(0,activeShell.height/2,activeShell.centerZ);engraving.position.z=activeShell.rearZ-.003;
   dock.group.visible=s.connectivity==='original'||s.connectivity==='moon';usb.group.visible=s.connectivity!=='original';usb.group.position.x=s.connectivity==='moon'?.80:0;glass.visible=!s.xray;
 
   const wkey=s.wheel+s.button;if(wkey!==lastWheel){lastWheel=wkey;replaceMap(parts.Wheel,texture((c,w,h)=>{fillPart(c,w,h,wheelPart);c.save();c.beginPath();c.arc(w/2,h/2,w*.175,0,Math.PI*2);c.clip();fillPart(c,w,h,buttonPart);c.restore();c.fillStyle=luminance(wheelPart.hex)<.48?'#eeeff1':'#404750';c.textAlign='center';c.textBaseline='middle';c.font='500 32px Arial';c.fillText('MENU',256,66);c.font='bold 37px Arial';c.fillText('◀◀',67,256);c.fillText('▶▶',443,256);c.fillText('▶Ⅱ',256,442);}));}applyPart(parts.Wheel,wheelPart,s.xray,true);
@@ -120,15 +174,11 @@ export async function createViewer(host,initial){
  let qualityScale=1;const resize=()=>{const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h);composer.setPixelRatio(renderer.getPixelRatio()*qualityScale);composer.setSize(w,h);ao.setSize(Math.ceil(w*renderer.getPixelRatio()*qualityScale*.65),Math.ceil(h*renderer.getPixelRatio()*qualityScale*.65));bloomComposer.setPixelRatio(.6);bloomComposer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();};const ro=new ResizeObserver(resize);ro.observe(host);resize();
  renderer.domElement.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();touch();flight=null;const a=e.key==='ArrowLeft'?.15:e.key==='ArrowRight'?-.15:0;camera.position.applyAxisAngle(new THREE.Vector3(0,1,0),a);if(e.key==='ArrowUp')camera.position.y+=.3;if(e.key==='ArrowDown')camera.position.y-=.3;}});
  let alive=true,lastTime=performance.now(),sampleStart=lastTime,frames=0,fps=0,slowWindows=0;const reduced=matchMedia('(prefers-reduced-motion: reduce)');
- function metrics(){return {fps,qualityScale,pixelRatio:renderer.getPixelRatio(),width:host.clientWidth,height:host.clientHeight,msaa:target.samples,hdri:'Studio Small 09 · 1K',bodyDepth:+((shellBounds.max.z-shellBounds.min.z)*shellDepth.scale.z).toFixed(4),portCenter:+bottomEdge.position.z.toFixed(4),portY:+bottomEdge.position.y.toFixed(4),topCenter:+topEdge.position.z.toFixed(4),portNormal:[0,-1,0],ports:[dock,usb].filter(p=>p.group.visible).map(p=>({kind:p===dock?'30-pin':'USB-C',width:p.w,height:p.h,center:[p.group.position.x,bottomEdge.position.y,bottomEdge.position.z],normal:[0,-1,0],rearOffset:rear.position.z})),camera:camera.position.toArray().map(v=>+v.toFixed(3)),idle:controls.autoRotate,ao:ao.enabled};}
+ function metrics(){return {fps,qualityScale,pixelRatio:renderer.getPixelRatio(),width:host.clientWidth,height:host.clientHeight,msaa:target.samples,hdri:'Studio Small 09 · 1K',bodyDepth:activeShell.depth,shellTriangles:shell.geometry.attributes.position.count/3,shellCacheMs:shellCache.buildMs,shellVariants:shellCache.variants.size,plate:shellCache.plate,wall:shellCache.wall,portCenter:+bottomEdge.position.z.toFixed(4),portY:+bottomEdge.position.y.toFixed(4),topCenter:+topEdge.position.z.toFixed(4),portNormal:[0,-1,0],ports:[dock,usb].filter(p=>p.group.visible).map(p=>({kind:p===dock?'30-pin':'USB-C',width:p.w,height:p.h,center:[p.group.position.x,bottomEdge.position.y,bottomEdge.position.z],normal:[0,-1,0],rearOffset:rear.position.z})),camera:camera.position.toArray().map(v=>+v.toFixed(3)),idle:controls.autoRotate,ao:ao.enabled};}
  function frame(){if(!alive)return;requestAnimationFrame(frame);const time=performance.now(),dt=Math.min((time-lastTime)/1000,.1);lastTime=time;if(document.hidden){sampleStart=time;frames=0;return;}const lerp=reduced.matches?1:1-Math.exp(-8*dt);if(flight){const now=new THREE.Spherical().setFromVector3(camera.position),to=new THREE.Spherical().setFromVector3(flight);now.radius=THREE.MathUtils.lerp(now.radius,to.radius,lerp);now.phi=THREE.MathUtils.lerp(now.phi,to.phi,lerp);now.theta+=Math.atan2(Math.sin(to.theta-now.theta),Math.cos(to.theta-now.theta))*lerp;camera.position.setFromSpherical(now);if(camera.position.distanceTo(flight)<.015)flight=null;}
  const explode=state.view==='exploded';front.position.z=THREE.MathUtils.lerp(front.position.z,explode?1.35:0,lerp);rear.position.z=THREE.MathUtils.lerp(rear.position.z,explode?-1.2:0,lerp);inside.position.z=THREE.MathUtils.lerp(inside.position.z,explode?.25:0,lerp);
- // One transform carries shell, authored Port and bottom strip. Every added
- // top/bottom detail follows the resulting shell bounds and rear explode group.
- const originalDepth=.194911-shellBounds.min.z,frontLip=.194911-anchorZ;const depth=state.body==='thick'?(originalDepth*13.5/10.5-frontLip)/(shellBounds.max.z-shellBounds.min.z):1;shellDepth.scale.z=THREE.MathUtils.lerp(shellDepth.scale.z,depth,lerp);shellDepth.position.z=anchorZ*(1-shellDepth.scale.z);const zMin=shellBounds.min.z*shellDepth.scale.z+shellDepth.position.z,zMax=shellBounds.max.z*shellDepth.scale.z+shellDepth.position.z;bottomEdge.position.z=topEdge.position.z=(zMin+zMax)/2;engraving.position.z=zMin-.008;
- const signature=[(zMax-zMin).toFixed(3),state.connectivity].join(':');if(signature!==edgeSignature){edgeSignature=signature;const outline=rounded(2.39,zMax-zMin,.04);for(const p of [dock,usb])if(p.group.visible){const path=new THREE.Path(rounded(p.w+.005,p.h+.005,Math.min(p.h/2,.04)).getPoints(20).map(v=>new THREE.Vector2(v.x+p.group.position.x,v.y)));outline.holes.push(path);}if(edgeCap){edgeCap.geometry.dispose();bottomEdge.remove(edgeCap);}edgeCap=edgePlane(outline,capMaterial,bottomEdge);}
- for(const [m,t]of targets){m.material.color.lerp(t.color,lerp);for(const k of ['roughness','metalness','opacity'])m.material[k]=THREE.MathUtils.lerp(m.material[k],t[k],lerp);}controls.autoRotate=!reduced.matches&&!interacting&&!flight&&!explode&&time-lastInteraction>7000;controls.update(dt);renderFrame();frames++;if(!flight&&Math.abs(shellDepth.scale.z-depth)<.0001){host.dataset.pose=state.view+':'+state.body+':'+state.connectivity;host.dataset.renderMetrics=JSON.stringify(metrics());}
+ for(const [m,t]of targets){m.material.color.lerp(t.color,lerp);for(const k of ['roughness','metalness','opacity'])m.material[k]=THREE.MathUtils.lerp(m.material[k],t[k],lerp);}controls.autoRotate=!reduced.matches&&!interacting&&!flight&&!explode&&time-lastInteraction>7000;controls.update(dt);renderFrame();frames++;if(!flight&&Math.abs(front.position.z-(explode?1.35:0))<.001&&Math.abs(rear.position.z-(explode?-1.2:0))<.001){host.dataset.pose=state.view+':'+state.body+':'+state.connectivity;host.dataset.renderMetrics=JSON.stringify(metrics());}
  if(time-sampleStart>2000){fps=Math.round(frames*1000/(time-sampleStart));host.dataset.renderMetrics=JSON.stringify(metrics());frames=0;sampleStart=time;if(fps<28)slowWindows++;else slowWindows=0;if(slowWindows>=3&&qualityScale>.65){qualityScale=Math.max(.65,qualityScale-.15);slowWindows=0;resize();}}
  }
- update(initial);angle(initial.view,false);frame();return {update,angle,metrics,dispose(){alive=false;ro.disconnect();controls.dispose();document.removeEventListener('pointerdown',touch);composer.dispose();bloomComposer.dispose();ao.dispose();bloom.dispose();smaa.dispose();dark.dispose();renderer.dispose();environment.dispose();scene.traverse(x=>{x.geometry?.dispose();x.material?.map?.dispose();x.material?.dispose();});}};
+ update(initial);angle(initial.view,false);frame();return {update,angle,metrics,dispose(){alive=false;ro.disconnect();controls.dispose();document.removeEventListener('pointerdown',touch);composer.dispose();bloomComposer.dispose();ao.dispose();bloom.dispose();smaa.dispose();dark.dispose();renderer.dispose();environment.dispose();for(const v of shellCache.variants.values())v.geometry.dispose();scene.traverse(x=>{x.geometry?.dispose();x.material?.map?.dispose();x.material?.dispose();});}};
 }
