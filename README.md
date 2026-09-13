@@ -29,7 +29,7 @@ Run `python3 build-single.py` to regenerate `outputs/classic-studio.html` after 
 
 ```sh
 git clone https://github.com/kylegothman/classic-studio.git
-cd your-classic
+cd classic-studio
 npm ci
 npm test
 python3 -m http.server 5173 --directory dist
