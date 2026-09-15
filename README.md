@@ -6,6 +6,8 @@ Pick a logic board, flash storage, battery, back plate, click wheel, and the res
 
 **https://kylegothman.github.io/classic-studio/**
 
+<img width="1707" height="985" alt="ClassicStudio_SS" src="https://github.com/user-attachments/assets/ba844b37-36de-45a9-a36b-72d2f49d73b8" />
+
 ## Why
 
 The A1238 mod scene has a hundred parts that mostly fit and a dozen combinations that quietly do not. A 2007 board caps you at 128GB. A 3000 mAh cell needs a thick back unless it is the thin one, which then only fits under two of the seven flash adapters. Nobody writes this down in one place. Classic Studio does, and it checks your build against it as you click.
